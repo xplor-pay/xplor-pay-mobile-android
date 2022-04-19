@@ -4,6 +4,11 @@
     <string name="title_transactions">Transactions</string>
     <string name="title_more">More</string>
 
+    <!-- Home screen -->
+    <string name="battery_life">%1$d%%</string>
+    <string name="charge_amount">Charge %1$s</string>
+    <string name="no_reader_message">No reader connected</string>
+
     <!-- Settings screen -->
     <string name="environment_production">PROD</string>
     <string name="environment_sandbox">SANDBOX</string>
