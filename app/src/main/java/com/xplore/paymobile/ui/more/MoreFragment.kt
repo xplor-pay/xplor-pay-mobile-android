@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -46,15 +45,25 @@ class MoreFragment : Fragment() {
         binding.urlText.text = Constants.BASE_URL_SANDBOX
         binding.publicKeyText.text = Constants.PUBLIC_KEY_SANDBOX
         binding.apiKeyText.text = Constants.API_KEY_SANDBOX
-        binding.switchButton.setOnCheckedChangeListener(object: CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-
-                binding.prodLabel.setTextColor(ContextCompat.getColor(context!!, if (isChecked) R.color.teal_200 else R.color.black))
-                binding.sandboxLabel.setTextColor(ContextCompat.getColor(context!!, if (isChecked) R.color.black else R.color.teal_200))
-                binding.urlText.text = if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
-                binding.publicKeyText.text = if (isChecked) Constants.PUBLIC_KEY_PROD else Constants.PUBLIC_KEY_SANDBOX
-                binding.apiKeyText.text = if (isChecked) Constants.API_KEY_PROD else Constants.API_KEY_SANDBOX
-            }
-        })
+        binding.switchButton.setOnCheckedChangeListener { view, isChecked ->
+            binding.prodLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (isChecked) R.color.teal_200 else R.color.black
+                )
+            )
+            binding.sandboxLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (isChecked) R.color.black else R.color.teal_200
+                )
+            )
+            binding.urlText.text =
+                if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
+            binding.publicKeyText.text =
+                if (isChecked) Constants.PUBLIC_KEY_PROD else Constants.PUBLIC_KEY_SANDBOX
+            binding.apiKeyText.text =
+                if (isChecked) Constants.API_KEY_PROD else Constants.API_KEY_SANDBOX
+        }
     }
 }
