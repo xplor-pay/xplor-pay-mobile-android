@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Button.RoundedGreen" parent="">
+        <item name="android:background">@drawable/round_corners</item>
+        <item name="backgroundTintMode">src_in</item>
+        <item name="android:backgroundTint">@color/button_green_background</item>
+    </style>
+
+</resources>
