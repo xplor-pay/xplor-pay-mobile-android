@@ -4,19 +4,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
     tools:context=".ui.more.MoreFragment">
 
     <TextView
-        android:id="@+id/text_more"
-        android:layout_width="match_parent"
+        android:id="@+id/sandbox_label"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="18dp"
+        android:textSize="15sp"
+        android:textColor="@color/teal_200"
+        android:text="@string/environment_sandbox"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/prod_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="18dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:text="@string/environment_production"
+        app:layout_constraintStart_toEndOf="@id/sandbox_label"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/url_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:text="@string/label_url"
+        app:layout_constraintEnd_toEndOf="@id/switch_button"
+        app:layout_constraintStart_toStartOf="@id/sandbox_label"
+        app:layout_constraintTop_toBottomOf="@id/switch_button" />
+
+    <TextView
+        android:id="@+id/url_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textSize="13sp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/url_label"
+        app:layout_constraintStart_toStartOf="@id/url_label"
+        app:layout_constraintTop_toBottomOf="@id/url_label" />
+
+    <TextView
+        android:id="@+id/public_key_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:text="@string/label_public_key"
+        app:layout_constraintEnd_toEndOf="@id/url_text"
+        app:layout_constraintStart_toStartOf="@id/url_text"
+        app:layout_constraintTop_toBottomOf="@id/url_text" />
+
+    <TextView
+        android:id="@+id/public_key_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textSize="13sp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/public_key_label"
+        app:layout_constraintStart_toStartOf="@id/public_key_label"
+        app:layout_constraintTop_toBottomOf="@id/public_key_label" />
+
+    <TextView
+        android:id="@+id/api_key_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:text="@string/label_api_key"
+        app:layout_constraintEnd_toEndOf="@id/public_key_text"
+        app:layout_constraintStart_toStartOf="@id/public_key_text"
+        app:layout_constraintTop_toBottomOf="@id/public_key_text" />
+
+    <TextView
+        android:id="@+id/api_key_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textSize="13sp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/api_key_label"
+        app:layout_constraintStart_toStartOf="@id/api_key_label"
+        app:layout_constraintTop_toBottomOf="@id/api_key_label" />
 </androidx.constraintlayout.widget.ConstraintLayout>
