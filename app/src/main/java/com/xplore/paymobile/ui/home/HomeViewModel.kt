@@ -2,15 +2,15 @@ package com.xplore.paymobile.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xplore.paymobile.module.BatteryLifeState
-import com.xplore.paymobile.module.Reader
-import com.xplore.paymobile.module.ReaderState
-import com.xplore.paymobile.module.SignalState
+import com.xplore.paymobile.model.BatteryLifeState
+import com.xplore.paymobile.model.Reader
+import com.xplore.paymobile.model.ReaderState
+import com.xplore.paymobile.model.SignalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel () {
+class HomeViewModel : ViewModel() {
 
     private var readerIndex = 0
 

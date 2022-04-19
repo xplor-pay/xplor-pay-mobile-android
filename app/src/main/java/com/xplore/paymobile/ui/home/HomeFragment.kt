@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
-import com.xplore.paymobile.module.BatteryLifeState
-import com.xplore.paymobile.module.Reader
-import com.xplore.paymobile.module.ReaderState
-import com.xplore.paymobile.module.SignalState
+import com.xplore.paymobile.model.BatteryLifeState
+import com.xplore.paymobile.model.Reader
+import com.xplore.paymobile.model.ReaderState
+import com.xplore.paymobile.model.SignalState
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect

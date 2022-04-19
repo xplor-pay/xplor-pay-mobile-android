@@ -8,6 +8,10 @@
     <string name="battery_life">%1$d%%</string>
     <string name="charge_amount">Charge %1$s</string>
     <string name="no_reader_message">No reader connected</string>
+    <string name="status_no_device_connected">Please select a reader to connect</string>
+    <string name="status_idle">Idle</string>
+    <string name="device_signal_connected">Connected</string>
+    <string name="charge_note_hint">+ Add Note</string>
 
     <!-- Settings screen -->
     <string name="environment_production">PROD</string>

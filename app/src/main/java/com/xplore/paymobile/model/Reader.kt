@@ -1,4 +1,4 @@
-package com.xplore.paymobile.module
+package com.xplore.paymobile.model
 
 import com.xplore.paymobile.R
 
