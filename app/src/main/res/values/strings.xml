@@ -3,4 +3,11 @@
     <string name="title_home">Home</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_more">More</string>
+
+    <!-- Settings screen -->
+    <string name="environment_production">PROD</string>
+    <string name="environment_sandbox">SANDBOX</string>
+    <string name="label_url">URL</string>
+    <string name="label_public_key">Public key</string>
+    <string name="label_api_key">API key</string>
 </resources>
