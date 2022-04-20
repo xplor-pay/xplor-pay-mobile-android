@@ -9,9 +9,12 @@
     <dimen name="separator_height">20dp</dimen>
     <dimen name="text_size_large">36sp</dimen>
     <dimen name="text_size_medium_big">18sp</dimen>
+    <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_big">22dp</dimen>
     <dimen name="margin_medium_big">20dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_medium_small">12dp</dimen>
+    <dimen name="margin_bottom_view">60dp</dimen>
+    <dimen name="margin_xsmall">5dp</dimen>
 </resources>

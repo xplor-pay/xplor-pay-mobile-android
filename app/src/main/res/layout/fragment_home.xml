@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.home.HomeFragment">
 
     <TextView
@@ -18,6 +17,9 @@
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_big"
         app:drawableEndCompat="@drawable/arrow_down"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="IDTECH-VP3300-26970" />
 
     <TextView
@@ -25,31 +27,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_xsmall"
         android:drawablePadding="@dimen/drawable_padding"
         android:gravity="center"
         android:text="@string/status_no_device_connected"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown" />
 
     <TextView
         android:id="@+id/device_idle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_xsmall"
         android:drawablePadding="@dimen/drawable_padding"
         android:gravity="center"
         android:text="@string/status_idle"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
         android:visibility="gone"
-        app:drawableStartCompat="@drawable/device_idle" />
+        app:drawableStartCompat="@drawable/device_idle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown" />
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/device_paired"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_marginTop="@dimen/margin_xsmall"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown">
 
         <TextView
             android:id="@+id/device_signal_strength"
@@ -96,6 +111,9 @@
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_large"
         android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/device_paired"
         tools:ignore="LabelFor"
         tools:text="$20.00" />
 
@@ -105,19 +123,25 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_medium_small"
         android:gravity="center"
         android:text="@string/charge_note_hint"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_medium_big" />
+        android:textSize="@dimen/text_size_medium_big"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/charge_counter" />
 
     <TextView
         android:id="@+id/numpad"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium_small"
         android:layout_marginEnd="@dimen/margin_medium"
-        android:background="@color/black" />
+        android:background="@color/black"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/charge_note" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/charge_button"
@@ -128,9 +152,14 @@
         android:layout_marginStart="@dimen/margin_medium_big"
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium_big"
+        android:layout_marginBottom="@dimen/margin_bottom_view"
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_medium_big"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numpad"
         tools:text="Charge $20.00" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
