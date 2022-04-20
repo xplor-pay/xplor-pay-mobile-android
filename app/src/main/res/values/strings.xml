@@ -4,10 +4,20 @@
     <string name="title_transactions">Transactions</string>
     <string name="title_more">More</string>
 
+    <!-- Home screen -->
+    <string name="battery_life">%1$d%%</string>
+    <string name="charge_amount">Charge %1$s</string>
+    <string name="no_reader_message">No reader connected</string>
+    <string name="status_no_device_connected">Please select a reader to connect</string>
+    <string name="status_idle">Idle</string>
+    <string name="device_signal_connected">Connected</string>
+    <string name="charge_note_hint">+ Add Note</string>
+
     <!-- Settings screen -->
     <string name="environment_production">PROD</string>
     <string name="environment_sandbox">SANDBOX</string>
     <string name="label_url">URL</string>
     <string name="label_public_key">Public key</string>
     <string name="label_api_key">API key</string>
+    <string name="charge_amount_hint">$0.00</string>
 </resources>

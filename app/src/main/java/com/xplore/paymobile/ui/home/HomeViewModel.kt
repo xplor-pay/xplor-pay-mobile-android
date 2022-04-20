@@ -1,13 +1,16 @@
 package com.xplore.paymobile.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.xplore.paymobile.model.ReaderState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    companion object {
+        private val defaultReaderState = ReaderState.NoReader
     }
-    val text: LiveData<String> = _text
+
+    private val _readerState = MutableStateFlow(defaultReaderState)
+    val readerState: StateFlow<ReaderState> = _readerState
 }
