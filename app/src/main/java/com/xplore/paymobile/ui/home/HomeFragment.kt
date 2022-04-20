@@ -1,6 +1,8 @@
 package com.xplore.paymobile.ui.home
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,11 +49,27 @@ class HomeFragment : Fragment() {
 
         renderChargeAmount()
 
-        binding.chargeButton.setOnClickListener {
-            viewModel.cycleReaders()
-        }
+        setListeners()
 
         return binding.root
+    }
+
+    private fun setListeners() {
+        binding.apply {
+            chargeButton.setOnClickListener {
+                viewModel.cycleReaders()
+            }
+            chargeCounter.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    chargeAmount = chargeCounter.text.toString()
+                    renderChargeAmount()
+                }
+
+                override fun afterTextChanged(p0: Editable?) {}
+            })
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,7 +98,6 @@ class HomeFragment : Fragment() {
 
     private fun renderChargeAmount() {
         binding.apply {
-            chargeCounter.text = formatChargeAmount()
             chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
         }
     }
@@ -106,6 +123,11 @@ class HomeFragment : Fragment() {
             return
 
         chargeAmount.dropLast(1)
+        renderChargeAmount()
+    }
+
+    private fun clearChargeAmount() {
+        chargeAmount = ""
         renderChargeAmount()
     }
 

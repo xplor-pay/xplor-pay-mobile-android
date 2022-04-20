@@ -19,4 +19,5 @@
     <string name="label_url">URL</string>
     <string name="label_public_key">Public key</string>
     <string name="label_api_key">API key</string>
+    <string name="charge_amount_hint">$0.00</string>
 </resources>
