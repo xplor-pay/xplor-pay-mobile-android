@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "XplorPayMobile"
-include ':app'
+include ':app', ':clearent-idtech-android'

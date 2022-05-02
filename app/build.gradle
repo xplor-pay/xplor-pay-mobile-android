@@ -76,4 +76,7 @@ dependencies {
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"
+
+    // Clearent Idtech Android SDK
+    implementation project (':clearent-idtech-android')
 }
