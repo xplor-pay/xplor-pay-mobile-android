@@ -12,12 +12,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ui.TransactionBottomSheetFragment
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.model.BatteryLifeState
 import com.xplore.paymobile.model.Reader
 import com.xplore.paymobile.model.ReaderState
 import com.xplore.paymobile.model.SignalState
+import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -51,13 +54,18 @@ class HomeFragment : Fragment() {
 
         setListeners()
 
+        SDKWrapper.initializeReader(requireContext(), Constants.BASE_URL_SANDBOX, Constants.PUBLIC_KEY_SANDBOX)
+
+        SDKWrapper.setMockDevice("IDTECH-VP3300-26863")
+
         return binding.root
     }
 
     private fun setListeners() {
         binding.apply {
             chargeButton.setOnClickListener {
-                // Handle button press
+                val modalBottomSheet = TransactionBottomSheetFragment()
+                modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
             }
             chargeCounter.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
