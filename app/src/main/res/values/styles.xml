@@ -7,4 +7,10 @@
         <item name="android:backgroundTint">@color/button_green_background</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.MyApp.Button.NumericKeyPad" parent="">
+        <item name="android:background">@drawable/numeric_key_pad_button_outline</item>
+        <item name="backgroundTintMode">src_in</item>
+        <item name="android:backgroundTint">@color/numeric_key_pad_background</item>
+    </style>
+
 </resources>
