@@ -54,11 +54,49 @@ class HomeFragment : Fragment() {
 
         setListeners()
 
-        SDKWrapper.initializeReader(requireContext(), Constants.BASE_URL_SANDBOX, Constants.PUBLIC_KEY_SANDBOX)
+        setUpNumpad()
+
+        SDKWrapper.initializeReader(
+            requireContext(),
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX
+        )
 
         SDKWrapper.setMockDevice("IDTECH-VP3300-26863")
 
         return binding.root
+    }
+
+    private fun setUpNumpad() {
+        binding.apply {
+            numpad.apply {
+                val numericKeys = listOf(
+                    numpad0,
+                    numpad1,
+                    numpad2,
+                    numpad3,
+                    numpad4,
+                    numpad5,
+                    numpad6,
+                    numpad7,
+                    numpad8,
+                    numpad9
+                )
+                numericKeys.forEachIndexed { index, key ->
+                    key.setOnClickListener {
+                        appendDigitToChargeAmount(index.toString())
+                    }
+                }
+
+                numpadClear.setOnClickListener {
+                    clearChargeAmount()
+                }
+
+                numpadBackspace.setOnClickListener {
+                    popDigitFromChargeAmount()
+                }
+            }
+        }
     }
 
     private fun setListeners() {
@@ -67,16 +105,6 @@ class HomeFragment : Fragment() {
                 val modalBottomSheet = TransactionBottomSheetFragment()
                 modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
             }
-            chargeCounter.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    chargeAmount = chargeCounter.text.toString()
-                    renderChargeAmount()
-                }
-
-                override fun afterTextChanged(p0: Editable?) {}
-            })
         }
     }
 
@@ -106,23 +134,38 @@ class HomeFragment : Fragment() {
 
     private fun renderChargeAmount() {
         binding.apply {
-            chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
+            if (chargeAmount.isBlank()) {
+                chargeButton.isEnabled = false
+                chargeButton.text = getString(R.string.charge_amount, "")
+            } else {
+                chargeButton.isEnabled = true
+                chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
+            }
+
+            chargeCounter.text = formatChargeAmount()
         }
     }
 
-    private fun formatChargeAmount(): String = if (chargeAmount.isBlank()) {
-        defaultChargeAmount
-    } else {
-        "\$$chargeAmount".let {
-            it.insert(it.length - 2, ".")
-        }
-    }
+    private fun formatChargeAmount(): String =
+        if (chargeAmount.isBlank())
+            defaultChargeAmount
+        else
+            when (chargeAmount.length) {
+                1 -> "\$0.0$chargeAmount"
+                2 -> "\$0.$chargeAmount"
+                else -> "\$$chargeAmount".let {
+                    it.insert(it.length - 2, ".")
+                }
+            }
 
     private fun appendDigitToChargeAmount(digit: String) {
         if (chargeAmount.isBlank() && digit == "0")
             return
 
-        chargeAmount.plus(digit)
+        if (chargeAmount.length >= 10)
+            return
+
+        chargeAmount = chargeAmount.plus(digit)
         renderChargeAmount()
     }
 
@@ -130,7 +173,7 @@ class HomeFragment : Fragment() {
         if (chargeAmount.isBlank())
             return
 
-        chargeAmount.dropLast(1)
+        chargeAmount = chargeAmount.dropLast(1)
         renderChargeAmount()
     }
 
