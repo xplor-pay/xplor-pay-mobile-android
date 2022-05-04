@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="TextNormal" parent="">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextBold" parent="TextNormal">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Separator" parent="">
+        <item name="android:background">@color/gray</item>
+    </style>
+
     <style name="ChargeButton" parent="Widget.Material3.Button.TextButton">
         <item name="shapeAppearanceOverlay">
             @style/ShapeAppearanceOverlay.MyApp.Button.Rounded

@@ -7,12 +7,12 @@
 
     <TextView
         android:id="@+id/devices_dropdown"
+        style="@style/TextNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:drawablePadding="@dimen/drawable_padding_large"
         android:gravity="center"
-        android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
         app:drawableEndCompat="@drawable/arrow_down"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,6 +22,7 @@
 
     <TextView
         android:id="@+id/no_device_connected"
+        style="@style/TextNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -29,7 +30,6 @@
         android:drawablePadding="@dimen/drawable_padding"
         android:gravity="center"
         android:text="@string/status_no_device_connected"
-        android:textColor="@color/black"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -38,6 +38,7 @@
 
     <TextView
         android:id="@+id/device_idle"
+        style="@style/TextNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -45,7 +46,6 @@
         android:drawablePadding="@dimen/drawable_padding"
         android:gravity="center"
         android:text="@string/status_idle"
-        android:textColor="@color/black"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/device_idle"
@@ -65,29 +65,29 @@
 
         <TextView
             android:id="@+id/device_signal_strength"
+            style="@style/TextNormal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/drawable_padding"
             android:gravity="center"
             android:text="@string/device_signal_connected"
-            android:textColor="@color/black"
             android:textSize="@dimen/text_size_small"
             app:drawableStartCompat="@drawable/device_idle" />
 
         <View
+            style="@style/Separator"
             android:layout_width="1dp"
             android:layout_height="@dimen/separator_height"
             android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:background="@color/gray" />
+            android:layout_marginEnd="@dimen/margin_medium" />
 
         <TextView
             android:id="@+id/device_battery_level"
+            style="@style/TextNormal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/drawable_padding"
             android:gravity="center"
-            android:textColor="@color/black"
             android:textSize="@dimen/text_size_small"
             app:drawableStartCompat="@drawable/battery_life_100"
             tools:text="100%" />

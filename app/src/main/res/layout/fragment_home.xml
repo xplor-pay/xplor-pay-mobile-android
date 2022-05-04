@@ -18,14 +18,13 @@
 
     <TextView
         android:id="@+id/charge_counter"
+        style="@style/TextBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_extra_large"
         android:gravity="center"
-        android:textColor="@color/black"
         android:textSize="@dimen/text_size_large"
-        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reader_info"
@@ -33,13 +32,13 @@
 
     <TextView
         android:id="@+id/charge_note"
+        style="@style/TextNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_small"
         android:gravity="center"
         android:text="@string/charge_note_hint"
-        android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium_big"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
