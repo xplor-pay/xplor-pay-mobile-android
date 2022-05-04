@@ -101,6 +101,9 @@ class HomeFragment : Fragment() {
 
     private fun setListeners() {
         binding.apply {
+            readerInfo.devicesDropdown.setOnClickListener {
+                viewModel.cycleReaders()
+            }
             chargeButton.setOnClickListener {
                 val modalBottomSheet = TransactionBottomSheetFragment()
                 modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
@@ -193,30 +196,36 @@ class HomeFragment : Fragment() {
 
     private fun setReaderPaired(readerState: ReaderState.ReaderPaired) {
         binding.apply {
-            devicePaired.visibility = View.VISIBLE
+            readerInfo.apply {
+                devicePaired.visibility = View.VISIBLE
 
-            noDeviceConnected.visibility = View.GONE
-            deviceIdle.visibility = View.GONE
+                noDeviceConnected.visibility = View.GONE
+                deviceIdle.visibility = View.GONE
 
-            readerState.apply {
-                devicesDropdown.text = reader.name
-                renderDeviceSignalStrength(status)
-                renderDeviceBatteryLevel(battery)
+                readerState.apply {
+                    devicesDropdown.text = reader.name
+                    renderDeviceSignalStrength(status)
+                    renderDeviceBatteryLevel(battery)
+                }
             }
         }
     }
 
     private fun renderDeviceSignalStrength(signalState: SignalState) {
         binding.apply {
-            setTextIcon(deviceSignalStrength, signalState.iconResourceId)
+            readerInfo.apply {
+                setTextIcon(deviceSignalStrength, signalState.iconResourceId)
+            }
         }
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
         binding.apply {
-            deviceBatteryLevel.text =
-                getString(R.string.battery_life, batteryLifeState.batteryLevel)
-            setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+            readerInfo.apply {
+                deviceBatteryLevel.text =
+                    getString(R.string.battery_life, batteryLifeState.batteryLevel)
+                setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+            }
         }
     }
 
@@ -230,23 +239,27 @@ class HomeFragment : Fragment() {
 
     private fun setNoReaderPaired() {
         binding.apply {
-            devicesDropdown.text = getString(R.string.no_reader_message)
+            readerInfo.apply {
+                devicesDropdown.text = getString(R.string.no_reader_message)
 
-            noDeviceConnected.visibility = View.VISIBLE
+                noDeviceConnected.visibility = View.VISIBLE
 
-            deviceIdle.visibility = View.GONE
-            devicePaired.visibility = View.GONE
+                deviceIdle.visibility = View.GONE
+                devicePaired.visibility = View.GONE
+            }
         }
     }
 
     private fun setReaderIdle(reader: Reader) {
         binding.apply {
-            devicesDropdown.text = reader.name
+            readerInfo.apply {
+                devicesDropdown.text = reader.name
 
-            deviceIdle.visibility = View.VISIBLE
+                deviceIdle.visibility = View.VISIBLE
 
-            noDeviceConnected.visibility = View.GONE
-            devicePaired.visibility = View.GONE
+                noDeviceConnected.visibility = View.GONE
+                devicePaired.visibility = View.GONE
+            }
         }
     }
 }
