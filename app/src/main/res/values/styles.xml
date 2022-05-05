@@ -32,7 +32,7 @@
 
     <style name="ChargeButton" parent="Widget.Material3.Button.TextButton">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.Rounded
+            @style/ShapeAppearanceOverlay.Button.Rounded
         </item>
         <item name="backgroundTintMode">src_in</item>
         <item name="android:backgroundTint">@color/button_green_background</item>
@@ -42,34 +42,34 @@
         <item name="android:paddingBottom">@dimen/drawable_padding_large</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.Rounded" parent="">
+    <style name="ShapeAppearanceOverlay.Button.Rounded" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/charge_button_corner_size</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners" parent="">
+    <style name="ShapeAppearanceOverlay.Button.NoRoundedCorners" parent="">
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.RoundedTopLeft" parent="ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners">
+    <style name="ShapeAppearanceOverlay.Button.RoundedTopLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
         <item name="cornerFamilyTopLeft">rounded</item>
         <item name="cornerSizeTopLeft">@dimen/numeric_key_pad_corner_size</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.RoundedTopRight" parent="ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners">
+    <style name="ShapeAppearanceOverlay.Button.RoundedTopRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
         <item name="cornerFamilyTopRight">rounded</item>
         <item name="cornerSizeTopRight">@dimen/numeric_key_pad_corner_size</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.RoundedBottomLeft" parent="ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners">
+    <style name="ShapeAppearanceOverlay.Button.RoundedBottomLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
         <item name="cornerFamilyBottomLeft">rounded</item>
         <item name="cornerSizeBottomLeft">@dimen/numeric_key_pad_corner_size</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.MyApp.Button.RoundedBottomRight" parent="ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners">
+    <style name="ShapeAppearanceOverlay.Button.RoundedBottomRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
         <item name="cornerFamilyBottomRight">rounded</item>
         <item name="cornerSizeBottomRight">@dimen/numeric_key_pad_corner_size</item>
     </style>
@@ -78,7 +78,7 @@
 
     <style name="NumericKeyPadButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.NoRoundedCorners
+            @style/ShapeAppearanceOverlay.Button.NoRoundedCorners
         </item>
         <item name="backgroundTint">@color/numeric_key_pad_background</item>
         <item name="android:insetBottom">0dp</item>
@@ -98,25 +98,25 @@
 
     <style name="NumericKeyPadButtonStyleTopLeft" parent="NumericKeyPadButtonStyle">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.RoundedTopLeft
+            @style/ShapeAppearanceOverlay.Button.RoundedTopLeft
         </item>
     </style>
 
     <style name="NumericKeyPadButtonStyleTopRight" parent="NumericKeyPadButtonStyle">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.RoundedTopRight
+            @style/ShapeAppearanceOverlay.Button.RoundedTopRight
         </item>
     </style>
 
     <style name="NumericKeyPadButtonStyleBottomLeft" parent="NumericKeyPadButtonStyle">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.RoundedBottomLeft
+            @style/ShapeAppearanceOverlay.Button.RoundedBottomLeft
         </item>
     </style>
 
     <style name="NumericKeyPadButtonStyleBottomRight" parent="NumericKeyPadButtonStyle">
         <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearanceOverlay.MyApp.Button.RoundedBottomRight
+            @style/ShapeAppearanceOverlay.Button.RoundedBottomRight
         </item>
     </style>
 
