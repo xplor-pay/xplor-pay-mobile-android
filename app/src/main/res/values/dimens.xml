@@ -6,6 +6,7 @@
     <dimen name="drawable_padding_large">10dp</dimen>
     <dimen name="text_size_big">20sp</dimen>
     <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="separator_width">2dp</dimen>
     <dimen name="separator_height">20dp</dimen>
     <dimen name="text_size_large">34sp</dimen>
     <dimen name="text_size_medium_big">16sp</dimen>
@@ -16,7 +17,12 @@
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_medium_small">12dp</dimen>
-    <dimen name="margin_bottom_view">60dp</dimen>
+    <dimen name="margin_bottom_view">40dp</dimen>
     <dimen name="margin_extra_small">5dp</dimen>
     <dimen name="text_size_small">12sp</dimen>
+    <dimen name="charge_button_corner_size">39dp</dimen>
+    <dimen name="numeric_key_pad_outline">2dp</dimen>
+    <dimen name="numeric_key_pad_corner_size">26dp</dimen>
+<!--    Should be 1 dp higher than the numpad's corner size -->
+    <dimen name="numeric_key_pad_background_corner_size">27dp</dimen>
 </resources>

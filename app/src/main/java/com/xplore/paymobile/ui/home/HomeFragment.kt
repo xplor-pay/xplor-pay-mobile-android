@@ -1,8 +1,6 @@
 package com.xplore.paymobile.ui.home
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +48,8 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        setNumericKeyPadBackground()
+
         renderChargeAmount()
 
         setListeners()
@@ -65,6 +65,10 @@ class HomeFragment : Fragment() {
         SDKWrapper.setMockDevice("IDTECH-VP3300-26863")
 
         return binding.root
+    }
+
+    private fun setNumericKeyPadBackground() {
+        binding.numpad.root.setBackgroundResource(R.drawable.bg_numeric_key_pad)
     }
 
     private fun setUpNumpad() {
@@ -145,7 +149,7 @@ class HomeFragment : Fragment() {
                 chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
             }
 
-            chargeCounter.text = formatChargeAmount()
+            chargeAmountText.text = formatChargeAmount()
         }
     }
 

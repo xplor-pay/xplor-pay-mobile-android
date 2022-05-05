@@ -12,8 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:drawablePadding="@dimen/drawable_padding_large"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_medium"
         app:drawableEndCompat="@drawable/arrow_down"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -28,7 +26,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_extra_small"
         android:drawablePadding="@dimen/drawable_padding"
-        android:gravity="center"
         android:text="@string/status_no_device_connected"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
@@ -44,7 +41,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_extra_small"
         android:drawablePadding="@dimen/drawable_padding"
-        android:gravity="center"
         android:text="@string/status_idle"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
@@ -69,14 +65,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/drawable_padding"
-            android:gravity="center"
             android:text="@string/device_signal_connected"
             android:textSize="@dimen/text_size_small"
             app:drawableStartCompat="@drawable/device_idle" />
 
         <View
             style="@style/Separator"
-            android:layout_width="1dp"
+            android:layout_width="@dimen/separator_width"
             android:layout_height="@dimen/separator_height"
             android:layout_marginStart="@dimen/margin_medium"
             android:layout_marginEnd="@dimen/margin_medium" />
@@ -87,7 +82,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/drawable_padding"
-            android:gravity="center"
             android:textSize="@dimen/text_size_small"
             app:drawableStartCompat="@drawable/battery_life_100"
             tools:text="100%" />
