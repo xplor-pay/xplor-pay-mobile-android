@@ -22,7 +22,7 @@
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="charge_button_corner_size">39dp</dimen>
     <dimen name="numeric_key_pad_outline">2dp</dimen>
-    <dimen name="numeric_key_pad_corner_size">26dp</dimen>
+    <dimen name="numeric_key_pad_corner_size">8dp</dimen>
 <!--    Should be 1 dp higher than the numpad's corner size -->
-    <dimen name="numeric_key_pad_background_corner_size">27dp</dimen>
+    <dimen name="numeric_key_pad_background_corner_size">9dp</dimen>
 </resources>
