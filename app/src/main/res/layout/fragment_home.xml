@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium_big"
         android:layout_marginEnd="@dimen/margin_medium_big"
-        android:layout_marginBottom="@dimen/margin_bottom_view"
+        android:layout_marginBottom="@dimen/margin_medium_big"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
