@@ -85,7 +85,7 @@
         <item name="android:insetTop">0dp</item>>
         <item name="android:insetLeft">0dp</item>>
         <item name="android:insetRight">0dp</item>
-        <item name="android:textSize">@dimen/margin_medium_big</item>
+        <item name="android:textSize">@dimen/text_size_big</item>
         <item name="android:textStyle">bold</item>
         <item name="strokeWidth">0dp</item>
         <item name="android:gravity">center</item>
@@ -94,6 +94,11 @@
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_gravity">fill_horizontal</item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyle.ClearButton" parent="NumericKeyPadButtonStyle">
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="NumericKeyPadButtonStyleTopLeft" parent="NumericKeyPadButtonStyle">
@@ -114,7 +119,7 @@
         </item>
     </style>
 
-    <style name="NumericKeyPadButtonStyleBottomRight" parent="NumericKeyPadButtonStyle">
+    <style name="NumericKeyPadButtonStyleBottomRight" parent="NumericKeyPadButtonStyle.ClearButton">
         <item name="shapeAppearanceOverlay">
             @style/ShapeAppearanceOverlay.Button.RoundedBottomRight
         </item>
