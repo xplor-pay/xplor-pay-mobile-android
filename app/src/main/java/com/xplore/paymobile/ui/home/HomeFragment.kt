@@ -1,8 +1,6 @@
 package com.xplore.paymobile.ui.home
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,33 +48,70 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        setNumericKeyPadBackground()
+
         renderChargeAmount()
 
         setListeners()
 
-        SDKWrapper.initializeReader(requireContext(), Constants.BASE_URL_SANDBOX, Constants.PUBLIC_KEY_SANDBOX)
+        setUpNumpad()
+
+        SDKWrapper.initializeReader(
+            requireContext(),
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX
+        )
 
         SDKWrapper.setMockDevice("IDTECH-VP3300-26863")
 
         return binding.root
     }
 
+    private fun setNumericKeyPadBackground() {
+        binding.numpad.root.setBackgroundResource(R.drawable.bg_numeric_key_pad)
+    }
+
+    private fun setUpNumpad() {
+        binding.apply {
+            numpad.apply {
+                val numericKeys = listOf(
+                    numpad0,
+                    numpad1,
+                    numpad2,
+                    numpad3,
+                    numpad4,
+                    numpad5,
+                    numpad6,
+                    numpad7,
+                    numpad8,
+                    numpad9
+                )
+                numericKeys.forEachIndexed { index, key ->
+                    key.setOnClickListener {
+                        appendDigitToChargeAmount(index.toString())
+                    }
+                }
+
+                numpadClear.setOnClickListener {
+                    clearChargeAmount()
+                }
+
+                numpadBackspace.setOnClickListener {
+                    popDigitFromChargeAmount()
+                }
+            }
+        }
+    }
+
     private fun setListeners() {
         binding.apply {
+            readerInfo.devicesDropdown.setOnClickListener {
+                viewModel.cycleReaders()
+            }
             chargeButton.setOnClickListener {
                 val modalBottomSheet = TransactionBottomSheetFragment()
                 modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
             }
-            chargeCounter.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    chargeAmount = chargeCounter.text.toString()
-                    renderChargeAmount()
-                }
-
-                override fun afterTextChanged(p0: Editable?) {}
-            })
         }
     }
 
@@ -106,23 +141,38 @@ class HomeFragment : Fragment() {
 
     private fun renderChargeAmount() {
         binding.apply {
-            chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
+            if (chargeAmount.isBlank()) {
+                chargeButton.isEnabled = false
+                chargeButton.text = getString(R.string.charge_amount, "")
+            } else {
+                chargeButton.isEnabled = true
+                chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
+            }
+
+            chargeAmountText.text = formatChargeAmount()
         }
     }
 
-    private fun formatChargeAmount(): String = if (chargeAmount.isBlank()) {
-        defaultChargeAmount
-    } else {
-        "\$$chargeAmount".let {
-            it.insert(it.length - 2, ".")
-        }
-    }
+    private fun formatChargeAmount(): String =
+        if (chargeAmount.isBlank())
+            defaultChargeAmount
+        else
+            when (chargeAmount.length) {
+                1 -> "\$0.0$chargeAmount"
+                2 -> "\$0.$chargeAmount"
+                else -> "\$$chargeAmount".let {
+                    it.insert(it.length - 2, ".")
+                }
+            }
 
     private fun appendDigitToChargeAmount(digit: String) {
         if (chargeAmount.isBlank() && digit == "0")
             return
 
-        chargeAmount.plus(digit)
+        if (chargeAmount.length >= 10)
+            return
+
+        chargeAmount = chargeAmount.plus(digit)
         renderChargeAmount()
     }
 
@@ -130,7 +180,7 @@ class HomeFragment : Fragment() {
         if (chargeAmount.isBlank())
             return
 
-        chargeAmount.dropLast(1)
+        chargeAmount = chargeAmount.dropLast(1)
         renderChargeAmount()
     }
 
@@ -150,30 +200,36 @@ class HomeFragment : Fragment() {
 
     private fun setReaderPaired(readerState: ReaderState.ReaderPaired) {
         binding.apply {
-            devicePaired.visibility = View.VISIBLE
+            readerInfo.apply {
+                devicePaired.visibility = View.VISIBLE
 
-            noDeviceConnected.visibility = View.GONE
-            deviceIdle.visibility = View.GONE
+                noDeviceConnected.visibility = View.GONE
+                deviceIdle.visibility = View.GONE
 
-            readerState.apply {
-                devicesDropdown.text = reader.name
-                renderDeviceSignalStrength(status)
-                renderDeviceBatteryLevel(battery)
+                readerState.apply {
+                    devicesDropdown.text = reader.name
+                    renderDeviceSignalStrength(status)
+                    renderDeviceBatteryLevel(battery)
+                }
             }
         }
     }
 
     private fun renderDeviceSignalStrength(signalState: SignalState) {
         binding.apply {
-            setTextIcon(deviceSignalStrength, signalState.iconResourceId)
+            readerInfo.apply {
+                setTextIcon(deviceSignalStrength, signalState.iconResourceId)
+            }
         }
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
         binding.apply {
-            deviceBatteryLevel.text =
-                getString(R.string.battery_life, batteryLifeState.batteryLevel)
-            setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+            readerInfo.apply {
+                deviceBatteryLevel.text =
+                    getString(R.string.battery_life, batteryLifeState.batteryLevel)
+                setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+            }
         }
     }
 
@@ -187,23 +243,27 @@ class HomeFragment : Fragment() {
 
     private fun setNoReaderPaired() {
         binding.apply {
-            devicesDropdown.text = getString(R.string.no_reader_message)
+            readerInfo.apply {
+                devicesDropdown.text = getString(R.string.no_reader_message)
 
-            noDeviceConnected.visibility = View.VISIBLE
+                noDeviceConnected.visibility = View.VISIBLE
 
-            deviceIdle.visibility = View.GONE
-            devicePaired.visibility = View.GONE
+                deviceIdle.visibility = View.GONE
+                devicePaired.visibility = View.GONE
+            }
         }
     }
 
     private fun setReaderIdle(reader: Reader) {
         binding.apply {
-            devicesDropdown.text = reader.name
+            readerInfo.apply {
+                devicesDropdown.text = reader.name
 
-            deviceIdle.visibility = View.VISIBLE
+                deviceIdle.visibility = View.VISIBLE
 
-            noDeviceConnected.visibility = View.GONE
-            devicePaired.visibility = View.GONE
+                noDeviceConnected.visibility = View.GONE
+                devicePaired.visibility = View.GONE
+            }
         }
     }
 }
