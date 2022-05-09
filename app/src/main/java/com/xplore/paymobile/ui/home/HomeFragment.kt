@@ -154,16 +154,25 @@ class HomeFragment : Fragment() {
     }
 
     private fun formatChargeAmount(): String =
-        if (chargeAmount.isBlank())
-            defaultChargeAmount
-        else
-            when (chargeAmount.length) {
-                1 -> "\$0.0$chargeAmount"
-                2 -> "\$0.$chargeAmount"
-                else -> "\$$chargeAmount".let {
-                    it.insert(it.length - 2, ".")
+        chargeAmount.length.let { length ->
+            when {
+                length > 8 -> "$" + chargeAmount.let {
+                    it.slice(IntRange(0, length - 9)) + "," +
+                            it.slice(IntRange(length - 8, length - 6)) + "," +
+                            it.slice(IntRange(length - 5, length - 3)) + "." +
+                            it.takeLast(2)
                 }
+                length > 5 -> "$" + chargeAmount.let {
+                    it.slice(IntRange(0, length - 6)) + "," +
+                            it.slice(IntRange(length - 5, length - 3)) + "." +
+                            it.takeLast(2)
+                }
+                length > 2 -> "$" + chargeAmount.insert(length - 2, ".")
+                length == 2 -> "\$0.$chargeAmount"
+                length == 1 -> "\$0.0$chargeAmount"
+                else -> defaultChargeAmount
             }
+        }
 
     private fun appendDigitToChargeAmount(digit: String) {
         if (chargeAmount.isBlank() && digit == "0")
