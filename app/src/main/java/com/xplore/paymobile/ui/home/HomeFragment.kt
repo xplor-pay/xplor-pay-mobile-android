@@ -110,7 +110,6 @@ class HomeFragment : Fragment() {
                 viewModel.cycleReaders()
             }
             chargeButton.setOnClickListener {
-                Timber.e("BUTTTOOOON")
                 val modalBottomSheet = TransactionBottomSheetFragment()
                 modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
             }
