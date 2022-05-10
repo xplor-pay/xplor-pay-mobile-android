@@ -87,51 +87,38 @@ class MoreFragment : Fragment() {
     }
 
     private fun shareLogsFile() {
-        val context = requireContext()
-
         val senderIntent = Intent(Intent.ACTION_SEND)
 
-        val files = context.filesDir.listFiles { fileDir, fileName ->
-            FileLoggingTree.isLogFile(fileDir, fileName)
+        // Get the file we want to share
+        val file = FileLoggingTree.getLogFile(requireContext())
+
+        // Try to retrieve the uri of the file
+        val fileUri: Uri? = try {
+            FileProvider.getUriForFile(
+                requireContext(),
+                "com.xplore.paymobile.fileprovider",
+                file
+            )
+        } catch (e: IllegalArgumentException) {
+            Log.e(
+                "File Selector",
+                "The selected file can't be shared: $file - check authority."
+            )
+            return
         }
 
-        Log.d("TESTEST", "file = ${files?.let { it[0].absolutePath }}")
-
-        files?.also {
-            val fileUri: Uri? = try {
-                FileProvider.getUriForFile(
-                    context,
-                    "com.xplore.paymobile.fileprovider",
-                    it[0]
-                )
-            } catch (e: IllegalArgumentException) {
-                Log.e(
-                    "File Selector",
-                    "The selected file can't be shared: ${it[0]} - check authority."
-                )
-                return@also
-            }
-
-            fileUri?.also {
-                // Grant temporary read permission to the content URI
-                senderIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                // Put the Uri and MIME type in the result Intent
-                senderIntent.setDataAndType(
-                    fileUri,
-                    context.contentResolver.getType(fileUri)
-                )
-                context.startActivity(Intent.createChooser(senderIntent, null))
-            } ?: run {
-                Toast.makeText(
-                    context,
-                    "Could not retrieve file uri for file: ${files[0].name}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        fileUri?.also {
+            // Grant temporary read permission to the content URI
+            senderIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // Put the Uri and MIME type in the result Intent
+            senderIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+            senderIntent.type = requireContext().contentResolver.getType(fileUri)
+            // Choose how you want to share the file
+            requireContext().startActivity(Intent.createChooser(senderIntent, null))
         } ?: run {
             Toast.makeText(
                 context,
-                "File Logger did not find any files belonging to it",
+                "Could not retrieve file uri for file: ${file.name}",
                 Toast.LENGTH_SHORT
             ).show()
         }
