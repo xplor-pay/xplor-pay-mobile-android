@@ -1,18 +1,28 @@
 package com.xplore.paymobile.ui.more
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.logger.FileLoggingTree
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
 import com.xplore.paymobile.util.Constants
 
 class MoreFragment : Fragment() {
+
+    companion object {
+        private const val numberOfVisibleDigits = 5
+    }
 
     private var _binding: FragmentMoreBinding? = null
 
@@ -25,15 +35,11 @@ class MoreFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val moreViewModel =
-            ViewModelProvider(this).get(MoreViewModel::class.java)
-
         _binding = FragmentMoreBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
         populateUI()
 
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -42,28 +48,95 @@ class MoreFragment : Fragment() {
     }
 
     private fun populateUI() {
-        binding.urlText.text = Constants.BASE_URL_SANDBOX
-        binding.publicKeyText.text = Constants.PUBLIC_KEY_SANDBOX
-        binding.apiKeyText.text = Constants.API_KEY_SANDBOX
-        binding.switchButton.setOnCheckedChangeListener { view, isChecked ->
-            binding.prodLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    if (isChecked) R.color.teal_200 else R.color.black
+        binding.apply {
+            viewLogs.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
+            }
+            deleteLogs.setOnClickListener {
+                SDKWrapper.deleteLogs()
+                Toast.makeText(requireContext(), "Logs deleted", Toast.LENGTH_SHORT).show()
+            }
+            shareLogs.setOnClickListener {
+                shareLogsFile()
+            }
+
+            urlText.text = hideKey(Constants.BASE_URL_SANDBOX)
+            publicKeyText.text = hideKey(Constants.PUBLIC_KEY_SANDBOX)
+            apiKeyText.text = hideKey(Constants.API_KEY_SANDBOX)
+            switchButton.setOnCheckedChangeListener { _, isChecked ->
+                prodLabel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isChecked) R.color.teal_200 else R.color.black
+                    )
                 )
-            )
-            binding.sandboxLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    if (isChecked) R.color.black else R.color.teal_200
+                sandboxLabel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isChecked) R.color.black else R.color.teal_200
+                    )
                 )
-            )
-            binding.urlText.text =
-                if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
-            binding.publicKeyText.text =
-                if (isChecked) Constants.PUBLIC_KEY_PROD else Constants.PUBLIC_KEY_SANDBOX
-            binding.apiKeyText.text =
-                if (isChecked) Constants.API_KEY_PROD else Constants.API_KEY_SANDBOX
+                urlText.text =
+                    if (isChecked) hideKey(Constants.BASE_URL_PROD) else hideKey(Constants.BASE_URL_SANDBOX)
+                publicKeyText.text =
+                    if (isChecked) hideKey(Constants.PUBLIC_KEY_PROD) else hideKey(Constants.PUBLIC_KEY_SANDBOX)
+                apiKeyText.text =
+                    if (isChecked) hideKey(Constants.API_KEY_PROD) else hideKey(Constants.API_KEY_SANDBOX)
+            }
         }
     }
+
+    private fun shareLogsFile() {
+        val context = requireContext()
+
+        val senderIntent = Intent(Intent.ACTION_SEND)
+
+        val files = context.filesDir.listFiles { fileDir, fileName ->
+            FileLoggingTree.isLogFile(fileDir, fileName)
+        }
+
+        Log.d("TESTEST", "file = ${files?.let { it[0].absolutePath }}")
+
+        files?.also {
+            val fileUri: Uri? = try {
+                FileProvider.getUriForFile(
+                    context,
+                    "com.xplore.paymobile.fileprovider",
+                    it[0]
+                )
+            } catch (e: IllegalArgumentException) {
+                Log.e(
+                    "File Selector",
+                    "The selected file can't be shared: ${it[0]} - check authority."
+                )
+                return@also
+            }
+
+            fileUri?.also {
+                // Grant temporary read permission to the content URI
+                senderIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                // Put the Uri and MIME type in the result Intent
+                senderIntent.setDataAndType(
+                    fileUri,
+                    context.contentResolver.getType(fileUri)
+                )
+                context.startActivity(Intent.createChooser(senderIntent, null))
+            } ?: run {
+                Toast.makeText(
+                    context,
+                    "Could not retrieve file uri for file: ${files[0].name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } ?: run {
+            Toast.makeText(
+                context,
+                "File Logger did not find any files belonging to it",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun hideKey(key: String) =
+        getString(R.string.hidden_key, key.takeLast(numberOfVisibleDigits))
 }

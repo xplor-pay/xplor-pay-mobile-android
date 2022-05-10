@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
     tools:context=".ui.more.MoreFragment">
 
     <TextView
@@ -13,11 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="18dp"
-        android:textSize="15sp"
-        android:textColor="@color/teal_200"
         android:text="@string/environment_sandbox"
+        android:textColor="@color/teal_200"
+        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/prod_label"
@@ -25,11 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="18dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
         android:text="@string/environment_production"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@id/sandbox_label"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_button"
@@ -46,9 +45,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
         android:text="@string/label_url"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@id/switch_button"
         app:layout_constraintStart_toStartOf="@id/sandbox_label"
         app:layout_constraintTop_toBottomOf="@id/switch_button" />
@@ -58,10 +57,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:background="@color/white"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:textSize="13sp"
-        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="@id/url_label"
         app:layout_constraintStart_toStartOf="@id/url_label"
         app:layout_constraintTop_toBottomOf="@id/url_label" />
@@ -71,9 +70,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
         android:text="@string/label_public_key"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@id/url_text"
         app:layout_constraintStart_toStartOf="@id/url_text"
         app:layout_constraintTop_toBottomOf="@id/url_text" />
@@ -83,10 +82,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:background="@color/white"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:textSize="13sp"
-        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="@id/public_key_label"
         app:layout_constraintStart_toStartOf="@id/public_key_label"
         app:layout_constraintTop_toBottomOf="@id/public_key_label" />
@@ -96,9 +95,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
         android:text="@string/label_api_key"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@id/public_key_text"
         app:layout_constraintStart_toStartOf="@id/public_key_text"
         app:layout_constraintTop_toBottomOf="@id/public_key_text" />
@@ -108,11 +107,45 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:background="@color/white"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:textSize="13sp"
-        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="@id/api_key_label"
         app:layout_constraintStart_toStartOf="@id/api_key_label"
         app:layout_constraintTop_toBottomOf="@id/api_key_label" />
+
+    <TextView
+        android:id="@+id/view_logs"
+        style="@style/LoggerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/button_view_logs_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/api_key_text" />
+
+    <TextView
+        android:id="@+id/delete_logs"
+        style="@style/LoggerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/button_delete_logs_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_logs" />
+
+    <TextView
+        android:id="@+id/share_logs"
+        style="@style/LoggerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/button_share_logs_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/delete_logs" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

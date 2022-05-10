@@ -16,6 +16,10 @@
         <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
 
+    <style name="TextBig" parent="TextNormal">
+        <item name="android:textSize">@dimen/text_size_big</item>
+    </style>
+
     <style name="TextBold" parent="TextNormal">
         <item name="android:textStyle">bold</item>
     </style>
@@ -26,6 +30,12 @@
 
     <style name="Separator" parent="">
         <item name="android:background">@color/gray</item>
+    </style>
+
+    <!--    TEXT -->
+
+    <style name="TextLogLine" parent="TextSmall">
+        <item name="android:textAlignment">textStart</item>
     </style>
 
     <!--    BUTTONS -->
@@ -40,6 +50,11 @@
         <item name="android:textSize">@dimen/text_size_medium_big</item>
         <item name="android:paddingTop">@dimen/drawable_padding_large</item>
         <item name="android:paddingBottom">@dimen/drawable_padding_large</item>
+    </style>
+
+    <style name="LoggerButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/teal_200</item>
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.Button.Rounded" parent="">
