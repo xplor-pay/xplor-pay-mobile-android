@@ -78,6 +78,9 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"
 
+    // Timber logger for file logging
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
     // Clearent Idtech Android SDK
     implementation project (':clearent-idtech-android')
 }
