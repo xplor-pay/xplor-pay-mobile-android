@@ -60,7 +60,7 @@ class MoreFragment : Fragment() {
                 shareLogsFile()
             }
 
-            urlText.text = hideKey(Constants.BASE_URL_SANDBOX)
+            urlText.text = Constants.BASE_URL_SANDBOX
             publicKeyText.text = hideKey(Constants.PUBLIC_KEY_SANDBOX)
             apiKeyText.text = hideKey(Constants.API_KEY_SANDBOX)
             switchButton.setOnCheckedChangeListener { _, isChecked ->
@@ -77,7 +77,7 @@ class MoreFragment : Fragment() {
                     )
                 )
                 urlText.text =
-                    if (isChecked) hideKey(Constants.BASE_URL_PROD) else hideKey(Constants.BASE_URL_SANDBOX)
+                    if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
                 publicKeyText.text =
                     if (isChecked) hideKey(Constants.PUBLIC_KEY_PROD) else hideKey(Constants.PUBLIC_KEY_SANDBOX)
                 apiKeyText.text =
