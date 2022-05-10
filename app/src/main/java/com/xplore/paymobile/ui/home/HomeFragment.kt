@@ -109,7 +109,7 @@ class HomeFragment : Fragment() {
                 viewModel.cycleReaders()
             }
             chargeButton.setOnClickListener {
-                val modalBottomSheet = TransactionBottomSheetFragment()
+                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble()/100)
                 modalBottomSheet.show(
                     parentFragmentManager,
                     TransactionBottomSheetFragment::class.java.simpleName
