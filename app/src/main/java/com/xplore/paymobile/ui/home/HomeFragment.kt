@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.clearent.idtech.android.wrapper.ui.TransactionBottomSheetFragment
 import com.xplore.paymobile.R
@@ -61,8 +62,7 @@ class HomeFragment : Fragment() {
             Constants.BASE_URL_SANDBOX,
             Constants.PUBLIC_KEY_SANDBOX
         )
-
-        SDKWrapper.setMockDevice("IDTECH-VP3300-26863")
+        SDKWrapper.setListener(ClearentDataSource)
 
         return binding.root
     }
@@ -109,8 +109,11 @@ class HomeFragment : Fragment() {
                 viewModel.cycleReaders()
             }
             chargeButton.setOnClickListener {
-                val modalBottomSheet = TransactionBottomSheetFragment()
-                modalBottomSheet.show(parentFragmentManager, TransactionBottomSheetFragment.TAG)
+                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble()/100)
+                modalBottomSheet.show(
+                    parentFragmentManager,
+                    TransactionBottomSheetFragment::class.java.simpleName
+                )
             }
         }
     }
