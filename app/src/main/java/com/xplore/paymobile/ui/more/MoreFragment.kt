@@ -3,7 +3,6 @@ package com.xplore.paymobile.ui.more
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +12,10 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.SDKWrapper
-import com.clearent.idtech.android.wrapper.logger.FileLoggingTree
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
 import com.xplore.paymobile.util.Constants
+import timber.log.Timber
 
 class MoreFragment : Fragment() {
 
@@ -90,7 +89,7 @@ class MoreFragment : Fragment() {
         val senderIntent = Intent(Intent.ACTION_SEND)
 
         // Get the file we want to share
-        val file = FileLoggingTree.getLogFile(requireContext())
+        val file = SDKWrapper.getLogFile(requireContext())
 
         // Try to retrieve the uri of the file
         val fileUri: Uri? = try {
@@ -100,10 +99,7 @@ class MoreFragment : Fragment() {
                 file
             )
         } catch (e: IllegalArgumentException) {
-            Log.e(
-                "File Selector",
-                "The selected file can't be shared: $file - check authority."
-            )
+            Timber.e("The selected file can't be shared: $file - check authority.")
             return
         }
 
