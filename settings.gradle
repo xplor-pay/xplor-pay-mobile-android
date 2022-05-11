@@ -3,6 +3,17 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven {
+            url 'https://pkgs.dev.azure.com/xplortechnologies/_packaging/xplortechnologies/maven/v1'
+            name 'xplortechnologies'
+            credentials {
+                username XPLOR_AZURE_USERNAME
+                password XPLOR_AZURE_PASSWORD
+            }
+        }
+        maven {
+            url "https://repository.jboss.org/nexus/content/repositories/public/"
+        }
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +21,17 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://pkgs.dev.azure.com/xplortechnologies/_packaging/xplortechnologies/maven/v1'
+            name 'xplortechnologies'
+            credentials {
+                username XPLOR_AZURE_USERNAME
+                password XPLOR_AZURE_PASSWORD
+            }
+        }
+        maven {
+            url "https://repository.jboss.org/nexus/content/repositories/public/"
+        }
     }
 }
 rootProject.name = "XplorPayMobile"
