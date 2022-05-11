@@ -24,6 +24,7 @@ import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -109,7 +110,7 @@ class HomeFragment : Fragment() {
                 viewModel.cycleReaders()
             }
             chargeButton.setOnClickListener {
-                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble()/100)
+                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble() / 100)
                 modalBottomSheet.show(
                     parentFragmentManager,
                     TransactionBottomSheetFragment::class.java.simpleName
