@@ -20,7 +20,7 @@ import timber.log.Timber
 class MoreFragment : Fragment() {
 
     companion object {
-        private const val numberOfVisibleDigits = 5
+        private const val numberOfVisibleDigits = 0
     }
 
     private var _binding: FragmentMoreBinding? = null
