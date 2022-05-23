@@ -22,9 +22,6 @@ buildscript {
                 password XPLOR_AZURE_PASSWORD
             }
         }
-        maven {
-            url "https://repository.jboss.org/nexus/content/repositories/public/"
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.3'

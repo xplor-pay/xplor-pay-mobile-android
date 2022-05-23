@@ -11,9 +11,6 @@ pluginManagement {
                 password XPLOR_AZURE_PASSWORD
             }
         }
-        maven {
-            url "https://repository.jboss.org/nexus/content/repositories/public/"
-        }
     }
 }
 dependencyResolutionManagement {
@@ -28,9 +25,6 @@ dependencyResolutionManagement {
                 username XPLOR_AZURE_USERNAME
                 password XPLOR_AZURE_PASSWORD
             }
-        }
-        maven {
-            url "https://repository.jboss.org/nexus/content/repositories/public/"
         }
     }
 }
