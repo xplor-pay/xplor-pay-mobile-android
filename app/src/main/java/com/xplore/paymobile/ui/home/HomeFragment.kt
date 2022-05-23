@@ -1,25 +1,25 @@
 package com.xplore.paymobile.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.clearent.idtech.android.wrapper.ClearentDataSource
-import com.clearent.idtech.android.wrapper.SDKWrapper
-import com.clearent.idtech.android.wrapper.ui.TransactionBottomSheetFragment
+import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.model.BatteryLifeState
 import com.xplore.paymobile.model.Reader
 import com.xplore.paymobile.model.ReaderState
 import com.xplore.paymobile.model.SignalState
-import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -36,8 +36,16 @@ class HomeFragment : Fragment() {
     private val viewModel by viewModels<HomeViewModel>()
 
     private var chargeAmount = ""
+    private var transactionOngoing = false
 
     private var _binding: FragmentHomeBinding? = null
+
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        Timber.d(result.resultCode.toString())
+        transactionOngoing = false
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -50,23 +58,17 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        setNumericKeyPadBackground()
-
-        renderChargeAmount()
-
-        setListeners()
-
-        setUpNumpad()
-
-        SDKWrapper.initializeReader(
-            requireContext(),
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
-        SDKWrapper.setListener(ClearentDataSource)
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setNumericKeyPadBackground()
+        renderChargeAmount()
+        setUpNumpad()
+        setListeners()
+        setupViewModel()
     }
 
     private fun setNumericKeyPadBackground() {
@@ -107,23 +109,24 @@ class HomeFragment : Fragment() {
 
     private fun setListeners() {
         binding.apply {
-            readerInfo.devicesDropdown.setOnClickListener {
-                viewModel.cycleReaders()
+            readerInfo.root.setOnClickListener {
+                startSdkActivityForResult(SDKWrapperAction.Pairing)
             }
             chargeButton.setOnClickListener {
-                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble() / 100)
-                modalBottomSheet.show(
-                    parentFragmentManager,
-                    TransactionBottomSheetFragment::class.java.simpleName
-                )
+                startSdkActivityForResult(SDKWrapperAction.Transaction(chargeAmount.toDouble() / 100))
             }
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
+        if (transactionOngoing)
+            return
 
-        setupViewModel()
+        transactionOngoing = true
+
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.putExtra(MainActivity.SDK_WRAPPER_ACTION_KEY, sdkWrapperAction)
+        activityLauncher.launch(intent)
     }
 
     private fun setupViewModel() {

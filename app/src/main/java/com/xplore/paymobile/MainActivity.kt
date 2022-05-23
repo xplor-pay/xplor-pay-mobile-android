@@ -7,8 +7,11 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.clearent.idtech.android.wrapper.ClearentDataSource
+import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
+import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,6 +40,18 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        SDKWrapper.initializeReader(
+            applicationContext,
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX
+        )
+        SDKWrapper.setListener(ClearentDataSource)
+
         supportActionBar?.hide()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SDKWrapper.removeListener()
     }
 }
