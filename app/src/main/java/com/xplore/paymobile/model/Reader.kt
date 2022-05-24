@@ -1,6 +1,6 @@
 package com.xplore.paymobile.model
 
-import com.xplore.paymobile.R
+import com.clearent.idtech.android.R
 
 sealed class ReaderState {
     object NoReader : ReaderState()
@@ -22,12 +22,12 @@ data class BatteryLifeState(
 ) {
 
     val iconResourceId = when {
-        batteryLevel > 75 -> R.drawable.battery_life_100
-        batteryLevel > 50 -> R.drawable.battery_life_75
-        batteryLevel > 45 -> R.drawable.battery_life_50
-        batteryLevel > 25 -> R.drawable.battery_life_45
-        batteryLevel > 10 -> R.drawable.battery_life_25
-        else -> R.drawable.battery_life_10
+        batteryLevel > 75 -> R.drawable.ic_battery_life_100
+        batteryLevel > 50 -> R.drawable.ic_battery_life_75
+        batteryLevel > 45 -> R.drawable.ic_battery_life_50
+        batteryLevel > 25 -> R.drawable.ic_battery_life_45
+        batteryLevel > 10 -> R.drawable.ic_battery_life_25
+        else -> R.drawable.ic_battery_life_10
     }
 }
 
@@ -36,15 +36,15 @@ enum class SignalState(
 ) {
 
     NoSignal(
-        iconResourceId = R.drawable.no_signal
+        iconResourceId = R.drawable.ic_no_signal
     ),
     Weak(
-        iconResourceId = R.drawable.signal_weak
+        iconResourceId = R.drawable.ic_signal_weak
     ),
     Medium(
-        iconResourceId = R.drawable.signal_medium
+        iconResourceId = R.drawable.ic_signal_medium
     ),
     Good(
-        iconResourceId = R.drawable.signal_good
+        iconResourceId = R.drawable.ic_signal_good
     );
 }

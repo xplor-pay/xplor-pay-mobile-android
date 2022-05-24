@@ -67,7 +67,7 @@
         style="@style/NumericKeyPadButtonStyleBottomLeft"
         android:layout_marginTop="@dimen/numeric_key_pad_outline"
         android:layout_marginEnd="@dimen/numeric_key_pad_outline"
-        app:icon="@drawable/backspace"
+        app:icon="@drawable/ic_backspace"
         app:iconGravity="textStart"
         app:iconSize="20dp" />
 

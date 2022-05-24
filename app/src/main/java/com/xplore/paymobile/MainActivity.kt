@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
         SDKWrapper.initializeReader(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX
+            Constants.PUBLIC_KEY_SANDBOX,
+            Constants.API_KEY_SANDBOX
         )
         SDKWrapper.setListener(ClearentDataSource)
 
