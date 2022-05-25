@@ -35,4 +35,5 @@
     <string name="button_view_logs_text">VIEW LOGS</string>
     <string name="button_delete_logs_text">DELETE LOGS</string>
     <string name="button_share_logs_text">SHARE LOGS</string>
+    <string name="first_reader_button_text">Pair your first reader</string>
 </resources>

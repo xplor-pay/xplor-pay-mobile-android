@@ -39,17 +39,16 @@ class HomeFragment : Fragment() {
     private var transactionOngoing = false
 
     private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
 
     private val activityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         Timber.d(result.resultCode.toString())
         transactionOngoing = false
-    }
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+        renderCurrentReader()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,11 +63,22 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewModel()
+        renderCurrentReader()
         setNumericKeyPadBackground()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
-        setupViewModel()
+    }
+
+    private fun renderCurrentReader() {
+        viewModel.getCurrentReader()?.also {
+            binding.firstReader.visibility = View.GONE
+            binding.readerInfo.root.visibility = View.VISIBLE
+        } ?: run {
+            binding.firstReader.visibility = View.VISIBLE
+            binding.readerInfo.root.visibility = View.GONE
+        }
     }
 
     private fun setNumericKeyPadBackground() {
@@ -110,12 +120,19 @@ class HomeFragment : Fragment() {
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                startSdkActivityForResult(SDKWrapperAction.Pairing)
+                startPairingProcess()
+            }
+            firstReader.setOnClickListener {
+                startPairingProcess()
             }
             chargeButton.setOnClickListener {
                 startSdkActivityForResult(SDKWrapperAction.Transaction(chargeAmount.toDouble() / 100))
             }
         }
+    }
+
+    private fun startPairingProcess() {
+        startSdkActivityForResult(SDKWrapperAction.Pairing)
     }
 
     private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
