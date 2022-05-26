@@ -23,22 +23,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.clearent.idtech.android.wrapper.ui.MainActivity"
+        <activity
+            android:name="com.clearent.idtech.android.wrapper.ui.MainActivity"
+            android:exported="true"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.Transparent"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.Transparent" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.xplore.paymobile.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
