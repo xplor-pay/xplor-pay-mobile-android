@@ -32,6 +32,7 @@
     <string name="label_public_key">Public key</string>
     <string name="label_api_key">API key</string>
     <string name="hidden_key">*****%1$s</string>
+    <string name="version_number_format">Version number: v%1$s</string>
     <string name="button_view_logs_text">VIEW LOGS</string>
     <string name="button_delete_logs_text">DELETE LOGS</string>
     <string name="button_share_logs_text">SHARE LOGS</string>

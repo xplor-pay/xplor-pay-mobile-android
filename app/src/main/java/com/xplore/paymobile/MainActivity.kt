@@ -22,6 +22,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        SDKWrapper.initializeReader(
+            applicationContext,
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX,
+            Constants.API_KEY_SANDBOX
+        )
+        SDKWrapper.setListener(ClearentDataSource)
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -39,14 +47,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        SDKWrapper.initializeReader(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
-        SDKWrapper.setListener(ClearentDataSource)
 
         supportActionBar?.hide()
     }
