@@ -12,14 +12,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.clearent.idtech.android.wrapper.model.BatteryLifeState
+import com.clearent.idtech.android.wrapper.model.ReaderState
+import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
-import com.xplore.paymobile.model.BatteryLifeState
-import com.xplore.paymobile.model.Reader
-import com.xplore.paymobile.model.ReaderState
-import com.xplore.paymobile.model.SignalState
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -227,7 +226,7 @@ class HomeFragment : Fragment() {
     private fun setReaderState(readerState: ReaderState) {
         when (readerState) {
             is ReaderState.NoReader -> setNoReaderPaired()
-            is ReaderState.ReaderIdle -> setReaderIdle(readerState.reader)
+            is ReaderState.ReaderUnavailable -> setReaderUnavailable(readerState)
             is ReaderState.ReaderPaired -> setReaderPaired(readerState)
         }
     }
@@ -288,15 +287,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setReaderIdle(reader: Reader) {
+    private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
             readerInfo.apply {
-                devicesDropdown.text = reader.name
+                devicesDropdown.text = readerState.reader.name
 
                 deviceIdle.visibility = View.VISIBLE
 
                 noDeviceConnected.visibility = View.GONE
                 devicePaired.visibility = View.GONE
+
+                deviceIdle.text = readerState.readerConnection.displayText
+                setTextIcon(deviceIdle, readerState.readerConnection.iconResourceId)
             }
         }
     }
