@@ -1,25 +1,24 @@
 package com.xplore.paymobile.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.clearent.idtech.android.wrapper.ClearentDataSource
-import com.clearent.idtech.android.wrapper.SDKWrapper
-import com.clearent.idtech.android.wrapper.ui.TransactionBottomSheetFragment
+import com.clearent.idtech.android.wrapper.model.BatteryLifeState
+import com.clearent.idtech.android.wrapper.model.ReaderState
+import com.clearent.idtech.android.wrapper.model.SignalState
+import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
-import com.xplore.paymobile.model.BatteryLifeState
-import com.xplore.paymobile.model.Reader
-import com.xplore.paymobile.model.ReaderState
-import com.xplore.paymobile.model.SignalState
-import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -36,12 +35,19 @@ class HomeFragment : Fragment() {
     private val viewModel by viewModels<HomeViewModel>()
 
     private var chargeAmount = ""
+    private var transactionOngoing = false
 
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        Timber.d(result.resultCode.toString())
+        transactionOngoing = false
+
+        renderCurrentReader()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,23 +56,28 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        setNumericKeyPadBackground()
-
-        renderChargeAmount()
-
-        setListeners()
-
-        setUpNumpad()
-
-        SDKWrapper.initializeReader(
-            requireContext(),
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
-        SDKWrapper.setListener(ClearentDataSource)
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViewModel()
+        renderCurrentReader()
+        setNumericKeyPadBackground()
+        renderChargeAmount()
+        setUpNumpad()
+        setListeners()
+    }
+
+    private fun renderCurrentReader() {
+        viewModel.getCurrentReader()?.also {
+            binding.firstReader.visibility = View.GONE
+            binding.readerInfo.root.visibility = View.VISIBLE
+        } ?: run {
+            binding.firstReader.visibility = View.VISIBLE
+            binding.readerInfo.root.visibility = View.GONE
+        }
     }
 
     private fun setNumericKeyPadBackground() {
@@ -107,23 +118,31 @@ class HomeFragment : Fragment() {
 
     private fun setListeners() {
         binding.apply {
-            readerInfo.devicesDropdown.setOnClickListener {
-                viewModel.cycleReaders()
+            readerInfo.root.setOnClickListener {
+                startPairingProcess()
+            }
+            firstReader.setOnClickListener {
+                startPairingProcess()
             }
             chargeButton.setOnClickListener {
-                val modalBottomSheet = TransactionBottomSheetFragment(chargeAmount.toDouble() / 100)
-                modalBottomSheet.show(
-                    parentFragmentManager,
-                    TransactionBottomSheetFragment::class.java.simpleName
-                )
+                startSdkActivityForResult(SDKWrapperAction.Transaction(chargeAmount.toDouble() / 100))
             }
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun startPairingProcess() {
+        startSdkActivityForResult(SDKWrapperAction.Pairing)
+    }
 
-        setupViewModel()
+    private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
+        if (transactionOngoing)
+            return
+
+        transactionOngoing = true
+
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.putExtra(MainActivity.SDK_WRAPPER_ACTION_KEY, sdkWrapperAction)
+        activityLauncher.launch(intent)
     }
 
     private fun setupViewModel() {
@@ -207,7 +226,7 @@ class HomeFragment : Fragment() {
     private fun setReaderState(readerState: ReaderState) {
         when (readerState) {
             is ReaderState.NoReader -> setNoReaderPaired()
-            is ReaderState.ReaderIdle -> setReaderIdle(readerState.reader)
+            is ReaderState.ReaderUnavailable -> setReaderUnavailable(readerState)
             is ReaderState.ReaderPaired -> setReaderPaired(readerState)
         }
     }
@@ -268,15 +287,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setReaderIdle(reader: Reader) {
+    private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
             readerInfo.apply {
-                devicesDropdown.text = reader.name
+                devicesDropdown.text = readerState.reader.name
 
                 deviceIdle.visibility = View.VISIBLE
 
                 noDeviceConnected.visibility = View.GONE
                 devicePaired.visibility = View.GONE
+
+                deviceIdle.text = readerState.readerConnection.displayText
+                setTextIcon(deviceIdle, readerState.readerConnection.iconResourceId)
             }
         }
     }

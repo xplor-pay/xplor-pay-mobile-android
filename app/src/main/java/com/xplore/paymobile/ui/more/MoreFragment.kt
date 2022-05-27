@@ -12,6 +12,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
 import com.xplore.paymobile.util.Constants
@@ -58,6 +59,8 @@ class MoreFragment : Fragment() {
             shareLogs.setOnClickListener {
                 shareLogsFile()
             }
+
+            versionNumber.text = getString(R.string.version_number_format, BuildConfig.VERSION_NAME)
 
             urlText.text = Constants.BASE_URL_SANDBOX
             publicKeyText.text = hideKey(Constants.PUBLIC_KEY_SANDBOX)
