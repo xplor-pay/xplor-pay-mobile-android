@@ -60,8 +60,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        SDKWrapper.addReaderStatusListener(this)
-
         return binding.root
     }
 
@@ -74,6 +72,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         renderChargeAmount()
         setUpNumpad()
         setListeners()
+        SDKWrapper.addReaderStatusListener(this)
     }
 
     private fun renderCurrentReader() {
