@@ -67,6 +67,7 @@
             app:drawableStartCompat="@drawable/ic_device_idle" />
 
         <View
+            android:id="@+id/separator"
             style="@style/Separator"
             android:layout_width="@dimen/separator_width"
             android:layout_height="@dimen/separator_height"
