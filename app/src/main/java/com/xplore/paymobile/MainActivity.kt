@@ -3,6 +3,7 @@ package com.xplore.paymobile
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -13,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -22,13 +24,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        SDKWrapper.initializeReader(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
-        SDKWrapper.setListener(ClearentDataSource)
+        initSdkWrapper()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
@@ -49,6 +45,16 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         supportActionBar?.hide()
+    }
+
+    private fun initSdkWrapper() = lifecycleScope.launch {
+        SDKWrapper.initializeReader(
+            applicationContext,
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX,
+            Constants.API_KEY_SANDBOX
+        )
+        SDKWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {

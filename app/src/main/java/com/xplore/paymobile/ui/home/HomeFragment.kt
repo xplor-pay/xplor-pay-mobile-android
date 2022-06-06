@@ -240,7 +240,7 @@ class HomeFragment : Fragment() {
                 deviceIdle.visibility = View.GONE
 
                 readerState.apply {
-                    devicesDropdown.text = reader.name
+                    devicesDropdown.text = reader.displayName
                     renderDeviceSignalStrength(status)
                     renderDeviceBatteryLevel(battery)
                 }
@@ -290,7 +290,7 @@ class HomeFragment : Fragment() {
     private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
             readerInfo.apply {
-                devicesDropdown.text = readerState.reader.name
+                devicesDropdown.text = readerState.reader.displayName
 
                 deviceIdle.visibility = View.VISIBLE
 
