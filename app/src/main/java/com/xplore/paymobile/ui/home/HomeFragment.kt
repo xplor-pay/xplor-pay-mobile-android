@@ -7,13 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
+import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
@@ -26,7 +30,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ReaderStatusListener {
 
     companion object {
         private const val defaultChargeAmount = "$0.00"
@@ -68,6 +72,7 @@ class HomeFragment : Fragment() {
         renderChargeAmount()
         setUpNumpad()
         setListeners()
+        SDKWrapper.addReaderStatusListener(this)
     }
 
     private fun renderCurrentReader() {
@@ -161,6 +166,7 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        SDKWrapper.removeReaderStatusListener(this)
     }
 
     private fun renderChargeAmount() {
@@ -241,7 +247,7 @@ class HomeFragment : Fragment() {
 
                 readerState.apply {
                     devicesDropdown.text = reader.name
-                    renderDeviceSignalStrength(status)
+                    renderDeviceSignalStrength(signal)
                     renderDeviceBatteryLevel(battery)
                 }
             }
@@ -259,9 +265,16 @@ class HomeFragment : Fragment() {
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
         binding.apply {
             readerInfo.apply {
-                deviceBatteryLevel.text =
-                    getString(R.string.battery_life, batteryLifeState.batteryLevel)
-                setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+                if (batteryLifeState.iconResourceId == 0) {
+                    deviceBatteryLevel.isVisible = false
+                    separator.isVisible = false
+                } else {
+                    deviceBatteryLevel.isVisible = true
+                    separator.isVisible = true
+                    deviceBatteryLevel.text =
+                        getString(R.string.battery_life, batteryLifeState.batteryLevel)
+                    setTextIcon(deviceBatteryLevel, batteryLifeState.iconResourceId)
+                }
             }
         }
     }
@@ -300,6 +313,12 @@ class HomeFragment : Fragment() {
                 deviceIdle.text = readerState.readerConnection.displayText
                 setTextIcon(deviceIdle, readerState.readerConnection.iconResourceId)
             }
+        }
+    }
+
+    override fun onReaderStatusUpdate(readerStatus: ReaderStatus) {
+        lifecycleScope.launch {
+            setReaderState(ReaderState.fromReaderStatus(readerStatus))
         }
     }
 }
