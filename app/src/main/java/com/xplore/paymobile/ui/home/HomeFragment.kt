@@ -9,11 +9,12 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
+import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
@@ -21,12 +22,11 @@ import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ReaderStatusListener {
 
     companion object {
         private const val defaultChargeAmount = "$0.00"
@@ -45,8 +45,6 @@ class HomeFragment : Fragment() {
     ) { result ->
         Timber.d(result.resultCode.toString())
         transactionOngoing = false
-
-        renderCurrentReader()
     }
 
     override fun onCreateView(
@@ -56,28 +54,38 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        SDKWrapper.addReaderStatusListener(this)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViewModel()
-        renderCurrentReader()
         setNumericKeyPadBackground()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
     }
 
-    private fun renderCurrentReader() {
-        viewModel.getCurrentReader()?.also {
-            binding.firstReader.visibility = View.GONE
-            binding.readerInfo.root.visibility = View.VISIBLE
-        } ?: run {
-            binding.firstReader.visibility = View.VISIBLE
-            binding.readerInfo.root.visibility = View.GONE
+    private fun renderCurrentReader(readerStatus: ReaderStatus?) {
+        if (viewModel.isFirstPairDone()) {
+            renderReader(readerStatus)
+        } else {
+            readerStatus?.also {
+                viewModel.firstPairDone()
+                renderReader(it)
+            } ?: run {
+                binding.firstReader.visibility = View.VISIBLE
+                binding.readerInfo.root.visibility = View.GONE
+            }
         }
+    }
+
+    private fun renderReader(readerStatus: ReaderStatus?) {
+        binding.firstReader.visibility = View.GONE
+        binding.readerInfo.root.visibility = View.VISIBLE
+        setReaderState(ReaderState.fromReaderStatus(readerStatus))
     }
 
     private fun setNumericKeyPadBackground() {
@@ -145,22 +153,10 @@ class HomeFragment : Fragment() {
         activityLauncher.launch(intent)
     }
 
-    private fun setupViewModel() {
-        // Start a coroutine in the lifecycle scope
-        viewLifecycleOwner.lifecycleScope.launch {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.readerState.collect { readerState ->
-                    setReaderState(readerState)
-                }
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        SDKWrapper.removeReaderStatusListener(this)
     }
 
     private fun renderChargeAmount() {
@@ -241,7 +237,7 @@ class HomeFragment : Fragment() {
 
                 readerState.apply {
                     devicesDropdown.text = reader.displayName
-                    renderDeviceSignalStrength(status)
+                    renderDeviceSignalStrength(readerState.signal)
                     renderDeviceBatteryLevel(battery)
                 }
             }
@@ -300,6 +296,13 @@ class HomeFragment : Fragment() {
                 deviceIdle.text = readerState.readerConnection.displayText
                 setTextIcon(deviceIdle, readerState.readerConnection.iconResourceId)
             }
+        }
+    }
+
+    override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
+        Timber.d("HOME LISTENER: $readerStatus")
+        lifecycleScope.launch {
+            renderCurrentReader(readerStatus)
         }
     }
 }
