@@ -10,9 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.BatteryLifeState
@@ -25,7 +23,6 @@ import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -49,8 +46,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     ) { result ->
         Timber.d(result.resultCode.toString())
         transactionOngoing = false
-
-        renderCurrentReader()
     }
 
     override fun onCreateView(
@@ -66,8 +61,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViewModel()
-        renderCurrentReader()
         setNumericKeyPadBackground()
         renderChargeAmount()
         setUpNumpad()
@@ -75,14 +68,24 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         SDKWrapper.addReaderStatusListener(this)
     }
 
-    private fun renderCurrentReader() {
-        viewModel.getCurrentReader()?.also {
-            binding.firstReader.visibility = View.GONE
-            binding.readerInfo.root.visibility = View.VISIBLE
-        } ?: run {
-            binding.firstReader.visibility = View.VISIBLE
-            binding.readerInfo.root.visibility = View.GONE
+    private fun renderCurrentReader(readerStatus: ReaderStatus?) {
+        if (viewModel.isFirstPairDone()) {
+            renderReader(readerStatus)
+        } else {
+            readerStatus?.also {
+                viewModel.firstPairDone()
+                renderReader(it)
+            } ?: run {
+                binding.firstReader.visibility = View.VISIBLE
+                binding.readerInfo.root.visibility = View.GONE
+            }
         }
+    }
+
+    private fun renderReader(readerStatus: ReaderStatus?) {
+        binding.firstReader.visibility = View.GONE
+        binding.readerInfo.root.visibility = View.VISIBLE
+        setReaderState(ReaderState.fromReaderStatus(readerStatus))
     }
 
     private fun setNumericKeyPadBackground() {
@@ -148,19 +151,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         val intent = Intent(requireContext(), MainActivity::class.java)
         intent.putExtra(MainActivity.SDK_WRAPPER_ACTION_KEY, sdkWrapperAction)
         activityLauncher.launch(intent)
-    }
-
-    private fun setupViewModel() {
-        // Start a coroutine in the lifecycle scope
-        viewLifecycleOwner.lifecycleScope.launch {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.readerState.collect { readerState ->
-                    setReaderState(readerState)
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {
@@ -246,7 +236,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 deviceIdle.visibility = View.GONE
 
                 readerState.apply {
-                    devicesDropdown.text = reader.name
+                    devicesDropdown.text = reader.displayName
                     renderDeviceSignalStrength(signal)
                     renderDeviceBatteryLevel(battery)
                 }
@@ -303,7 +293,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
             readerInfo.apply {
-                devicesDropdown.text = readerState.reader.name
+                devicesDropdown.text = readerState.reader.displayName
 
                 deviceIdle.visibility = View.VISIBLE
 
@@ -316,9 +306,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         }
     }
 
-    override fun onReaderStatusUpdate(readerStatus: ReaderStatus) {
+    override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
+        Timber.d("HOME LISTENER: $readerStatus")
         lifecycleScope.launch {
-            setReaderState(ReaderState.fromReaderStatus(readerStatus))
+            renderCurrentReader(readerStatus)
         }
     }
 }

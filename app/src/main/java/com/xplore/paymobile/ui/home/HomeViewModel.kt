@@ -12,14 +12,7 @@ class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
 
     companion object {
         private const val firstPairDoneKey = "FIRST_PAIR_DONE_KEY"
-
-        private val defaultReaderState = ReaderState.NoReader
     }
-
-    private val _readerState = MutableStateFlow<ReaderState>(defaultReaderState)
-    val readerState: StateFlow<ReaderState> = _readerState
-
-    fun getCurrentReader(): ReaderStatus? = SDKWrapper.currentReader
 
     fun firstPairDone() {
         savedStateHandle[firstPairDoneKey] = true
