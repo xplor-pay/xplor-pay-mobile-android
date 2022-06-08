@@ -2,7 +2,6 @@ package com.xplore.paymobile.util
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.gson.Gson
 
 class SharedPreferencesDataSource(val context: Context) {
 
