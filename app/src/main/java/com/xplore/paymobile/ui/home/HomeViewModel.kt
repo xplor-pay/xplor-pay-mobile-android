@@ -1,22 +1,14 @@
 package com.xplore.paymobile.ui.home
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import com.clearent.idtech.android.wrapper.SDKWrapper
-import com.clearent.idtech.android.wrapper.model.ReaderState
-import com.clearent.idtech.android.wrapper.model.ReaderStatus
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 
-class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    companion object {
-        private const val firstPairDoneKey = "FIRST_PAIR_DONE_KEY"
-    }
+    private val sharedPrefs = SharedPreferencesDataSource(application.applicationContext)
 
-    fun firstPairDone() {
-        savedStateHandle[firstPairDoneKey] = true
-    }
+    fun firstPairDone() = sharedPrefs.setFirstPairDone(true)
 
-    fun isFirstPairDone() = savedStateHandle[firstPairDoneKey] ?: false
+    fun isFirstPairDone() = sharedPrefs.getFirstPairDone()
 }
