@@ -22,13 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        SDKWrapper.initializeReader(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
-        SDKWrapper.setListener(ClearentDataSource)
+        initSdkWrapper()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
@@ -49,6 +43,16 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         supportActionBar?.hide()
+    }
+
+    private fun initSdkWrapper() {
+        SDKWrapper.initializeReader(
+            applicationContext,
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX,
+            Constants.API_KEY_SANDBOX
+        )
+        SDKWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {

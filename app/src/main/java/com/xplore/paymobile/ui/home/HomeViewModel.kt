@@ -1,20 +1,14 @@
 package com.xplore.paymobile.ui.home
 
-import androidx.lifecycle.ViewModel
-import com.clearent.idtech.android.wrapper.SDKWrapper
-import com.clearent.idtech.android.wrapper.model.ReaderState
-import com.clearent.idtech.android.wrapper.model.ReaderStatus
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    companion object {
-        private val defaultReaderState = ReaderState.NoReader
-    }
+    private val sharedPrefs = SharedPreferencesDataSource(application.applicationContext)
 
-    private val _readerState = MutableStateFlow<ReaderState>(defaultReaderState)
-    val readerState: StateFlow<ReaderState> = _readerState
+    fun firstPairDone() = sharedPrefs.setFirstPairDone(true)
 
-    fun getCurrentReader(): ReaderStatus? = SDKWrapper.currentReader
+    fun isFirstPairDone() = sharedPrefs.getFirstPairDone()
 }
