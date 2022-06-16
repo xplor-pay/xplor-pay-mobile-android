@@ -61,11 +61,18 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (viewModel.isFirstPairDone())
+            renderFirstTimeHints()
+
         setNumericKeyPadBackground()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
         SDKWrapper.addReaderStatusListener(this)
+    }
+
+    private fun renderFirstTimeHints() {
+
     }
 
     private fun renderCurrentReader(readerStatus: ReaderStatus?) {
@@ -133,13 +140,18 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startPairingProcess()
             }
             chargeButton.setOnClickListener {
-                startSdkActivityForResult(SDKWrapperAction.Transaction(chargeAmount.toDouble() / 100))
+                startSdkActivityForResult(
+                    SDKWrapperAction.Transaction(
+                        chargeAmount.toDouble() / 100,
+                        viewModel.isFirstPairDone()
+                    )
+                )
             }
         }
     }
 
     private fun startPairingProcess() {
-        startSdkActivityForResult(SDKWrapperAction.Pairing)
+        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.isFirstPairDone()))
     }
 
     private fun openDevicesList() {
