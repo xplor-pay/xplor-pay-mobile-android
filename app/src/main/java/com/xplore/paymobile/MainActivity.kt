@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
+    private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,10 +71,10 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     }
 
     private fun setupHints() {
-        binding.hints.apply {
-            root.visibility = View.GONE
+        binding.apply {
+            hintsContainer.visibility = View.GONE
 
-            hintsPairingTip.hintsTipText.text = getString(R.string.first_pairing_tip_text)
+            hints.hintsPairingTip.hintsTipText.text = getString(R.string.first_pairing_tip_text)
         }
     }
 
@@ -80,25 +84,50 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {
-        lifecycleScope.launch {
-            binding.hints.apply {
-                root.bringToFront()
-                hintsFirstReaderButton.setOnClickListener {
-                    root.visibility = View.GONE
-                    onClick()
-                }
+        if (hintsShowed)
+            return
 
-                hintsSkipPairing.setOnClickListener {
-                    root.visibility = View.GONE
-                    onDismiss()
+        hintsShowed = true
+        lifecycle.addObserver(
+            ListenerCallbackObserver(lifecycle) {
+                lifecycleScope.launch {
+                    binding.apply {
+                        hintsContainer.visibility = View.VISIBLE
+                        hintsContainer.bringToFront()
+
+                        hints.apply {
+                            root.visibility = View.GONE
+
+                            hintsFirstReaderButton.setOnClickListener {
+                                hintsContainer.visibility = View.GONE
+                                onClick()
+                            }
+                            hintsSkipPairing.setOnClickListener {
+                                hintsContainer.visibility = View.GONE
+                                onDismiss()
+                            }
+
+                            renderHints()
+                        }
+                    }
                 }
-                renderHints()
             }
-        }
+        )
     }
 
     private fun renderHints() = lifecycleScope.launch {
         delay(HINTS_DISPLAY_DELAY)
         binding.hints.root.visibility = View.VISIBLE
+    }
+
+    class ListenerCallbackObserver(
+        private val lifecycle: Lifecycle,
+        private val callback: () -> Unit
+    ) : DefaultLifecycleObserver {
+
+        override fun onStart(owner: LifecycleOwner) {
+            callback()
+            lifecycle.removeObserver(this)
+        }
     }
 }

@@ -25,7 +25,6 @@ import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -75,7 +74,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     private fun showHints() = lifecycleScope.launch {
-        delay(100)
         val listener = activity as FirstPairListener?
 
         listener?.also {
@@ -154,7 +152,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startSdkActivityForResult(
                     SDKWrapperAction.Transaction(
                         chargeAmount.toDouble() / 100,
-                        viewModel.getFirstPair() != FirstPair.NOT_DONE
+                        viewModel.getFirstPair() != FirstPair.DONE
                     )
                 )
             }
@@ -177,11 +175,16 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
         val intent = Intent(requireContext(), MainActivity::class.java)
         when (sdkWrapperAction) {
-            is SDKWrapperAction.Pairing ->
+            is SDKWrapperAction.Pairing -> {
                 intent.putExtra(
                     MainActivity.SDK_WRAPPER_ACTION_KEY,
                     MainActivity.SDK_WRAPPER_ACTION_PAIR
                 )
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    sdkWrapperAction.showHints
+                )
+            }
             is SDKWrapperAction.DevicesList ->
                 intent.putExtra(
                     MainActivity.SDK_WRAPPER_ACTION_KEY,
@@ -193,6 +196,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     MainActivity.SDK_WRAPPER_ACTION_TRANSACTION
                 )
                 intent.putExtra(MainActivity.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    sdkWrapperAction.showHints
+                )
             }
         }
         activityLauncher.launch(intent)
