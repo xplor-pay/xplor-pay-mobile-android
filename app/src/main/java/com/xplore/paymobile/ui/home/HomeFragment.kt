@@ -127,7 +127,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                startPairingProcess()
+                openDevicesList()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -142,6 +142,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         startSdkActivityForResult(SDKWrapperAction.Pairing)
     }
 
+    private fun openDevicesList() {
+        startSdkActivityForResult(SDKWrapperAction.DevicesList)
+    }
+
     private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
         if (transactionOngoing)
             return
@@ -149,7 +153,25 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         transactionOngoing = true
 
         val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.putExtra(MainActivity.SDK_WRAPPER_ACTION_KEY, sdkWrapperAction)
+        when (sdkWrapperAction) {
+            is SDKWrapperAction.Pairing ->
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_ACTION_KEY,
+                    MainActivity.SDK_WRAPPER_ACTION_PAIR
+                )
+            is SDKWrapperAction.DevicesList ->
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_ACTION_KEY,
+                    MainActivity.SDK_WRAPPER_ACTION_DEVICES
+                )
+            is SDKWrapperAction.Transaction -> {
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_ACTION_KEY,
+                    MainActivity.SDK_WRAPPER_ACTION_TRANSACTION
+                )
+                intent.putExtra(MainActivity.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
+            }
+        }
         activityLauncher.launch(intent)
     }
 
