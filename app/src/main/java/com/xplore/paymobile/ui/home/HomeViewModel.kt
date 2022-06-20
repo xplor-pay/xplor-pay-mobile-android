@@ -12,7 +12,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun firstPairDone() = sharedPrefs.setFirstPair(FirstPair.DONE)
     fun firstPairSkipped() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)
 
-    fun getFirstPair(): FirstPair {
-        return sharedPrefs.getFirstPair()
-    }
+    fun getFirstPair() = sharedPrefs.getFirstPair()
+    fun shouldShowSDKHints() = getFirstPair() != FirstPair.DONE
+    fun shouldShowHintsScreen() = getFirstPair() == FirstPair.NOT_DONE
 }
