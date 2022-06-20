@@ -3,18 +3,28 @@ package com.xplore.paymobile.util
 import android.content.Context
 import androidx.core.content.edit
 
-class SharedPreferencesDataSource(val context: Context) {
+class SharedPreferencesDataSource(context: Context) {
 
     companion object {
         private const val KEY_PREFERENCES = "com.xplore.paymobile.READER_PREFERENCES"
-        private const val FIRST_PAIR_DONE = "FIRST_PAIR_DONE_KEY"
+        private const val FIRST_PAIR = "FIRST_PAIR_KEY"
     }
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
 
-    fun setFirstPairDone(firstPairDone: Boolean) =
-        sharedPrefs.edit { putBoolean(FIRST_PAIR_DONE, firstPairDone) }
+    fun setFirstPair(firstPair: FirstPair) =
+        sharedPrefs.edit { putInt(FIRST_PAIR, firstPair.ordinal) }
 
-    fun getFirstPairDone(): Boolean =
-        sharedPrefs.getBoolean(FIRST_PAIR_DONE, false)
+    fun getFirstPair(): FirstPair = FirstPair.fromOrdinal(retrieveFirstPair())
+
+    private fun retrieveFirstPair(): Int =
+        sharedPrefs.getInt(FIRST_PAIR, FirstPair.NOT_DONE.ordinal)
+
+    enum class FirstPair {
+        NOT_DONE, SKIPPED, DONE;
+
+        companion object {
+            fun fromOrdinal(firstPair: Int) = values().find { it.ordinal == firstPair } ?: NOT_DONE
+        }
+    }
 }

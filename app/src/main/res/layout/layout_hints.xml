@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hints"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#B3000000">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hints_first_reader_button"
-        style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
@@ -19,19 +20,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        layout="@layout/layout_hints_tip_bellow"
         android:id="@+id/hints_pairing_tip"
+        layout="@layout/layout_hints_tip_bellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_large"
         android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hints_first_reader_button" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hints_skip_pairing"
-        style="@style/RoundedTransparentRedTextButton"
+        style="@style/RoundedRedTextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"

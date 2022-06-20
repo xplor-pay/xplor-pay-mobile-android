@@ -39,4 +39,5 @@
     <string name="first_reader_button_text">Pair your first reader</string>
     <string name="hints_skip_pairing_button_text">Skip pairing for now</string>
     <string name="hints_pairing_tip">Lets start by pairing your reader with your mobile app. Click on the button above</string>
+    <string name="first_pairing_tip_text">Lets start by pairing your reader with your mobile app. Click on the button above.</string>
 </resources>

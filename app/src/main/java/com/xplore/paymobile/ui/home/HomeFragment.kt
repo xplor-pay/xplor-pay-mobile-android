@@ -21,8 +21,11 @@ import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
+import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -30,7 +33,7 @@ import timber.log.Timber
 class HomeFragment : Fragment(), ReaderStatusListener {
 
     companion object {
-        private const val defaultChargeAmount = "$0.00"
+        private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
     }
 
     private val viewModel by viewModels<HomeViewModel>()
@@ -61,8 +64,8 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.isFirstPairDone())
-            renderFirstTimeHints()
+        if (viewModel.getFirstPair() == FirstPair.NOT_DONE)
+            showHints()
 
         setNumericKeyPadBackground()
         renderChargeAmount()
@@ -71,12 +74,20 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         SDKWrapper.addReaderStatusListener(this)
     }
 
-    private fun renderFirstTimeHints() {
+    private fun showHints() = lifecycleScope.launch {
+        delay(100)
+        val listener = activity as FirstPairListener?
 
+        listener?.also {
+            it.showFirstPair(
+                { startPairingProcess() },
+                { viewModel.firstPairSkipped() }
+            )
+        }
     }
 
     private fun renderCurrentReader(readerStatus: ReaderStatus?) {
-        if (viewModel.isFirstPairDone()) {
+        if (viewModel.getFirstPair() == FirstPair.DONE) {
             renderReader(readerStatus)
         } else {
             readerStatus?.also {
@@ -143,7 +154,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startSdkActivityForResult(
                     SDKWrapperAction.Transaction(
                         chargeAmount.toDouble() / 100,
-                        viewModel.isFirstPairDone()
+                        viewModel.getFirstPair() != FirstPair.NOT_DONE
                     )
                 )
             }
@@ -151,7 +162,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     private fun startPairingProcess() {
-        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.isFirstPairDone()))
+        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.getFirstPair() != FirstPair.DONE))
     }
 
     private fun openDevicesList() {
@@ -224,7 +235,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 length > 2 -> "$" + chargeAmount.insert(length - 2, ".")
                 length == 2 -> "\$0.$chargeAmount"
                 length == 1 -> "\$0.0$chargeAmount"
-                else -> defaultChargeAmount
+                else -> DEFAULT_CHARGE_AMOUNT
             }
         }
 
