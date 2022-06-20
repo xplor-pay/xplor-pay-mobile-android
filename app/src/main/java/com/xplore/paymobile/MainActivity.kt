@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupHints()
-
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -70,14 +68,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         SDKWrapper.setListener(ClearentDataSource)
     }
 
-    private fun setupHints() {
-        binding.apply {
-            hintsContainer.visibility = View.GONE
-
-            hints.hintsPairingTip.hintsTipText.text = getString(R.string.first_pairing_tip_text)
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         SDKWrapper.removeListener()
@@ -98,6 +88,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                         hints.apply {
                             root.visibility = View.GONE
 
+                            hintsPairingTip.hintsTipText.text =
+                                getString(R.string.first_pairing_tip_text)
                             hintsFirstReaderButton.setOnClickListener {
                                 hintsContainer.visibility = View.GONE
                                 onClick()

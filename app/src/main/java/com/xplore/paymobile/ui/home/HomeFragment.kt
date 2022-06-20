@@ -74,7 +74,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     private fun showHints() = lifecycleScope.launch {
-        val listener = activity as FirstPairListener?
+        val listener = activity as? FirstPairListener
 
         listener?.also {
             it.showFirstPair(
