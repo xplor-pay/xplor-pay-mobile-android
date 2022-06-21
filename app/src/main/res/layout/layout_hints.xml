@@ -4,7 +4,7 @@
     android:id="@+id/hints"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B3000000">
+    android:background="@color/translucent_black">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hints_first_reader_button"
