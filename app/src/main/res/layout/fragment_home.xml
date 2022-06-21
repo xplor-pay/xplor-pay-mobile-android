@@ -6,13 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/hints_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <FrameLayout
         android:id="@+id/current_reader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button

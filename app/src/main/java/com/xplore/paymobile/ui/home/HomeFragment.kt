@@ -21,6 +21,8 @@ import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
+import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,7 +32,7 @@ import timber.log.Timber
 class HomeFragment : Fragment(), ReaderStatusListener {
 
     companion object {
-        private const val defaultChargeAmount = "$0.00"
+        private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
     }
 
     private val viewModel by viewModels<HomeViewModel>()
@@ -61,6 +63,9 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (viewModel.shouldShowHintsScreen())
+            showHints()
+
         setNumericKeyPadBackground()
         renderChargeAmount()
         setUpNumpad()
@@ -68,8 +73,19 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         SDKWrapper.addReaderStatusListener(this)
     }
 
+    private fun showHints() = lifecycleScope.launch {
+        val listener = activity as? FirstPairListener
+
+        listener?.also {
+            it.showFirstPair(
+                { startPairingProcess() },
+                { viewModel.firstPairSkipped() }
+            )
+        }
+    }
+
     private fun renderCurrentReader(readerStatus: ReaderStatus?) {
-        if (viewModel.isFirstPairDone()) {
+        if (viewModel.getFirstPair() == FirstPair.DONE) {
             renderReader(readerStatus)
         } else {
             readerStatus?.also {
@@ -133,18 +149,21 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startPairingProcess()
             }
             chargeButton.setOnClickListener {
-                startSdkActivityForResult(SDKWrapperAction.Transaction(chargeAmount.toDouble() / 100))
+                startSdkActivityForResult(
+                    SDKWrapperAction.Transaction(
+                        chargeAmount.toDouble() / 100,
+                        viewModel.shouldShowSDKHints()
+                    )
+                )
             }
         }
     }
 
-    private fun startPairingProcess() {
-        startSdkActivityForResult(SDKWrapperAction.Pairing)
-    }
+    private fun startPairingProcess() =
+        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.shouldShowSDKHints()))
 
-    private fun openDevicesList() {
+    private fun openDevicesList() =
         startSdkActivityForResult(SDKWrapperAction.DevicesList)
-    }
 
     private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
         if (transactionOngoing)
@@ -154,11 +173,16 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
         val intent = Intent(requireContext(), MainActivity::class.java)
         when (sdkWrapperAction) {
-            is SDKWrapperAction.Pairing ->
+            is SDKWrapperAction.Pairing -> {
                 intent.putExtra(
                     MainActivity.SDK_WRAPPER_ACTION_KEY,
                     MainActivity.SDK_WRAPPER_ACTION_PAIR
                 )
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    sdkWrapperAction.showHints
+                )
+            }
             is SDKWrapperAction.DevicesList ->
                 intent.putExtra(
                     MainActivity.SDK_WRAPPER_ACTION_KEY,
@@ -170,6 +194,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     MainActivity.SDK_WRAPPER_ACTION_TRANSACTION
                 )
                 intent.putExtra(MainActivity.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    sdkWrapperAction.showHints
+                )
             }
         }
         activityLauncher.launch(intent)
@@ -212,7 +240,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 length > 2 -> "$" + chargeAmount.insert(length - 2, ".")
                 length == 2 -> "\$0.$chargeAmount"
                 length == 1 -> "\$0.0$chargeAmount"
-                else -> defaultChargeAmount
+                else -> DEFAULT_CHARGE_AMOUNT
             }
         }
 
