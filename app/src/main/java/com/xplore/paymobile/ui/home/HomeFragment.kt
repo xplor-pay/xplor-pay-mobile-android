@@ -79,7 +79,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         listener?.also {
             it.showFirstPair(
                 { startPairingProcess() },
-                { viewModel.firstPairDone() }
+                { viewModel.firstPairSkipper() }
             )
         }
     }

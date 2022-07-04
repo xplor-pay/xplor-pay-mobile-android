@@ -21,10 +21,10 @@ class SharedPreferencesDataSource(context: Context) {
         sharedPrefs.getInt(FIRST_PAIR, FirstPair.NOT_DONE.ordinal)
 
     enum class FirstPair {
-        NOT_DONE, DONE;
+        NOT_DONE, SKIPPED, DONE;
 
         companion object {
-            fun fromOrdinal(firstPairOrdinal: Int) = values().find { it.ordinal == firstPairOrdinal } ?: NOT_DONE
+            fun fromOrdinal(firstPair: Int) = values().find { it.ordinal == firstPair } ?: NOT_DONE
         }
     }
 }
