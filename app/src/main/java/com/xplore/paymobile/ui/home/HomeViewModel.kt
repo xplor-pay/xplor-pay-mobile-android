@@ -10,7 +10,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPrefs = SharedPreferencesDataSource(application.applicationContext)
 
     fun firstPairDone() = sharedPrefs.setFirstPair(FirstPair.DONE)
-    fun firstPairSkipper() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)
+    fun firstPairSkipped() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)
 
     fun getFirstPair() = sharedPrefs.getFirstPair()
     fun shouldShowHints() = getFirstPair() == FirstPair.NOT_DONE
