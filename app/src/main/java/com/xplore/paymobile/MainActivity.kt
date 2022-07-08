@@ -2,6 +2,7 @@ package com.xplore.paymobile
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -14,6 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -31,6 +33,10 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
+
+    private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
+    private val multiplePermissionsLauncher =
+        registerForActivityResult(multiplePermissionsContract) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +62,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         navView.setupWithNavController(navController)
 
         supportActionBar?.hide()
+
+        askPermissions()
     }
+
+    private fun askPermissions() =
+        multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
     private fun initSdkWrapper() {
         SDKWrapper.initializeReader(
