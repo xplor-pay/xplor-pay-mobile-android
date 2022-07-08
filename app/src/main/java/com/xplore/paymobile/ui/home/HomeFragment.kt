@@ -63,7 +63,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.shouldShowHintsScreen())
+        if (viewModel.shouldShowHints())
             showHints()
 
         setNumericKeyPadBackground()
@@ -152,7 +152,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startSdkActivityForResult(
                     SDKWrapperAction.Transaction(
                         chargeAmount.toDouble() / 100,
-                        viewModel.shouldShowSDKHints()
+                        viewModel.shouldShowHints()
                     )
                 )
             }
@@ -160,7 +160,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     private fun startPairingProcess() =
-        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.shouldShowSDKHints()))
+        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.shouldShowHints()))
 
     private fun openDevicesList() =
         startSdkActivityForResult(SDKWrapperAction.DevicesList)

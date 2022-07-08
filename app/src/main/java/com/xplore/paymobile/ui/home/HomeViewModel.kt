@@ -13,6 +13,5 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun firstPairSkipped() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)
 
     fun getFirstPair() = sharedPrefs.getFirstPair()
-    fun shouldShowSDKHints() = getFirstPair() != FirstPair.DONE
-    fun shouldShowHintsScreen() = getFirstPair() == FirstPair.NOT_DONE
+    fun shouldShowHints() = getFirstPair() == FirstPair.NOT_DONE
 }
