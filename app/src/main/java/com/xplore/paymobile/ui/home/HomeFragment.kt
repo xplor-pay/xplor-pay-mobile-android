@@ -39,6 +39,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
     private var chargeAmount = ""
     private var transactionOngoing = false
+    private var shouldShowSignature = true
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -198,6 +199,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     MainActivity.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
+                intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
             }
         }
         activityLauncher.launch(intent)
@@ -357,7 +359,6 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
-        Timber.d("HOME LISTENER: $readerStatus")
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
         }

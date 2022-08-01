@@ -19,7 +19,6 @@ import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
-import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initSdkWrapper()
+        setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
@@ -69,13 +68,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun askPermissions() =
         multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
-    private fun initSdkWrapper() {
-        SDKWrapper.initializeReader(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-        )
+    private fun setupListener() {
         SDKWrapper.setListener(ClearentDataSource)
     }
 
