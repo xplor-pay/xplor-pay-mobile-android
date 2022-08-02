@@ -250,7 +250,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         if (chargeAmount.isBlank() && digit == "0")
             return
 
-        if (chargeAmount.length >= 10)
+        if (chargeAmount.length >= 11)
             return
 
         chargeAmount = chargeAmount.plus(digit)
