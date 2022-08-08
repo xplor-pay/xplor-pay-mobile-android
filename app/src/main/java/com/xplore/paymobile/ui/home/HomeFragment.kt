@@ -1,12 +1,14 @@
 package com.xplore.paymobile.ui.home
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -68,10 +70,52 @@ class HomeFragment : Fragment(), ReaderStatusListener {
             showHints()
 
         setNumericKeyPadBackground()
+        handlePaymentMethodButtonState()
+        setupPaymentMethodClickListeners()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
         SDKWrapper.addReaderStatusListener(this)
+    }
+
+    private fun setupPaymentMethodClickListeners() {
+        with(binding) {
+            cardReaderButton.setOnClickListener { handlePaymentMethodButtonPressed(true) }
+            manualEntryButton.setOnClickListener { handlePaymentMethodButtonPressed(false) }
+        }
+    }
+
+    private fun handlePaymentMethodButtonPressed(isCardReader: Boolean) {
+        viewModel.isCardReaderSelected = isCardReader
+        handlePaymentMethodButtonState()
+    }
+
+    private fun handlePaymentMethodButtonState() {
+        val isCardReader = viewModel.isCardReaderSelected
+        with(binding) {
+            val cardReaderBgColor =
+                if (isCardReader) R.color.button_enabled else R.color.gray
+            val manualEntryBgColor =
+                if (!isCardReader) R.color.button_enabled else R.color.gray
+            val cardReaderTextColor =
+                if (isCardReader) R.color.button_enabled else R.color.black
+            val manualEntryTextColor =
+                if (!isCardReader) R.color.button_enabled else R.color.black
+            cardReaderButton.strokeColor = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    cardReaderBgColor
+                )
+            )
+            cardReaderButton.setTextColor(requireContext().getColor(cardReaderTextColor))
+            manualEntryButton.strokeColor = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    manualEntryBgColor
+                )
+            )
+            manualEntryButton.setTextColor(requireContext().getColor(manualEntryTextColor))
+        }
     }
 
     private fun showHints() = lifecycleScope.launch {

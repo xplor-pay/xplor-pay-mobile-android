@@ -11,8 +11,9 @@
     <string name="status_no_device_connected">Please select a reader to connect</string>
     <string name="status_idle">Idle</string>
     <string name="device_signal_connected">Connected</string>
-    <string name="charge_note_hint">+ Add Note</string>
     <string name="charge_amount_hint">$0.00</string>
+    <string name="payment_method_reader">Card reader</string>
+    <string name="payment_method_manual">Manual entry</string>
     <string name="numpad_key_1">1</string>
     <string name="numpad_key_2">2</string>
     <string name="numpad_key_3">3</string>

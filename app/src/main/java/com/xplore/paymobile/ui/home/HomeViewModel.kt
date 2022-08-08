@@ -8,6 +8,7 @@ import com.xplore.paymobile.util.SharedPreferencesDataSource.*
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val sharedPrefs = SharedPreferencesDataSource(application.applicationContext)
+    var isCardReaderSelected = true
 
     fun firstPairDone() = sharedPrefs.setFirstPair(FirstPair.DONE)
     fun firstPairSkipped() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)

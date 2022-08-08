@@ -89,6 +89,39 @@
         <item name="cornerSizeBottomRight">@dimen/numeric_key_pad_corner_size</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.Button.PaymentMethodLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyBottomLeft">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/margin_medium</item>
+        <item name="cornerSizeBottomLeft">@dimen/margin_medium</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.PaymentMethodRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerFamilyBottomRight">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/margin_medium</item>
+        <item name="cornerSizeBottomRight">@dimen/margin_medium</item>
+    </style>
+
+    <style name="PaymentMethodButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="PaymentMethodButtonLeft" parent="PaymentMethodButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.PaymentMethodLeft
+        </item>
+    </style>
+
+    <style name="PaymentMethodButtonRight" parent="PaymentMethodButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.PaymentMethodRight
+        </item>
+    </style>
+
     <!--    NUMERIC KEY PAD -->
 
     <style name="NumericKeyPadButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
@@ -97,8 +130,8 @@
         </item>
         <item name="backgroundTint">@color/numeric_key_pad_background</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="android:insetTop">0dp</item>>
-        <item name="android:insetLeft">0dp</item>>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:textSize">@dimen/text_size_big</item>
         <item name="android:textStyle">bold</item>
