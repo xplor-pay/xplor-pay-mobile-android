@@ -3,6 +3,7 @@ package com.xplore.paymobile.ui.home
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
@@ -244,6 +246,9 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     sdkWrapperAction.showHints
                 )
                 intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
+                val paymentMethod =
+                    if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
+                intent.putExtra(MainActivity.SDK_WRAPPER_PAYMENT_METHOD, paymentMethod as Parcelable)
             }
         }
         activityLauncher.launch(intent)
