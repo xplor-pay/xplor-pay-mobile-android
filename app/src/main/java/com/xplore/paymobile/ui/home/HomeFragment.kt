@@ -1,12 +1,15 @@
 package com.xplore.paymobile.ui.home
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +21,7 @@ import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
@@ -68,10 +72,52 @@ class HomeFragment : Fragment(), ReaderStatusListener {
             showHints()
 
         setNumericKeyPadBackground()
+        handlePaymentMethodButtonState()
+        setupPaymentMethodClickListeners()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
         SDKWrapper.addReaderStatusListener(this)
+    }
+
+    private fun setupPaymentMethodClickListeners() {
+        with(binding) {
+            cardReaderButton.setOnClickListener { handlePaymentMethodButtonPressed(true) }
+            manualEntryButton.setOnClickListener { handlePaymentMethodButtonPressed(false) }
+        }
+    }
+
+    private fun handlePaymentMethodButtonPressed(isCardReader: Boolean) {
+        viewModel.isCardReaderSelected = isCardReader
+        handlePaymentMethodButtonState()
+    }
+
+    private fun handlePaymentMethodButtonState() {
+        val isCardReader = viewModel.isCardReaderSelected
+        with(binding) {
+            val cardReaderBgColor =
+                if (isCardReader) R.color.button_enabled else R.color.gray
+            val manualEntryBgColor =
+                if (!isCardReader) R.color.button_enabled else R.color.gray
+            val cardReaderTextColor =
+                if (isCardReader) R.color.button_enabled else R.color.black
+            val manualEntryTextColor =
+                if (!isCardReader) R.color.button_enabled else R.color.black
+            cardReaderButton.strokeColor = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    cardReaderBgColor
+                )
+            )
+            cardReaderButton.setTextColor(requireContext().getColor(cardReaderTextColor))
+            manualEntryButton.strokeColor = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    manualEntryBgColor
+                )
+            )
+            manualEntryButton.setTextColor(requireContext().getColor(manualEntryTextColor))
+        }
     }
 
     private fun showHints() = lifecycleScope.launch {
@@ -200,6 +246,9 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     sdkWrapperAction.showHints
                 )
                 intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
+                val paymentMethod =
+                    if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
+                intent.putExtra(MainActivity.SDK_WRAPPER_PAYMENT_METHOD, paymentMethod as Parcelable)
             }
         }
         activityLauncher.launch(intent)
