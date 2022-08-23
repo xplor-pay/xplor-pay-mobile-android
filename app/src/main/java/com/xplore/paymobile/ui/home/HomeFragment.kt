@@ -23,6 +23,7 @@ import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
+import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -53,6 +54,9 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     ) { result ->
         Timber.d(result.resultCode.toString())
         transactionOngoing = false
+
+        if (result.resultCode and SdkUiResultCode.TransactionSuccess.value != 0)
+            clearChargeAmount()
     }
 
     override fun onCreateView(
@@ -248,7 +252,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
                 val paymentMethod =
                     if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
-                intent.putExtra(MainActivity.SDK_WRAPPER_PAYMENT_METHOD, paymentMethod as Parcelable)
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_PAYMENT_METHOD,
+                    paymentMethod as Parcelable
+                )
             }
         }
         activityLauncher.launch(intent)
