@@ -1,5 +1,6 @@
 package com.xplore.paymobile.ui.home
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -21,8 +22,10 @@ import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.MainActivity.Companion.SDK_WRAPPER_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
+import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -51,8 +54,20 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     private val activityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        Timber.d(result.resultCode.toString())
+        Timber.d(
+            "SDK UI result code: ${
+                result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0).toString()
+            }"
+        )
+
         transactionOngoing = false
+
+        if (result.resultCode != Activity.RESULT_OK)
+            return@registerForActivityResult
+
+        if (result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0)
+                ?.and(SdkUiResultCode.TransactionSuccess.value) != 0
+        ) clearChargeAmount()
     }
 
     override fun onCreateView(
@@ -248,7 +263,10 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
                 val paymentMethod =
                     if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
-                intent.putExtra(MainActivity.SDK_WRAPPER_PAYMENT_METHOD, paymentMethod as Parcelable)
+                intent.putExtra(
+                    MainActivity.SDK_WRAPPER_PAYMENT_METHOD,
+                    paymentMethod as Parcelable
+                )
             }
         }
         activityLauncher.launch(intent)
