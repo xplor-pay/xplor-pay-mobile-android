@@ -2,7 +2,7 @@ package com.xplore.paymobile.ui.home
 
 import android.app.Activity
 import android.content.Intent
-import  android.content.res.ColorStateList
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
