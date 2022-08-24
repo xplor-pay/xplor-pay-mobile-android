@@ -1,7 +1,8 @@
 package com.xplore.paymobile.ui.home
 
+import android.app.Activity
 import android.content.Intent
-import android.content.res.ColorStateList
+import  android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.MainActivity
+import com.clearent.idtech.android.wrapper.ui.MainActivity.Companion.SDK_WRAPPER_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
@@ -52,11 +54,20 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     private val activityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        Timber.d(result.resultCode.toString())
+        Timber.d(
+            "SDK UI result code: ${
+                result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0).toString()
+            }"
+        )
+
         transactionOngoing = false
 
-        if (result.resultCode and SdkUiResultCode.TransactionSuccess.value != 0)
-            clearChargeAmount()
+        if (result.resultCode != Activity.RESULT_OK)
+            return@registerForActivityResult
+
+        if (result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0)
+                ?.and(SdkUiResultCode.TransactionSuccess.value) != 0
+        ) clearChargeAmount()
     }
 
     override fun onCreateView(
