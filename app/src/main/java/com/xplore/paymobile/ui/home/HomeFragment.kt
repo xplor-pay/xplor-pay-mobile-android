@@ -21,8 +21,8 @@ import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
-import com.clearent.idtech.android.wrapper.ui.MainActivity
-import com.clearent.idtech.android.wrapper.ui.MainActivity.Companion.SDK_WRAPPER_RESULT_CODE
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKUi
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKUi.Companion.SDK_WRAPPER_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
@@ -241,38 +241,38 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
         transactionOngoing = true
 
-        val intent = Intent(requireContext(), MainActivity::class.java)
+        val intent = Intent(requireContext(), ClearentSDKUi::class.java)
         when (sdkWrapperAction) {
             is SDKWrapperAction.Pairing -> {
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_ACTION_KEY,
-                    MainActivity.SDK_WRAPPER_ACTION_PAIR
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_PAIR
                 )
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
             }
             is SDKWrapperAction.DevicesList ->
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_ACTION_KEY,
-                    MainActivity.SDK_WRAPPER_ACTION_DEVICES
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_DEVICES
                 )
             is SDKWrapperAction.Transaction -> {
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_ACTION_KEY,
-                    MainActivity.SDK_WRAPPER_ACTION_TRANSACTION
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUi.SDK_WRAPPER_ACTION_TRANSACTION
                 )
-                intent.putExtra(MainActivity.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
+                intent.putExtra(ClearentSDKUi.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
-                intent.putExtra(MainActivity.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
+                intent.putExtra(ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
                 val paymentMethod =
                     if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
                 intent.putExtra(
-                    MainActivity.SDK_WRAPPER_PAYMENT_METHOD,
+                    ClearentSDKUi.SDK_WRAPPER_PAYMENT_METHOD,
                     paymentMethod as Parcelable
                 )
             }

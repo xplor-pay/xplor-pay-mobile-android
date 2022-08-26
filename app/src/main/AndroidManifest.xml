@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name="com.clearent.idtech.android.wrapper.ui.MainActivity"
+            android:name="com.clearent.idtech.android.wrapper.ui.ClearentSDKUi"
             android:exported="true"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.Transparent"
