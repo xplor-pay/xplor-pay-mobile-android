@@ -215,7 +215,9 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 startSdkActivityForResult(
                     SDKWrapperAction.Transaction(
                         chargeAmount.toDouble() / 100,
-                        viewModel.shouldShowHints()
+                        viewModel.shouldShowHints(),
+                        shouldShowSignature,
+                        if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
                     )
                 )
             }
@@ -263,17 +265,21 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
                     ClearentSDKUi.SDK_WRAPPER_ACTION_TRANSACTION
                 )
-                intent.putExtra(ClearentSDKUi.SDK_WRAPPER_AMOUNT_KEY, sdkWrapperAction.amount)
+                intent.putExtra(
+                    ClearentSDKUi.SDK_WRAPPER_AMOUNT_KEY,
+                    sdkWrapperAction.amount
+                )
                 intent.putExtra(
                     ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
-                intent.putExtra(ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE, shouldShowSignature)
-                val paymentMethod =
-                    if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
+                intent.putExtra(
+                    ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE,
+                    sdkWrapperAction.showSignature
+                )
                 intent.putExtra(
                     ClearentSDKUi.SDK_WRAPPER_PAYMENT_METHOD,
-                    paymentMethod as Parcelable
+                    sdkWrapperAction.paymentMethod as Parcelable
                 )
             }
         }
