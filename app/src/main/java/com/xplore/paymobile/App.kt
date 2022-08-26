@@ -1,7 +1,6 @@
 package com.xplore.paymobile
 
 import android.app.Application
-import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.HiltAndroidApp
