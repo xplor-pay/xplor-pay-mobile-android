@@ -7,7 +7,7 @@
 Clearent SDK UI is a wrapper over ClearentFrameworkSDK that provides payment capabilities using the IDTech iOS framework to read credit card data using VP3300. Its goal is to ease integration by providing complete UI that handle all important flows end-to-end.
 
 
- **Clearent SDK UI** wraps all major features of the ClearentFrameworkSDK and adds UI for all major flows:
+**Clearent SDK UI** wraps all major features of the ClearentFrameworkSDK and adds UI for all major flows:
 
 1. **Pairing Flow**, guides the user through the pairing process steps, taking care of edge cases and possible errors.
 
@@ -24,13 +24,13 @@ Clearent SDK UI is a wrapper over ClearentFrameworkSDK that provides payment cap
 3. **UI Customization**, Clearent SDK UI provides the integrator the chance to customize the fonts, colors and texts used in the UI, This is achieved by overwriting the public properties of each UI element that is exposed.
 
 
-## Dependencies
+## Dependencies  - TODO
 
- **Clearent SDK UI** does not use any other dependencies except the ones of the ClearentFrameworkSDK:
+**Clearent SDK UI** does not use any other dependencies except the ones of the ClearentFrameworkSDK:
 
- - IDTech.xcframework
- - DTech.bundle (responsible for translating error codes to messages)
- - CocoaLumberJack.xcframework
+- IDTech.xcframework
+- DTech.bundle (responsible for translating error codes to messages)
+- CocoaLumberJack.xcframework
 
 
 ## Package Management - (To be updated with correct information)
@@ -39,51 +39,66 @@ Clearent SDK UI is a wrapper over ClearentFrameworkSDK that provides payment cap
 
 ## Supported Android versions
 
-The SDK supports current version of Android and two previous versions. Currently sdk versions 30, 31 and 32. With unofficial support for versions 21 throughout 29.
+The SDK supports current version of Android and two previous versions. Currently sdk versions 29, 30 and 31. With unofficial support for versions 21 throughout 29.
 
 ## How to Integrate
 
 In order to integrate the **SDK UI** you will need the **API URL**, **API KEY** and the **PUBLIC KEY**.
-Use the SDKWrapper class to update the SDK with this information like this.
+Use the ClearentWrapper class to update the SDK with this information like this.
 
 ```
-SDKWrapper.initializeReader(
-        context: Context, // where context is the ApplicationContext
-        baseUrl: String,
-        publicKey: String,
-        apiKey: String
+ClearentWrapper.INSTANCE.initializeReader(
+        Context context, // where context is the ApplicationContext
+        String baseUrl,
+        String publicKey,
+        String apiKey
 )
 ```
 
 We recommend calling this method as soon as possible, preferably inside the Application class of your project. ClearentSDKUi is an Activity thus it will have to be called through androids activity launcher:
 ```
-activityLauncher = registerForActivityResult(
-	ActivityResultContracts.StartActivityForResult()
-	{ // code to check the result of the activity }
-);
-activityLauncher.launch(Intent(requireContext(), ClearentSDKUi::class.java));
+private final ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    // Code to check the result of the activity
+                }
+            }
+    );
+final Intent intent = new Intent(this, ClearentSDKUi.class); // Use this intent to start the activity
+activityLauncher.launch(intent);
 ```
 
 Inside the intent you will be able to pass in the options.
 
-### Important!
+Also do not forget to setup the SDK listener as the ui will not update otherwise, and remove the listener when we don't plan to use SDK UI anymore.
 
-**The safe keeping of the **API URL**, **API KEY** and the **PUBLIC KEY** is the integrators reposability. The SDK stores this information only in memory!**
+```
+ClearentWrapper.INSTANCE.setListener(ClearentDataSource.INSTANCE);
+```
+
+```
+ClearentWrapper.INSTANCE.removeListener();
+```
 
 
 **Tips**
 
-This feature can be enabled from your merchant account and when it's enabled the first step in the transaction flow will be a prompt where the user/client is prompted with UI that will offer some options to choose a tip. The options the user/client has are three fixed options in percents and a custom tip input field. The three options are customizable by settting the **tipAmounts** that is an array of Int values property of the **SDKWrapper** as below.
+This feature can be enabled from your merchant account and when it's enabled the first step in the transaction flow will be a prompt where the user/client is prompted with UI that will offer some options to choose a tip. The options the user/client has are three fixed options in percents and a custom tip input field. The three options are customizable by settting the **tipAmounts** that is an array of Int values property of the **ClearentWrapper** as below.
 
 ```
-SDKWrapper.setTipPercentages(5, 15, 20)
+ClearentWrapper.INSTANCE.setTipPercentages(5, 15, 20);
 ```
 
 
 **Disabling the signature functionality**
 The signature feature is enabled by default, if you want to disable it you will have to pass the option into the aforementioned intent before launching the activity:
 ```
-intent.putExtra(ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE, false)
+intent.putExtra(
+    ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE, 
+    false
+);
 ```
 
 Now you are ready to use the SDK UI.
@@ -95,36 +110,36 @@ In order to display the UI from the SDK you need to pass in what flow you want t
 intent.putExtra(
 	ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
 	ClearentSDKUi.SDK_WRAPPER_ACTION_PAIR
-)
+);
 
 // If you want to show hints for the pairing process you should also do this:
 intent.putExtra(
-        ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
-        true
-)
+    ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
+    true
+);
 ```
 
 **Starting a transaction**
 
 Every time you start a transaction you need to pass the amount as a Double to the intent.
-The SDK UI provides the option to enter the card details manualy or by using the card reader.
+The SDK UI provides the option to enter the card details manually or by using the card reader.
 
 ```
 intent.putExtra(
 	ClearentSDKUi.SDK_WRAPPER_PAYMENT_METHOD,
-        PaymentMethod as Parcelable // Where PaymentMethod is an enum inside "com.clearent.idtech.android.wrapper.ui.PaymentMethod" with the values "CARD_READER" and "MANUAL_ENTRY"
-)
+    (Parcelable) PaymentMethod // Where PaymentMethod is an enum inside "com.clearent.idtech.android.wrapper.ui.PaymentMethod" with the values "CARD_READER" and "MANUAL_ENTRY"
+);
 ```
 
 ```
 intent.putExtra(
 	ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
 	ClearentSDKUi.SDK_WRAPPER_ACTION_TRANSACTION
-)
+);
 intent.putExtra(
 	ClearentSDKUi.SDK_WRAPPER_AMOUNT_KEY,
 	amount  // The amount of the transaction which is a Double
-)
+);
 ```
 
 **Showing readers list & reader details**
@@ -133,18 +148,18 @@ intent.putExtra(
 intent.putExtra(
 	ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
 	ClearentSDKUi.SDK_WRAPPER_ACTION_DEVICES
-)
+);
 ```
 The reader details will display the status of the current reader and a list of recently paired readers. From this list the user can navigate to the readers details.
 
 
 **Reader Status**
 
-If you want to display the reader's status in your app you can implement the  **ReaderStatusListener** interface from **com.clearent.idtech.android.wrapper.model.ReaderStatus**, and then use the addReaderStatusListener(listener: ReaderStatusListener) to register for notifications and respectively removeReaderStatusListener(listener: ReaderStatusListener) to unregister.
+If you want to display the reader's status in your app you can implement the  **ReaderStatusListener** interface from **com.clearent.idtech.android.wrapper.model.ReaderStatus**, and then use the addReaderStatusListener(ReaderStatusListener listener) to register for notifications and respectively removeReaderStatusListener(ReaderStatusListener listener) to unregister.
 
 The interface contains a method that will be called to notify you of the new ReaderStatus which contains reader related information.
 ```
-fun onReaderStatusUpdate(readerStatus: ReaderStatus?)
+public void onReaderStatusUpdate(ReaderStatus readerStatus);
 
 ```
 
@@ -152,121 +167,117 @@ How to use it.
 
 ```
 // First we create the object that implements the interface
-readerStatusListener = object : ReaderStatusListener {
-        override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
-		// Update your UI
-	}
-}
+final ReaderStatusListener readerStatusListener = readerStatus -> {
+    // Update your UI
+};
 
 // And then we register for the callback inside the OnViewCreated
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-	// your code...
-	SDKWrapper.addReaderStatusListener(readerStatusListener)
-	// your code...
+@Override
+public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    // your code...
+    ClearentWrapper.INSTANCE.addReaderStatusListener(readerStatusListener);
+    // your code...
 }
 
 // When we don't use it anymore we unregister from the callback
-override fun onDestroyView() {
-	// your code...
-        SDKWrapper.removeReaderStatusListener(readerStatusListener)
-	// your code...
+@Override
+public void onDestroyView() {
+    super.onDestroyView();
+    // your code...
+    ClearentWrapper.INSTANCE.removeReaderStatusListener(readerStatusListener);
+    // your code...
 }
 ```
 
 If you want to refresh the ReaderStatus you can always call the following method:
 
 ```
-SDKWrapper.startDeviceInfoUpdate()
+ClearentWrapper.INSTANCE.startDeviceInfoUpdate();
 ```
 
 
 ## Customizing the SDK experience
 
-The SDK provides the option to customize the fonts, colors and texts used in the SDK. This can be achieved by overriding properties of the **ClearentUIBrandConfigurator** class that is a singleton. Check our [Swift Example](https://) for full customization example.
+The SDK provides the option to customize the fonts, colors and texts used in the SDK. This can be achieved by overriding certain attributes in styles, strings and colors xml files. Check our [Example](https://) for full customization example.
 
 **Colors**
 ```
-ClearentUIBrandConfigurator.shared.colorPalette = ClientColorPalette()
+    <color name="color_primary">#FFFF00</color>
+    <color name="color_secondary">#00FFFF</color>
 ```
-
-**ClientColorPalette** is a class that you will need to write and implement **ClearentUIColors** protocol.
 
 
 **Fonts**
 
-You will need to implement a class that will implement **ClearentUIFonts** protocol and load your custom fonts.
-
+You will need to override the fontFamily attribute of the styles "FontFamilyRegular" and "FontFamilyBold".
 
 ```
-UIFont.loadFonts(fonts: ["Arial Bold.ttf", "Arial.ttf"], bundle: Constants.bundle)
-ClearentUIBrandConfigurator.shared.fonts = ClientFonts()
+    <style name="FontFamilyRegular" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/sf_pro_text_regular</item>
+    </style>
+
+    <style name="FontFamilyBold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/sf_pro_text_bold</item>
+    </style>
 ```
 
 **Texts**
 
-In order to customize texts used in the SDK you will need to provide a dictionary containing the new messages you want to show.
+In order to customize texts used in the SDK you will need to override strings inside the strings.xml with the corresponding names.
 
 ```
-ClearentUIBrandConfigurator.shared.overriddenLocalizedStrings = [
-    "xsdk_tips_custom_amount": "🍎Custom amount",
-    "xsdk_tips_user_transaction_tip_title": "🍎Would you like to add a tip?",
-    "xsdk_tips_user_action_transaction_with_tip": "🍎Charge %@",
-    "xsdk_tips_user_action_transaction_without_tip":"🍎Maybe next time"
-]
+    <string name="tips_title">Would you like to add a tip?</string>
+    <string name="tips_confirmation_button_text">Charge $%1$s</string>
+    <string name="tips_skip_button_text">Maybe next time</string>
+    <string name="tips_percentage_label">"%1$d%% ($%2$s)"</string>
 ```
 
 
 ## Code Example
 
-Swift example of the ClearenSDKUI  integration [Swift Example](https://).
+Java example of the ClearentSDKUI integration [Java Example](https://github.com/clearent/ClearentSDKUIDemo/tree/Java).
+
 
 ```
-import UIKit
-import ClearentSDKUI
+public class App extends Application {
 
-class ViewController: UIViewController {
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    @IBOutlet weak var showReadersDetailsButton: UIButton!
-    @IBOutlet weak var startTransactionButton: UIButton!
-    @IBOutlet weak var startPairingButton: UIButton!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        initSDK()
+        initSdk();
     }
 
-    func initSDK() {
-
-        // Update the SDk with needed info to work properly
-        ClearentUIManager.shared.updateWith(baseURL: Api.baseURL, apiKey: Api.apiKey, publicKey: Api.publicKey)
-
-        // Load the default fonts from our SDK
-        UIFont.loadFonts()
-
-        // The signature step from transaction is enabled by default
-        ClearentUIManager.shared.signatureEnabled = false
-    }
-
-
-    // MARK: Actions
-
-    @IBAction func showRederDetailsAction(_ sender: Any) {
-
-        let readerDetailsVC = ClearentUIManager.shared.readersViewController()
-        self.navigationController?.present(readerDetailsVC, animated: true, completion: { })
-    }
-
-    @IBAction func startTransactionAction(_ sender: Any) {
-        let transactionVC = ClearentUIManager.shared.paymentViewController(amount: 20.0)
-        self.navigationController?.present(transactionVC, animated: true, completion: { })
-    }
-
-    @IBAction func startPairingProcess(_ sender: Any) {
-        let pairingVC = ClearentUIManager.shared.pairingViewController()
-        self.navigationController?.present(pairingVC, animated: true, completion: { })
+    private void initSdk() {
+        ClearentWrapper.INSTANCE.initializeReader(
+                getApplicationContext(),
+                Constants.BASE_URL_SANDBOX,
+                Constants.PUBLIC_KEY_SANDBOX,
+                Constants.API_KEY_SANDBOX
+        );
     }
 }
+```
 
+```
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // This method will setup the ClearentDataSource object to send data over 
+        // to the ClearentSDKUi. You can also implement your custom *ClearentWrapperListener*.
+        ClearentWrapper.INSTANCE.setListener(ClearentDataSource.INSTANCE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ClearentWrapper.INSTANCE.removeListener();
+    }
+}
 ```
 
 
@@ -284,74 +295,72 @@ You will use this class to update the SDK with the needed information to work pr
 
 **Important Note:**
 
-The safe keeping of the **API URL**, **API KEY** and the **PUBLIC KEY** is the integrators reposability. The SDK stores this information only in memory!
+The safe keeping of the **API URL**, **API KEY** and the **PUBLIC KEY** is the integrators responsibility. The SDK stores this information only in memory!
 
-**ClearentWrapperProtocol** is the protocol you will need to implement in order to receive updates , error and notifications from the SDK. Each method from the protocol is documented in code.
+**ClearentDataSource** is the protocol you will need to implement in order to receive updates , error and notifications from the SDK. Each method from the protocol is documented in code.
 
-**ClearentWrapperDefaults** is a user default storage that holds information like currently paired reader and a list of previously paired readers. You should not save anything here the SDK handles this for you.
+**ClearentWrapperSharedPrefs** is a user default storage that holds information like currently paired reader and a list of previously paired readers. You should not save anything here the SDK handles this for you.
 
-## Supported iOS versions
+## Supported Android versions
 
-The SDK supports current version of iOS and two previous versions. Currently 13, 14 and 15.
+The SDK supports current version of Android and two previous versions. Currently sdk versions 29, 30 and 31. With unofficial support for versions 21 throughout 29.
 
 ## Pairing a reader.
 
 In order to perform transaction using the VP3300 card reader you will need to pair (connect) the device using Bluetooth, the Bluetooth connectivity is handled by the SDK .
 
-In this step the SDK performs a Bluetooth search in order to discover the card readers around. In order for the device to be discoverable, it needs to be turned on and in range of the mobile device. The result of the Bluetooth search is a list of devices of type ReaderInfo and you will get the list from the delegate method **didFindReaders(readers: [ReaderInfo])**.
+In this step the SDK performs a Bluetooth search in order to discover the card readers around with the method **startSearching(searchDuration: Int? = null)** where search duration is the number of seconds the sdk will search for readers before returning them, the default value is 5 seconds. The SDK uses continuous search by default, stopping a search is done by connecting to a reader or by calling **stopSearching()**. In order for the device to be discoverable, it needs to be turned on and in range of the mobile device. The result of the Bluetooth search is a list of devices of type ReaderStatus and you will get the list from the delegate method **didFindReaders(readers: List<ReaderStatus>)**. In case no readers are found, the method **didNotFindReaders()** will be called.
 
-Once you have the list of available readers the next step is to select the reader you want to connect to using the **connectTo(reader: ReaderInfo)** method that will try to connect the reader. Once the SDK manages to connect to the reader the delegate method didFinishPairing will get called indicating the connection was successful.
+Once you have the list of available readers the next step is to select the reader you want to connect to using the **connectTo(reader: ReaderInfo)** method that will try to connect the reader. Once the SDK manages to connect to the reader the delegate method **deviceDidConnect()** will get called indicating the connection was successful.
 
 
 ## Performing a transaction
 
-You can perform a transaction in two modes : using a card reader or by using the card details directly.
+There are two ways to perform a transaction : using a card reader or by using the card details directly.
 
 **1.Performing a transaction using the card reader.**
 
 A transaction is performed in two steps :
 
-1.  Reading the card, the IDTech framework reads the card info and provides a jwt (token).
+1. Reading the card, the IDTech framework reads the card info and provides a jwt (token).
 2. Performing an API call that will send the transaction information together with the JWT token to a payment gateway.
 
-You can start a transaction using startTransaction(saleEntity: SaleEntity) method. You need to provide a SaleEntity that will contain the amount, you can also specify a tip and client related information.
+You can start a transaction using startTransaction(saleEntity: SaleEntity, manualEntryCardInfo: ManualEntryCardInfo? = null) method. You need to provide a SaleEntity that will contain the amount, you can also specify a tip and client related information. Providing a ManualEntryCardInfo will start a manual transaction with the card data provided in aforementioned class.
 
-When you call the startTransaction method the SDK will start guide you to the process by calling two important methods from the ClearentWrapperProtocol  :
+When you call the startTransaction method the SDK will start guide you to the process by calling two important methods from the ClearentWrapperDataSource  :
 
 1. **userActionNeeded(action: UserAction)** , indicates that the user need to do an action like swiping the card, removing the card etc.
 2. **didReceiveInfo(info: UserInfo)**, this method presents different information related to the transaction.
 
-After the transaction is completed the delegate method didFinishTransaction(response: TransactionResponse, error: ResponseError?) will get called. You can check the error parameter to know if the transaction was successful or not.
+After the transaction is completed the delegate method didFinishTransaction(response: TransactionResponse?, error: ResponseError?) will get called. You can check the error parameter to know if the transaction was successful or not.
 
 **2. Performing a transaction using manual card entry.**
 
-You can start a transaction using startTransaction(with saleEntity: SaleEntity, manualEntryCardInfo: ManualEntryCardInfo?) method where the manualEntryCardInfo parameter will contain the card informations.
+You can start a transaction using startTransaction(saleEntity: SaleEntity, manualEntryCardInfo: ManualEntryCardInfo?) method where the manualEntryCardInfo parameter will contain the card information.
 
 
 **Cancelling , voiding and refunding a transaction**
 
-If you started a card reader transaction and want to cancel it you can use cancelTransaction() method and after this call the card reader will be ready to take another transaction. You can use this method only before the card is read by the card reader. Once the card has been read the transaction will be performed and the transaction will be also registered by the payment gateway. In this case you can use the **voidTransaction(transactionID:String)** to void the transaction you want (this will work only if the transaction was not yet processed by the gateway). Another option is to perform a refund using the **refundTransaction(jwt: String, amount: String)**.
+If you started a card reader transaction and want to cancel it you can use cancelTransaction() method and after this call the card reader will be ready to take another transaction. You can use this method only before the card is read by the card reader. Once the card has been read the transaction will be performed and the transaction will be also registered by the payment gateway. In this case you can use the **voidTransaction(transactionId: String)** to void the transaction you want (this will work only if the transaction was not yet processed by the gateway). Another option is to perform a refund using the **refundTransaction(transactionToken: String, saleEntity: SaleEntity)**.
 
 
 ## Getting information related to the card reader status
 
-You can obtain a ReaderInfo  object from **ClearentWrapperDefaults.pairedReader**.
-Sometimes you will need to request and display new information related to the reader like battery status or signal strength. You can achieve this by using the **startDeviceInfoUpdate()** method, calling this method will start fetching new information from the connected reader and when this information will be available it will call **readerInfoReceived: ((_ readerInfo: ReaderInfo?) -> Void)?** closure that you will need to implement in your code.
+Sometimes you will need to request and display new information related to the reader like battery status or signal strength. You can achieve this by using the **startDeviceInfoUpdate()** method, calling this method will start fetching new information from the connected reader. To receive updates about the reader you must implement the **interface ReaderStatusListener** which has a method **fun onReaderStatusUpdate(readerStatus: ReaderStatus?)** that will be called. After implementing the interface you can register and unregister for updates with the methods **addReaderStatusListener(listener: ReaderStatusListener)**, respectively **removeReaderStatusListener(listener: ReaderStatusListener)**.
 
 
 ## Getting information related to previously paired readers
 
-Each time you pair a new reader the SDK will save its information in a User Defaults cache. You can get the list using recentlyPairedReaders  property of the **ClearentWrapperDefaults**. The result will be an array of **ReaderInfo** objects.
+Each time you pair a new reader the SDK will save its information in Shared Preferences. You can get the list using the **fun getRecentlyPairedReaders(): List<ReaderStatus>** method inside the SDK wrapper.
 
-You can check if a reader is connected by using the **isReaderConnected()** method or by checking the **isConnected** property of the **ClearentWrapperDefaults.pairedReader**.
+You can check if a reader is connected by using the **fun isReaderConnected(): Boolean** method or by checking the **isConnected** property of the **currentReader**.
 
 
 
 ## Uploading a signature
 
 If you want to upload a signature image after a transaction, you can use
-**sendSignatureWithImage(image: UIImage)**. After this method is called, the **didFinishedSignatureUploadWith(response: SignatureResponse, error: ResponseError?)** delegate method will be called.  Note that the sendSignature method will use the latest transaction ID as the ID for the signature in the API call.
-In case of error you can use the **resendSignature()** method to retry the signature upload
+**fun sendSignatureWithImage(signature: Bitmap)**. After this method is called, the **didFinishSignature(response: SignatureResponse?, error: ResponseError?)** delegate method will be called. Note that the sendSignature method will use the latest transaction ID as the ID for the signature in the API call, which will be lost on application restart.
 
 
 ## Relevant code snippets
@@ -398,7 +407,7 @@ After the user selects one of the readers from the list you need to tell the SDK
    ClearentWrapper.shared.connectTo(reader: reader)
 ```
 
-The SDK will try to connect to the selected device and it will call the ```didFinishedPairing()``` method when finished.
+The SDK will try to connect to the selected device and it will call the ```deviceDidConnect()``` method when finished.
 Now you have a paired reader and you can start using it for performing transactions.
 
 
@@ -434,7 +443,7 @@ User action needed indicates that the user/client needs to perform an action in 
 ```
 
 
-User info contains informations related to the transaction status e.g. Processing
+User info contains information related to the transaction status e.g. Processing
 
 ```
     func didReceiveInfo(info: UserInfo) {
@@ -443,7 +452,7 @@ User info contains informations related to the transaction status e.g. Processin
 ```
 
 
-After the transaction is proccesed a delegate method will inform you about the status.
+After the transaction is processed a delegate method will inform you about the status.
 
 ```
     func didFinishTransaction(error: ResponseError?) {
@@ -456,4 +465,4 @@ After the transaction is proccesed a delegate method will inform you about the s
 ```
 
 
-Full Swift example of the ClearenWrapper integration  integration [Swift Example](https://).
+Full Kotlin example of the Clearent Wrapper integration  integration [Kotlin Example](https://).

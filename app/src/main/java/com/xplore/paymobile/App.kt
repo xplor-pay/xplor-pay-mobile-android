@@ -1,7 +1,7 @@
 package com.xplore.paymobile
 
 import android.app.Application
-import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -17,7 +17,7 @@ class App : Application() {
         }
     }
 
-    private fun initSdkWrapper() = SDKWrapper.initializeReader(
+    private fun initSdkWrapper() = ClearentWrapper.initializeReader(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             Constants.PUBLIC_KEY_SANDBOX,

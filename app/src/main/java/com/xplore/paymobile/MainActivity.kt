@@ -14,7 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
-import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
@@ -69,12 +69,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
     private fun setupListener() {
-        SDKWrapper.setListener(ClearentDataSource)
+        ClearentWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        SDKWrapper.removeListener()
+        ClearentWrapper.removeListener()
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {
