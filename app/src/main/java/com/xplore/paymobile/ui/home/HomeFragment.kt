@@ -15,14 +15,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
-import com.clearent.idtech.android.wrapper.ui.ClearentSDKUi
-import com.clearent.idtech.android.wrapper.ui.ClearentSDKUi.Companion.SDK_WRAPPER_RESULT_CODE
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKUI
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKUI.Companion.SDK_WRAPPER_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
@@ -93,7 +93,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         renderChargeAmount()
         setUpNumpad()
         setListeners()
-        SDKWrapper.addReaderStatusListener(this)
+        ClearentWrapper.addReaderStatusListener(this)
     }
 
     private fun setupPaymentMethodClickListeners() {
@@ -228,7 +228,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.shouldShowHints()))
 
     private fun openDevicesList() =
-        startSdkActivityForResult(SDKWrapperAction.DevicesList)
+        startSdkActivityForResult(SDKWrapperAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
         if (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty()) {
@@ -243,42 +243,42 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
         transactionOngoing = true
 
-        val intent = Intent(requireContext(), ClearentSDKUi::class.java)
+        val intent = Intent(requireContext(), ClearentSDKUI::class.java)
         when (sdkWrapperAction) {
             is SDKWrapperAction.Pairing -> {
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_PAIR
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_PAIR
                 )
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKUI.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
             }
             is SDKWrapperAction.DevicesList ->
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_DEVICES
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_DEVICES
                 )
             is SDKWrapperAction.Transaction -> {
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUi.SDK_WRAPPER_ACTION_TRANSACTION
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKUI.SDK_WRAPPER_ACTION_TRANSACTION
                 )
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_AMOUNT_KEY,
+                    ClearentSDKUI.SDK_WRAPPER_AMOUNT_KEY,
                     sdkWrapperAction.amount
                 )
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKUI.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_SHOW_SIGNATURE,
+                    ClearentSDKUI.SDK_WRAPPER_SHOW_SIGNATURE,
                     sdkWrapperAction.showSignature
                 )
                 intent.putExtra(
-                    ClearentSDKUi.SDK_WRAPPER_PAYMENT_METHOD,
+                    ClearentSDKUI.SDK_WRAPPER_PAYMENT_METHOD,
                     sdkWrapperAction.paymentMethod as Parcelable
                 )
             }
@@ -289,7 +289,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        SDKWrapper.removeReaderStatusListener(this)
+        ClearentWrapper.removeReaderStatusListener(this)
     }
 
     private fun renderChargeAmount() {

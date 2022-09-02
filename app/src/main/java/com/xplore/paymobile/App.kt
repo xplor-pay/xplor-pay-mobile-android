@@ -1,7 +1,7 @@
 package com.xplore.paymobile
 
 import android.app.Application
-import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.HiltAndroidApp
@@ -25,7 +25,7 @@ class App : Application() {
     private fun initSdkWrapper() {
         val apiKey = encryptedPrefs.getApiKey()
         val publicKey = encryptedPrefs.getPublicKey()
-        SDKWrapper.initializeReader(
+        ClearentWrapper.initializeReader(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             publicKey,
