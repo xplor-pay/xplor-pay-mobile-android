@@ -25,7 +25,7 @@ class App : Application() {
     private fun initSdkWrapper() {
         val apiKey = encryptedPrefs.getApiKey()
         val publicKey = encryptedPrefs.getPublicKey()
-        ClearentWrapper.initializeReader(
+        ClearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             publicKey,

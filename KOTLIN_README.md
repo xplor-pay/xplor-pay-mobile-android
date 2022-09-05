@@ -282,19 +282,19 @@ You will use this class to update the SDK with the needed information to work pr
 
 The safe keeping of the **API URL**, **API KEY** and the **PUBLIC KEY** is the integrators responsibility. The SDK stores this information only in memory!
 
-**ClearentDataSource** is the protocol you will need to implement in order to receive updates , error and notifications from the SDK. Each method from the protocol is documented in code.
+**ClearentWrapperListener** is the interface you will need to implement in order to receive updates, error and notifications from the SDK. Each method from the interface is documented in code.
 
 **ClearentWrapperSharedPrefs** is a user default storage that holds information like currently paired reader and a list of previously paired readers. You should not save anything here the SDK handles this for you.
 
 ## Supported Android versions
 
-The SDK supports current version of Android and two previous versions. Currently sdk versions 29, 30 and 31. With unofficial support for versions 21 throughout 29.
+The SDK supports current version of Android and two previous versions. Currently sdk versions 29, 30 and 31. With unofficial support for versions 24 throughout 29.
 
 ## Pairing a reader.
 
 In order to perform transaction using the VP3300 card reader you will need to pair (connect) the device using Bluetooth, the Bluetooth connectivity is handled by the SDK .
 
-In this step the SDK performs a Bluetooth search in order to discover the card readers around with the method **startSearching(searchDuration: Int? = null)** where search duration is the number of seconds the sdk will search for readers before returning them, the default value is 5 seconds. The SDK uses continuous search by default, stopping a search is done by connecting to a reader or by calling **stopSearching()**. In order for the device to be discoverable, it needs to be turned on and in range of the mobile device. The result of the Bluetooth search is a list of devices of type ReaderStatus and you will get the list from the delegate method **didFindReaders(readers: List<ReaderStatus>)**. In case no readers are found, the method **didNotFindReaders()** will be called.
+In this step the SDK performs a Bluetooth search in order to discover the card readers around with the method **startSearching(searchDuration: Int? = null)** where search duration is the number of seconds the sdk will search for readers before returning them, the default value is 5 seconds. The SDK uses continuous search by default, stopping a search is done by connecting to a reader or by calling **stopSearching()**. In order for the device to be discoverable, it needs to be turned on and in range of the mobile device. The result of the Bluetooth search is a list of devices of type ReaderStatus and you will get the list from the delegate method **didFindReaders(readers: List<ReaderStatus>)**. In case no readers are found, the list will be empty.
 
 Once you have the list of available readers the next step is to select the reader you want to connect to using the **connectTo(reader: ReaderInfo)** method that will try to connect the reader. Once the SDK manages to connect to the reader the delegate method **deviceDidConnect()** will get called indicating the connection was successful.
 
@@ -314,7 +314,7 @@ You can start a transaction using startTransaction(saleEntity: SaleEntity, manua
 
 When you call the startTransaction method the SDK will start guide you to the process by calling two important methods from the ClearentWrapperDataSource  :
 
-1. **userActionNeeded(action: UserAction)** , indicates that the user need to do an action like swiping the card, removing the card etc.
+1. **userActionNeeded(action: UserAction)** , indicates that the user needs to do an action like swiping the card, removing the card etc.
 2. **didReceiveInfo(info: UserInfo)**, this method presents different information related to the transaction.
 
 After the transaction is completed the delegate method didFinishTransaction(response: TransactionResponse?, error: ResponseError?) will get called. You can check the error parameter to know if the transaction was successful or not.
@@ -331,7 +331,6 @@ If you started a card reader transaction and want to cancel it you can use cance
 
 ## Getting information related to the card reader status
 
-You can obtain a ReaderInfo  object from **ClearentWrapperDefaults.pairedReader**.
 Sometimes you will need to request and display new information related to the reader like battery status or signal strength. You can achieve this by using the **startDeviceInfoUpdate()** method, calling this method will start fetching new information from the connected reader. To receive updates about the reader you must implement the **interface ReaderStatusListener** which has a method **fun onReaderStatusUpdate(readerStatus: ReaderStatus?)** that will be called. After implementing the interface you can register and unregister for updates with the methods **addReaderStatusListener(listener: ReaderStatusListener)**, respectively **removeReaderStatusListener(listener: ReaderStatusListener)**.
 
 
@@ -355,46 +354,43 @@ If you want to upload a signature image after a transaction, you can use
 **Initialisation**
 
 ```
-    ClearentWrapper.shared.updateWithInfo(baseURL: Api.baseURL, publicKey: Api.publicKey, apiKey: Api.apiKey)
-
-    // You will need to implement the delegate methods
-    ClearentWrapper.shared.delegate = self
+    ClearentWrapper.initializeReader(
+            applicationContext,
+            Constants.BASE_URL_SANDBOX,
+            Constants.PUBLIC_KEY_SANDBOX,
+            Constants.API_KEY_SANDBOX
+    )
 ```
 
 
 **Pairing a device**
 
-Calling this method will start the process of pairing a card reader with an iOS device.
+Calling this method will start the process of pairing a card reader with an Android device.
 
 ```
-    ClearentWrapper.shared.startPairing(reconnectIfPossible: true)
+    ClearentWrapper.startSearching()
 ```
 
 After the search for readers is completed the SDK will trigger a delegate method.
 
 ```
-    func didFindReaders(readers: [ReaderInfo])  {
+    fun didFindReaders(readers: List<ReaderStatus>)  {
         // you can display the list of readers on the UI
     }
 ```
 
-If no available readers around are found the SDK will trigger this method :
+If no available readers around are found the SDK will pass in an empty list.
 
-```
-    func didNotFindReaders() {
-        // you can inform the user to check if the card reader is turned on in range and it's not paired with another device
-    }
-```
 
 After the user selects one of the readers from the list you need to tell the SDK to connect to it.
 
 ```
-   // reader is a ReaderInfo item
-   ClearentWrapper.shared.connectTo(reader: reader)
+   // readerStatus is a ReaderStatus item
+   ClearentWrapper.selectReader(readerStatus)
 ```
 
-The SDK will try to connect to the selected device and it will call the ```didFinishedPairing()``` method when finished.
-Now you have a paired reader and you can start using it for performing transactions.
+The SDK will try to connect to the selected device and it will call the ```deviceDidConnect()``` method when a successful connection is established.
+Now you can use the paired reader to start performing transactions.
 
 
 **Performing a transaction**
@@ -403,19 +399,23 @@ Using a card reader
 
 ```
    // Define a SaleEntity, you can also add client information on the SaleEntity
-   let saleEntity = SaleEntity(amount: 22.0, tipAmount: 5)
-   ClearentWrapper.shared.startTransaction(with: saleEntity)
+   ClearentWrapper.startTransactionWithAmount(
+        SaleEntity(
+            amount = SaleEntity.formatAmount(amount)
+            tipAmount = SaleEntity.formatAmount(tipAmount)
+        )
+    )
 ```
 
 Using manual card entry
 
 ```
    // Define a SaleEntity, you can also add client information on the SaleEntity
-   let saleEntity = SaleEntity(amount: 22.0, tipAmount: 5)
+   val saleEntity = SaleEntity(amount = 22.0, tipAmount = 5)
 
    // Create a manual card entry instance
-   let ManualEntryCardInfo(card: "4111111111111111", expirationDateMMYY: "0728", csc: "999")
-   ClearentWrapper.shared.startTransaction(with: saleEntity, manualEntryCardInfo: manualEntryCardInfo)
+   val manualEntry = ManualEntryCardInfo(card = "4111111111111111", expirationDateMMYY = "0932", csc = "999")
+   ClearentWrapper.startTransaction(saleEntity = saleEntity, manualEntryCardInfo = manualEntryCardInfo)
 ```
 
 After starting a transaction feedback messages will be triggered on the delegate.
@@ -423,7 +423,7 @@ After starting a transaction feedback messages will be triggered on the delegate
 
 User action needed indicates that the user/client needs to perform an action in order for the transaction to continue e.g. Insert the card.
 ```
-    func userActionNeeded(action: UserAction) {
+    fun userActionNeeded(userAction: UserAction) {
         // here you should check the user action type and display the informtion to the users
     }
 ```
@@ -432,7 +432,7 @@ User action needed indicates that the user/client needs to perform an action in 
 User info contains information related to the transaction status e.g. Processing
 
 ```
-    func didReceiveInfo(info: UserInfo) {
+    fun didReceiveInfo(userInfo: UserInfo) {
         // you should display the information to the users
     }
 ```
@@ -441,8 +441,8 @@ User info contains information related to the transaction status e.g. Processing
 After the transaction is processed a delegate method will inform you about the status.
 
 ```
-    func didFinishTransaction(error: ResponseError?) {
-        if error == nil {
+    fun didFinishTransaction(response: TransactionResponse?, error: ResponseError?) {
+        if (error == null) {
            // no error
         } else {
            // you should inform about the error
@@ -451,4 +451,4 @@ After the transaction is processed a delegate method will inform you about the s
 ```
 
 
-Full Kotlin example of the Clearent Wrapper integration  integration [Kotlin Example](https://).
+Kotlin example of the Clearent Wrapper integration integration [Kotlin Example](https://github.com/clearent/ClearentWrapperDemo/tree/Kotlin).
