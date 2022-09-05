@@ -17,7 +17,7 @@ class App : Application() {
         }
     }
 
-    private fun initSdkWrapper() = ClearentWrapper.initializeReader(
+    private fun initSdkWrapper() = ClearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             Constants.PUBLIC_KEY_SANDBOX,
