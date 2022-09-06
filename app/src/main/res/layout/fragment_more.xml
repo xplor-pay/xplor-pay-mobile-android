@@ -66,29 +66,14 @@
         app:layout_constraintTop_toBottomOf="@id/url_label" />
 
     <TextView
-        android:id="@+id/public_key_label"
-        android:layout_width="0dp"
+        android:id="@+id/version_number"
+        style="@style/TextPrimaryStartSingleLine14"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/label_public_key"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/url_text"
-        app:layout_constraintStart_toStartOf="@id/url_text"
+        android:layout_margin="@dimen/margin_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/url_text" />
-
-    <TextView
-        android:id="@+id/public_key_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="@id/public_key_label"
-        app:layout_constraintStart_toStartOf="@id/public_key_label"
-        app:layout_constraintTop_toBottomOf="@id/public_key_label" />
 
     <TextView
         android:id="@+id/api_key_label"
@@ -98,34 +83,69 @@
         android:text="@string/label_api_key"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/public_key_text"
-        app:layout_constraintStart_toStartOf="@id/public_key_text"
-        app:layout_constraintTop_toBottomOf="@id/public_key_text" />
+        app:layout_constraintEnd_toEndOf="@id/version_number"
+        app:layout_constraintStart_toStartOf="@id/version_number"
+        app:layout_constraintTop_toBottomOf="@id/version_number" />
 
-    <TextView
-        android:id="@+id/api_key_text"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/api_key_text_input"
+        style="@style/TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@color/white"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:textSize="13sp"
+        app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="@id/api_key_label"
         app:layout_constraintStart_toStartOf="@id/api_key_label"
-        app:layout_constraintTop_toBottomOf="@id/api_key_label" />
+        app:layout_constraintTop_toBottomOf="@id/api_key_label">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/version_number"
-        style="@style/TextPrimaryStartSingleLine14"
-        android:layout_width="match_parent"
+        android:id="@+id/public_key_label"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
+        android:layout_marginTop="10dp"
+        android:text="@string/label_public_key"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="@id/api_key_text_input"
+        app:layout_constraintStart_toStartOf="@id/api_key_text_input"
+        app:layout_constraintTop_toBottomOf="@id/api_key_text_input" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/public_key_text_input"
+        style="@style/TextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:endIconMode="password_toggle"
+        app:layout_constraintEnd_toEndOf="@id/public_key_label"
+        app:layout_constraintStart_toStartOf="@id/public_key_label"
+        app:layout_constraintTop_toBottomOf="@id/public_key_label">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/save_keys"
+        app:backgroundTint="@color/teal_200"
+        android:theme="@style/SaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/button_save_keys_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/api_key_text" />
+        app:layout_constraintTop_toBottomOf="@id/public_key_text_input" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/view_logs"
         style="@style/LoggerButton"
         android:layout_width="wrap_content"
@@ -134,9 +154,9 @@
         android:text="@string/button_view_logs_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/version_number" />
+        app:layout_constraintTop_toBottomOf="@id/save_keys" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/delete_logs"
         style="@style/LoggerButton"
         android:layout_width="wrap_content"
@@ -147,7 +167,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_logs" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/share_logs"
         style="@style/LoggerButton"
         android:layout_width="wrap_content"

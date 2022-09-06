@@ -10,19 +10,24 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
 import com.xplore.paymobile.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class MoreFragment : Fragment() {
 
     companion object {
         private const val numberOfVisibleDigits = 0
     }
+
+    private val viewModel by viewModels<MoreViewModel>()
 
     private var _binding: FragmentMoreBinding? = null
 
@@ -49,6 +54,21 @@ class MoreFragment : Fragment() {
 
     private fun populateUI() {
         binding.apply {
+            saveKeys.setOnClickListener {
+                val apiKey = apiKeyTextInput.editText?.text?.toString() ?: ""
+                val publicKey = publicKeyTextInput.editText?.text?.toString() ?: ""
+                viewModel.setApiKey(apiKey)
+                viewModel.setPublicKey(publicKey)
+                if (SDKWrapper.currentReader?.isConnected == true) {
+                    SDKWrapper.disconnect()
+                }
+                SDKWrapper.initializeReader(
+                    requireContext(),
+                    if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
+                    publicKey,
+                    apiKey
+                )
+            }
             viewLogs.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
             }
@@ -60,11 +80,12 @@ class MoreFragment : Fragment() {
                 shareLogsFile()
             }
 
+            apiKeyTextInput.editText?.setText(viewModel.getApiKey())
+            publicKeyTextInput.editText?.setText(viewModel.getPublicKey())
+
             versionNumber.text = getString(R.string.version_number_format, BuildConfig.VERSION_NAME)
 
             urlText.text = Constants.BASE_URL_SANDBOX
-            publicKeyText.text = hideKey(Constants.PUBLIC_KEY_SANDBOX)
-            apiKeyText.text = hideKey(Constants.API_KEY_SANDBOX)
             switchButton.setOnCheckedChangeListener { _, isChecked ->
                 prodLabel.setTextColor(
                     ContextCompat.getColor(
@@ -80,10 +101,6 @@ class MoreFragment : Fragment() {
                 )
                 urlText.text =
                     if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
-                publicKeyText.text =
-                    if (isChecked) hideKey(Constants.PUBLIC_KEY_PROD) else hideKey(Constants.PUBLIC_KEY_SANDBOX)
-                apiKeyText.text =
-                    if (isChecked) hideKey(Constants.API_KEY_PROD) else hideKey(Constants.API_KEY_SANDBOX)
             }
         }
     }
