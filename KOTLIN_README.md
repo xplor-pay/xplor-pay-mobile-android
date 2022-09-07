@@ -227,7 +227,7 @@ In order to customize texts used in the SDK you will need to override strings in
 
 ## Code Example
 
-Kotlin example of the ClearentSDKUI integration [Kotlin Example](https://github.com/clearent/ClearentSDKUIDemo/tree/Kotlin).
+Kotlin example of the ClearentSDKUI integration [Java Example](https://github.com/clearent/ClearentSDKUIDemo/tree/Java).
 
 
 ```
@@ -296,7 +296,7 @@ In order to perform transaction using the VP3300 card reader you will need to pa
 
 In this step the SDK performs a Bluetooth search in order to discover the card readers around with the method **startSearching(searchDuration: Int? = null)** where search duration is the number of seconds the sdk will search for readers before returning them, the default value is 5 seconds. The SDK uses continuous search by default, stopping a search is done by connecting to a reader or by calling **stopSearching()**. In order for the device to be discoverable, it needs to be turned on and in range of the mobile device. The result of the Bluetooth search is a list of devices of type ReaderStatus and you will get the list from the delegate method **didFindReaders(readers: List<ReaderStatus>)**. In case no readers are found, the list will be empty.
 
-Once you have the list of available readers the next step is to select the reader you want to connect to using the **connectTo(reader: ReaderInfo)** method that will try to connect the reader. Once the SDK manages to connect to the reader the delegate method **deviceDidConnect()** will get called indicating the connection was successful.
+Once you have the list of available readers the next step is to select the reader you want to connect to using the **selectReader(reader: ReaderStatus, tryConnect: Boolean = true)** method that will try to connect the reader if the 'tryConnect' variable is true. Once the SDK manages to connect to the reader the delegate method **deviceDidConnect()** will get called indicating the connection was successful.
 
 
 ## Performing a transaction
@@ -326,26 +326,26 @@ You can start a transaction using startTransaction(saleEntity: SaleEntity, manua
 
 **Cancelling , voiding and refunding a transaction**
 
-If you started a card reader transaction and want to cancel it you can use cancelTransaction() method and after this call the card reader will be ready to take another transaction. You can use this method only before the card is read by the card reader. Once the card has been read the transaction will be performed and the transaction will be also registered by the payment gateway. In this case you can use the **voidTransaction(transactionId: String)** to void the transaction you want (this will work only if the transaction was not yet processed by the gateway). Another option is to perform a refund using the **refundTransaction(transactionToken: String, saleEntity: SaleEntity)**.
+If you started a card reader transaction and want to cancel it you can use cancelTransaction() method and after this call the card reader will be ready to take another transaction. You can use this method only before the card is read by the card reader. Once the card has been read the transaction will be performed and the transaction will be also registered by the payment gateway. In this case you can use the **voidTransaction(String transactionId)** to void the transaction you want (this will work only if the transaction was not yet processed by the gateway). Another option is to perform a refund using the **refundTransaction(String transactionToken, SaleEntity saleEntity)**.
 
 
 ## Getting information related to the card reader status
 
-Sometimes you will need to request and display new information related to the reader like battery status or signal strength. You can achieve this by using the **startDeviceInfoUpdate()** method, calling this method will start fetching new information from the connected reader. To receive updates about the reader you must implement the **interface ReaderStatusListener** which has a method **fun onReaderStatusUpdate(readerStatus: ReaderStatus?)** that will be called. After implementing the interface you can register and unregister for updates with the methods **addReaderStatusListener(listener: ReaderStatusListener)**, respectively **removeReaderStatusListener(listener: ReaderStatusListener)**.
+Sometimes you will need to request and display new information related to the reader like battery status or signal strength. You can achieve this by using the **startDeviceInfoUpdate()** method, calling this method will start fetching new information from the connected reader. To receive updates about the reader you must implement the **interface ReaderStatusListener** which has a method **fun onReaderStatusUpdate(ReaderStatus readerStatus)** that will be called. After implementing the interface you can register and unregister for updates with the methods **addReaderStatusListener(ReaderStatusListener listener)**, respectively **removeReaderStatusListener(ReaderStatusListener listener)**.
 
 
 ## Getting information related to previously paired readers
 
 Each time you pair a new reader the SDK will save its information in Shared Preferences. You can get the list using the **fun getRecentlyPairedReaders(): List<ReaderStatus>** method inside the SDK wrapper.
 
-You can check if a reader is connected by using the **fun isReaderConnected(): Boolean** method or by checking the **isConnected** property of the **currentReader**.
+You can check if a reader is connected by using the **public Boolean isReaderConnected()** method or by checking the **isConnected** property of the **currentReader**.
 
 
 
 ## Uploading a signature
 
 If you want to upload a signature image after a transaction, you can use
-**fun sendSignatureWithImage(signature: Bitmap)**. After this method is called, the **didFinishSignature(response: SignatureResponse?, error: ResponseError?)** delegate method will be called. Note that the sendSignature method will use the latest transaction ID as the ID for the signature in the API call, which will be lost on application restart.
+**sendSignatureWithImage(Bitmap signature)**. After this method is called, the **didFinishSignature(@Nullable SignatureResponse signatureResponse, @Nullable ResponseError responseError)** delegate method will be called. Note that the sendSignature method will use the latest transaction ID as the ID for the signature in the API call, which will be lost on application restart.
 
 
 ## Relevant code snippets
@@ -354,13 +354,28 @@ If you want to upload a signature image after a transaction, you can use
 **Initialisation**
 
 ```
-    ClearentWrapper.initializeReader(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
-    )
+    ClearentWrapper.INSTANCE.initializeSDK(
+        getApplicationContext(),
+        Constants.BASE_URL_SANDBOX,
+        Constants.PUBLIC_KEY_SANDBOX,
+        Constants.API_KEY_SANDBOX
+    );
 ```
+
+You will also need to implement the ClearentWrapperListener interface and set it as the listener for the ClearentWrapper:
+
+```
+public class ClearentDataSource implements ClearentWrapperListener {
+    // implement the methods...
+}
+
+// Start listening to data
+ClearentWrapper.INSTANCE.setListener(ClearentDataSource);
+
+// Stop listening to data when the SDK is not used anymore
+ClearentWrapper.INSTANCE.removeListener();
+```
+
 
 
 **Pairing a device**
@@ -368,13 +383,14 @@ If you want to upload a signature image after a transaction, you can use
 Calling this method will start the process of pairing a card reader with an Android device.
 
 ```
-    ClearentWrapper.startSearching()
+    ClearentWrapper.INSTANCE.startSearching()
 ```
 
 After the search for readers is completed the SDK will trigger a delegate method.
 
 ```
-    fun didFindReaders(readers: List<ReaderStatus>)  {
+    @Override
+    public void didFindReaders(@NonNull List<ReaderStatus> list) {
         // you can display the list of readers on the UI
     }
 ```
@@ -386,7 +402,7 @@ After the user selects one of the readers from the list you need to tell the SDK
 
 ```
    // readerStatus is a ReaderStatus item
-   ClearentWrapper.selectReader(readerStatus)
+   ClearentWrapper.INSTANCE.selectReader(readerStatus)
 ```
 
 The SDK will try to connect to the selected device and it will call the ```deviceDidConnect()``` method when a successful connection is established.
@@ -398,24 +414,49 @@ Now you can use the paired reader to start performing transactions.
 Using a card reader
 
 ```
-   // Define a SaleEntity, you can also add client information on the SaleEntity
-   ClearentWrapper.startTransactionWithAmount(
-        SaleEntity(
-            amount = SaleEntity.formatAmount(amount)
-            tipAmount = SaleEntity.formatAmount(tipAmount)
-        )
-    )
+    // Define a SaleEntity
+    SaleEntity saleEntity = new SaleEntity(
+        SaleEntity.Companion.formatAmount(22.0),
+        null,  // you can also add client information
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
+    ClearentWrapper.INSTANCE.startTransaction(saleEntity, null);
 ```
 
 Using manual card entry
 
 ```
-   // Define a SaleEntity, you can also add client information on the SaleEntity
-   val saleEntity = SaleEntity(amount = 22.0, tipAmount = 5)
+    // Define a SaleEntity
+    SaleEntity saleEntity = new SaleEntity(
+        SaleEntity.Companion.formatAmount(22.0), // chargeAmount
+        SaleEntity.Companion.formatAmount(5.0),  // tipAmount
+        null,  // you can also add client information
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
 
    // Create a manual card entry instance
-   val manualEntry = ManualEntryCardInfo(card = "4111111111111111", expirationDateMMYY = "0932", csc = "999")
-   ClearentWrapper.startTransaction(saleEntity = saleEntity, manualEntryCardInfo = manualEntryCardInfo)
+   ManualEntryCardInfo manualEntry = new ManualEntryCardInfo("4111111111111111", "0932", "999")
+   
+   ClearentWrapper.INSTANCE.startTransaction(saleEntity, manualEntryCardInfo)
 ```
 
 After starting a transaction feedback messages will be triggered on the delegate.
@@ -423,7 +464,8 @@ After starting a transaction feedback messages will be triggered on the delegate
 
 User action needed indicates that the user/client needs to perform an action in order for the transaction to continue e.g. Insert the card.
 ```
-    fun userActionNeeded(userAction: UserAction) {
+    @Override
+    public void userActionNeeded(@NonNull UserAction userAction) {
         // here you should check the user action type and display the informtion to the users
     }
 ```
@@ -432,7 +474,8 @@ User action needed indicates that the user/client needs to perform an action in 
 User info contains information related to the transaction status e.g. Processing
 
 ```
-    fun didReceiveInfo(userInfo: UserInfo) {
+    @Override
+    public void didReceiveInfo(@NonNull UserInfo userInfo) {
         // you should display the information to the users
     }
 ```
@@ -441,8 +484,9 @@ User info contains information related to the transaction status e.g. Processing
 After the transaction is processed a delegate method will inform you about the status.
 
 ```
-    fun didFinishTransaction(response: TransactionResponse?, error: ResponseError?) {
-        if (error == null) {
+    @Override
+    public void didFinishTransaction(@Nullable TransactionResponse transactionResponse, @Nullable ResponseError responseError) {
+        if (responseError == null) {
            // no error
         } else {
            // you should inform about the error
@@ -451,4 +495,4 @@ After the transaction is processed a delegate method will inform you about the s
 ```
 
 
-Kotlin example of the Clearent Wrapper integration integration [Kotlin Example](https://github.com/clearent/ClearentWrapperDemo/tree/Kotlin).
+Kotlin example of the Clearent Wrapper integration integration [Java Example](https://github.com/clearent/ClearentWrapperDemo/tree/Java).
