@@ -21,8 +21,8 @@ import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
-import com.clearent.idtech.android.wrapper.ui.ClearentSDKUI
-import com.clearent.idtech.android.wrapper.ui.ClearentSDKUI.Companion.SDK_WRAPPER_RESULT_CODE
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.SDK_WRAPPER_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
@@ -243,42 +243,42 @@ class HomeFragment : Fragment(), ReaderStatusListener {
 
         transactionOngoing = true
 
-        val intent = Intent(requireContext(), ClearentSDKUI::class.java)
+        val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
         when (sdkWrapperAction) {
             is SDKWrapperAction.Pairing -> {
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_PAIR
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_PAIR
                 )
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKActivity.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
             }
             is SDKWrapperAction.DevicesList ->
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_DEVICES
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_DEVICES
                 )
             is SDKWrapperAction.Transaction -> {
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKUI.SDK_WRAPPER_ACTION_TRANSACTION
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
+                    ClearentSDKActivity.SDK_WRAPPER_ACTION_TRANSACTION
                 )
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_AMOUNT_KEY,
+                    ClearentSDKActivity.SDK_WRAPPER_AMOUNT_KEY,
                     sdkWrapperAction.amount
                 )
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_SHOW_HINTS,
+                    ClearentSDKActivity.SDK_WRAPPER_SHOW_HINTS,
                     sdkWrapperAction.showHints
                 )
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_SHOW_SIGNATURE,
+                    ClearentSDKActivity.SDK_WRAPPER_SHOW_SIGNATURE,
                     sdkWrapperAction.showSignature
                 )
                 intent.putExtra(
-                    ClearentSDKUI.SDK_WRAPPER_PAYMENT_METHOD,
+                    ClearentSDKActivity.SDK_WRAPPER_PAYMENT_METHOD,
                     sdkWrapperAction.paymentMethod as Parcelable
                 )
             }
