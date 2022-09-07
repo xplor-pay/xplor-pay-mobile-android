@@ -22,9 +22,9 @@ import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
-import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.SDK_WRAPPER_RESULT_CODE
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
-import com.clearent.idtech.android.wrapper.ui.SDKWrapperAction
+import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
@@ -56,7 +56,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     ) { result ->
         Timber.d(
             "SDK UI result code: ${
-                result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0).toString()
+                result.data?.getIntExtra(CLEARENT_RESULT_CODE, 0).toString()
             }"
         )
 
@@ -65,7 +65,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         if (result.resultCode != Activity.RESULT_OK)
             return@registerForActivityResult
 
-        if (result.data?.getIntExtra(SDK_WRAPPER_RESULT_CODE, 0)
+        if (result.data?.getIntExtra(CLEARENT_RESULT_CODE, 0)
                 ?.and(SdkUiResultCode.TransactionSuccess.value) != 0
         ) clearChargeAmount()
     }
@@ -212,7 +212,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
             }
             chargeButton.setOnClickListener {
                 startSdkActivityForResult(
-                    SDKWrapperAction.Transaction(
+                    ClearentAction.Transaction(
                         chargeAmount.toDouble() / 100,
                         viewModel.shouldShowHints(),
                         shouldShowSignature,
@@ -224,54 +224,54 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     }
 
     private fun startPairingProcess() =
-        startSdkActivityForResult(SDKWrapperAction.Pairing(viewModel.shouldShowHints()))
+        startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
 
     private fun openDevicesList() =
-        startSdkActivityForResult(SDKWrapperAction.DevicesList(viewModel.shouldShowHints()))
+        startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
-    private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
+    private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (transactionOngoing)
             return
 
         transactionOngoing = true
 
         val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
-        when (sdkWrapperAction) {
-            is SDKWrapperAction.Pairing -> {
+        when (clearentAction) {
+            is ClearentAction.Pairing -> {
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_PAIR
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_PAIR
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_SHOW_HINTS,
-                    sdkWrapperAction.showHints
+                    ClearentSDKActivity.CLEARENT_SHOW_HINTS,
+                    clearentAction.showHints
                 )
             }
-            is SDKWrapperAction.DevicesList ->
+            is ClearentAction.DevicesList ->
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_DEVICES
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_DEVICES
                 )
-            is SDKWrapperAction.Transaction -> {
+            is ClearentAction.Transaction -> {
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_KEY,
-                    ClearentSDKActivity.SDK_WRAPPER_ACTION_TRANSACTION
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_AMOUNT_KEY,
-                    sdkWrapperAction.amount
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_TRANSACTION
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_SHOW_HINTS,
-                    sdkWrapperAction.showHints
+                    ClearentSDKActivity.CLEARENT_AMOUNT_KEY,
+                    clearentAction.amount
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_SHOW_SIGNATURE,
-                    sdkWrapperAction.showSignature
+                    ClearentSDKActivity.CLEARENT_SHOW_HINTS,
+                    clearentAction.showHints
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.SDK_WRAPPER_PAYMENT_METHOD,
-                    sdkWrapperAction.paymentMethod as Parcelable
+                    ClearentSDKActivity.CLEARENT_SHOW_SIGNATURE,
+                    clearentAction.showSignature
+                )
+                intent.putExtra(
+                    ClearentSDKActivity.CLEARENT_PAYMENT_METHOD,
+                    clearentAction.paymentMethod as Parcelable
                 )
             }
         }
