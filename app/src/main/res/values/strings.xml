@@ -34,10 +34,14 @@
     <string name="label_api_key">API key</string>
     <string name="hidden_key">*****%1$s</string>
     <string name="version_number_format">Version number: v%1$s</string>
+    <string name="button_save_keys_text">SAVE</string>
     <string name="button_view_logs_text">VIEW LOGS</string>
     <string name="button_delete_logs_text">DELETE LOGS</string>
     <string name="button_share_logs_text">SHARE LOGS</string>
     <string name="first_reader_button_text">Pair your first reader</string>
     <string name="hints_skip_pairing_button_text">Skip pairing for now</string>
     <string name="first_pairing_tip_text">Lets start by pairing your reader with your mobile app. Click on the button above.</string>
+    <string name="ok">OK</string>
+    <string name="keys_alert_title">Info</string>
+    <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
 </resources>

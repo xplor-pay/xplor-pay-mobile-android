@@ -1,16 +1,20 @@
 package com.xplore.paymobile
 
 import android.app.Application
-import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.SDKWrapper
 import com.xplore.paymobile.util.Constants
+import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
+
+    private lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
+
     override fun onCreate() {
         super.onCreate()
+        encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
         initSdkWrapper()
 
         if (BuildConfig.DEBUG) {
@@ -18,10 +22,14 @@ class App : Application() {
         }
     }
 
-    private fun initSdkWrapper() = SDKWrapper.initializeReader(
+    private fun initSdkWrapper() {
+        val apiKey = encryptedPrefs.getApiKey()
+        val publicKey = encryptedPrefs.getPublicKey()
+        SDKWrapper.initializeReader(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
-            Constants.PUBLIC_KEY_SANDBOX,
-            Constants.API_KEY_SANDBOX
+            publicKey,
+            apiKey
         )
+    }
 }

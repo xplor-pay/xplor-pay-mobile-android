@@ -29,6 +29,7 @@ import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
@@ -228,6 +229,13 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         startSdkActivityForResult(SDKWrapperAction.DevicesList)
 
     private fun startSdkActivityForResult(sdkWrapperAction: SDKWrapperAction) {
+        if (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty()) {
+            BasicDialog(
+                getString(R.string.keys_alert_title),
+                getString(R.string.keys_alert_message)
+            ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
+            return
+        }
         if (transactionOngoing)
             return
 
