@@ -59,10 +59,10 @@ class MoreFragment : Fragment() {
                 val publicKey = publicKeyTextInput.editText?.text?.toString() ?: ""
                 viewModel.setApiKey(apiKey)
                 viewModel.setPublicKey(publicKey)
-                if (SDKWrapper.currentReader?.isConnected == true) {
-                    SDKWrapper.disconnect()
+                if (ClearentWrapper.currentReader?.isConnected == true) {
+                    ClearentWrapper.disconnect()
                 }
-                SDKWrapper.initializeReader(
+                ClearentWrapper.initializeSDK(
                     requireContext(),
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
                     publicKey,
