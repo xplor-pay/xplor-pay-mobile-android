@@ -14,12 +14,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
-        initSdkWrapper()
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
+        encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
+        initSdkWrapper()
     }
 
     private fun initSdkWrapper() {
