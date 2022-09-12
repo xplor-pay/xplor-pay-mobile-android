@@ -12,7 +12,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.clearent.idtech.android.wrapper.SDKWrapper
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
@@ -73,7 +73,7 @@ class MoreFragment : Fragment() {
                 findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
             }
             deleteLogs.setOnClickListener {
-                SDKWrapper.deleteLogs()
+                ClearentWrapper.deleteLogs()
                 Toast.makeText(requireContext(), "Logs deleted", Toast.LENGTH_SHORT).show()
             }
             shareLogs.setOnClickListener {
@@ -109,7 +109,7 @@ class MoreFragment : Fragment() {
         val senderIntent = Intent(Intent.ACTION_SEND)
 
         // Get the file we want to share
-        val file = SDKWrapper.getLogFile(requireContext())
+        val file = ClearentWrapper.getLogFile(requireContext())
 
         // Try to retrieve the uri of the file
         val fileUri: Uri? = try {
