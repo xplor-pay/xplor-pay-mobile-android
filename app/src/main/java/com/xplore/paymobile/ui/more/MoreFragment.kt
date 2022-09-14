@@ -16,6 +16,7 @@ import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -68,6 +69,10 @@ class MoreFragment : Fragment() {
                     publicKey,
                     apiKey
                 )
+                BasicDialog(
+                    getString(R.string.keys_alert_title),
+                    getString(R.string.keys_update_message)
+                ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
             }
             viewLogs.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
