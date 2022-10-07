@@ -16,15 +16,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.listener.OfflineModeEnabledListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
+import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
-import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), ReaderStatusListener {
+class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListener {
 
     companion object {
         private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
@@ -94,6 +95,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         setUpNumpad()
         setListeners()
         ClearentWrapper.addReaderStatusListener(this)
+        ClearentWrapper.addOfflineModeEnabledListener(this)
     }
 
     private fun setupPaymentMethodClickListeners() {
@@ -290,6 +292,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         super.onDestroyView()
         _binding = null
         ClearentWrapper.removeReaderStatusListener(this)
+        ClearentWrapper.removeOfflineModeEnabledListener(this)
     }
 
     private fun renderChargeAmount() {
@@ -442,6 +445,12 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
+        }
+    }
+
+    override fun onOfflineModeChanged(enabled: Boolean) {
+        lifecycleScope.launch {
+            binding.offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
         }
     }
 }

@@ -45,4 +45,5 @@
     <string name="keys_alert_title">Info</string>
     <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
     <string name="keys_update_message">New values were saved.</string>
+    <string name="offline_mode_enabled_text">Offline Mode Enabled</string>
 </resources>
