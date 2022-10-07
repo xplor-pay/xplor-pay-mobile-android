@@ -231,7 +231,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
-        if (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty()) {
+        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
             BasicDialog(
                 getString(R.string.keys_alert_title),
                 getString(R.string.keys_alert_message)
