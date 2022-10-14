@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
 
@@ -48,15 +50,15 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             when (view.getId()) {
                 R.id.radio_button_1 ->
                     if (checked) {
-                        ClearentWrapper.storeAndForwardMode = StoreAndForwardMode.ON
+                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.ON
                     }
                 R.id.radio_button_2 ->
                     if (checked) {
-                        ClearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
+                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
                     }
                 R.id.radio_button_3 ->
                     if (checked) {
-                        ClearentWrapper.storeAndForwardMode = StoreAndForwardMode.OFF
+                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.OFF
                     }
             }
         }
@@ -64,8 +66,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        ClearentWrapper.registerNetworkListener()
 
         setupListener()
 
@@ -96,14 +96,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
     private fun setupListener() {
-        ClearentWrapper.setListener(ClearentDataSource)
+        clearentWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ClearentWrapper.removeListener()
-
-        ClearentWrapper.unregisterNetworkCallback()
+        clearentWrapper.removeListener()
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {

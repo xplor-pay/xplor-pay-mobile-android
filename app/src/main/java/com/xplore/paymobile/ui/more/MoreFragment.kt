@@ -31,6 +31,8 @@ class MoreFragment : Fragment() {
 
     private val viewModel by viewModels<MoreViewModel>()
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private var _binding: FragmentMoreBinding? = null
 
     // This property is only valid between onCreateView and
@@ -61,10 +63,10 @@ class MoreFragment : Fragment() {
                 val publicKey = publicKeyTextInput.editText?.text?.toString() ?: ""
                 viewModel.setApiKey(apiKey)
                 viewModel.setPublicKey(publicKey)
-                if (ClearentWrapper.currentReader?.isConnected == true) {
-                    ClearentWrapper.disconnect()
+                if (clearentWrapper.currentReader?.isConnected == true) {
+                    clearentWrapper.disconnect()
                 }
-                ClearentWrapper.initializeSDK(
+                clearentWrapper.initializeSDK(
                     requireContext(),
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
                     publicKey,
@@ -79,7 +81,7 @@ class MoreFragment : Fragment() {
                 findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
             }
             deleteLogs.setOnClickListener {
-                ClearentWrapper.deleteLogs()
+                clearentWrapper.deleteLogs()
                 Toast.makeText(requireContext(), "Logs deleted", Toast.LENGTH_SHORT).show()
             }
             shareLogs.setOnClickListener {
@@ -109,7 +111,7 @@ class MoreFragment : Fragment() {
                     if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
             }
 
-            when (ClearentWrapper.storeAndForwardMode) {
+            when (clearentWrapper.storeAndForwardMode) {
                 ON -> radioButton1.isChecked = true
                 PROMPT -> radioButton2.isChecked = true
                 OFF -> radioButton3.isChecked = true
@@ -122,7 +124,7 @@ class MoreFragment : Fragment() {
         val senderIntent = Intent(Intent.ACTION_SEND)
 
         // Get the file we want to share
-        val file = ClearentWrapper.getLogFile(requireContext())
+        val file = clearentWrapper.getLogFile(requireContext())
 
         // Try to retrieve the uri of the file
         val fileUri: Uri? = try {

@@ -46,6 +46,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private val viewModel by viewModels<HomeViewModel>()
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private var chargeAmount = ""
     private var transactionOngoing = false
     private var shouldShowSignature = true
@@ -94,8 +96,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         renderChargeAmount()
         setUpNumpad()
         setListeners()
-        ClearentWrapper.addReaderStatusListener(this)
-        ClearentWrapper.addOfflineModeEnabledListener(this)
+        clearentWrapper.addReaderStatusListener(this)
+        clearentWrapper.addOfflineModeEnabledListener(this)
     }
 
     private fun setupPaymentMethodClickListeners() {
@@ -291,8 +293,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        ClearentWrapper.removeReaderStatusListener(this)
-        ClearentWrapper.removeOfflineModeEnabledListener(this)
+        clearentWrapper.removeReaderStatusListener(this)
+        clearentWrapper.removeOfflineModeEnabledListener(this)
     }
 
     private fun renderChargeAmount() {

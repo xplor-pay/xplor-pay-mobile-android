@@ -13,6 +13,8 @@ import javax.inject.Inject
 @HiltAndroidApp
 class App : Application() {
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     @Inject
     lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
 
@@ -31,7 +33,7 @@ class App : Application() {
     private fun initSdkWrapper() {
         val apiKey = encryptedPrefs.getApiKey()
         val publicKey = encryptedPrefs.getPublicKey()
-        ClearentWrapper.initializeSDK(
+        clearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             publicKey,
@@ -42,8 +44,8 @@ class App : Application() {
         if (sharedPrefs.isSdkSetUp())
             return
 
-        ClearentWrapper.storeAndForwardEnabled = true
-        ClearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
+        clearentWrapper.storeAndForwardEnabled = true
+        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
         sharedPrefs.sdkSetupComplete()
     }
 }
