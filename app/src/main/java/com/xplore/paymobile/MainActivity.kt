@@ -16,7 +16,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.model.StoreAndForwardMode
+import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding

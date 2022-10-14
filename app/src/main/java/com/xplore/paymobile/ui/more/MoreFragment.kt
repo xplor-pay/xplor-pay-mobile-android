@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.model.StoreAndForwardMode.*
+import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode.*
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding

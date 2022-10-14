@@ -2,7 +2,7 @@ package com.xplore.paymobile
 
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.model.StoreAndForwardMode
+import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.util.SharedPreferencesDataSource
