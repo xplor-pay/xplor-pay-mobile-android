@@ -16,10 +16,10 @@ class App : Application() {
     private val clearentWrapper = ClearentWrapper.getInstance()
 
     @Inject
-    lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
+    internal lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
 
     @Inject
-    lateinit var sharedPrefs: SharedPreferencesDataSource
+    internal lateinit var sharedPrefs: SharedPreferencesDataSource
 
     override fun onCreate() {
         super.onCreate()
