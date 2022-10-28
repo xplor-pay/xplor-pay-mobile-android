@@ -2,6 +2,7 @@ package com.xplore.paymobile
 
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
@@ -37,7 +38,9 @@ class App : Application() {
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             publicKey,
-            apiKey
+            apiKey,
+            //TODO proper key management
+            OfflineModeConfig("PassPhrase")
         )
 
         // set up the sdk store and forward mode once so we don't override user preferences
