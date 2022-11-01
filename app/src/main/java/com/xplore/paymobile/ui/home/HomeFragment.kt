@@ -172,6 +172,12 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     }
 
     private fun setNumericKeyPadBackground() {
+        binding.processOfflineTransactions.setOnClickListener {
+            clearentWrapper.processOfflineTransactions()
+        }
+        binding.addOfflineTransactions.setOnClickListener {
+            clearentWrapper.mockOfflineTransactions()
+        }
         binding.numpad.root.setBackgroundResource(R.drawable.bg_numeric_key_pad)
     }
 
