@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -172,14 +174,13 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 renderReader(it)
             } ?: run {
                 binding.firstReader.visibility = View.VISIBLE
-                binding.readerInfo.root.visibility = View.GONE
+                binding.readerContainer.visibility = View.GONE
             }
         }
     }
 
     private fun renderReader(readerStatus: ReaderStatus?) {
         binding.firstReader.visibility = View.GONE
-        binding.readerInfo.root.visibility = View.VISIBLE
         setReaderState(ReaderState.fromReaderStatus(readerStatus))
     }
 
@@ -236,6 +237,10 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                         if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
                     )
                 )
+            }
+            settingsButton.setOnClickListener {
+                Toast.makeText(activity, "Settings", Toast.LENGTH_LONG).show()
+                // Start the Settings screen here
             }
         }
     }
@@ -379,17 +384,21 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setReaderPaired(readerState: ReaderState.ReaderPaired) {
         binding.apply {
-            readerInfo.apply {
-                devicePaired.visibility = View.VISIBLE
+            settingsSeparator.isVisible = true
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(binding.currentReader)
+            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.reader_container, ConstraintSet.END)
+            constraintSet.applyTo(binding.currentReader)
 
+            readerContainer.isVisible = true
+            readerState.apply {
+                devicesDropdown.text = reader.displayName
+                renderDeviceSignalStrength(signal)
+                renderDeviceBatteryLevel(battery)
+            }
+            readerInfo.apply {
                 noDeviceConnected.visibility = View.GONE
                 deviceIdle.visibility = View.GONE
-
-                readerState.apply {
-                    devicesDropdown.text = reader.displayName
-                    renderDeviceSignalStrength(signal)
-                    renderDeviceBatteryLevel(battery)
-                }
             }
         }
     }
@@ -429,9 +438,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setNoReaderPaired() {
         binding.apply {
+            devicesDropdown.text = getString(R.string.no_reader_message)
             readerInfo.apply {
-                devicesDropdown.text = getString(R.string.no_reader_message)
-
                 noDeviceConnected.visibility = View.VISIBLE
 
                 deviceIdle.visibility = View.GONE
@@ -442,9 +450,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
+            devicesDropdown.text = readerState.reader.displayName
             readerInfo.apply {
-                devicesDropdown.text = readerState.reader.displayName
-
                 deviceIdle.visibility = View.VISIBLE
 
                 noDeviceConnected.visibility = View.GONE
@@ -464,7 +471,14 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     override fun onOfflineModeChanged(enabled: Boolean) {
         lifecycleScope.launch {
-            binding.offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+            clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
+                lifecycleScope.launch {
+                    binding.apply {
+                        offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size)
+                        offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+                    }
+                }
+            }, onError = {})
         }
     }
 }
