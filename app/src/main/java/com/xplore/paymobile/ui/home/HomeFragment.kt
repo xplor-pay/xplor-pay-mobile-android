@@ -224,7 +224,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                openDevicesList()
+//                openDevicesList()
+                openSettings()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -251,6 +252,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun openDevicesList() =
         startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
+
+    private fun openSettings() =
+        startSdkActivityForResult(ClearentAction.Settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
@@ -281,6 +285,11 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 intent.putExtra(
                     ClearentSDKActivity.CLEARENT_ACTION_KEY,
                     ClearentSDKActivity.CLEARENT_ACTION_DEVICES
+                )
+            is ClearentAction.Settings ->
+                intent.putExtra(
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_SETTINGS
                 )
             is ClearentAction.Transaction -> {
                 intent.putExtra(
