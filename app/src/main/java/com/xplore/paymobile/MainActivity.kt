@@ -2,7 +2,6 @@ package com.xplore.paymobile
 
 import android.os.Bundle
 import android.view.View
-import android.widget.RadioButton
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,7 +15,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
@@ -40,29 +38,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
         registerForActivityResult(multiplePermissionsContract) {}
-
-    fun onRadioButtonClicked(view: View) {
-        if (view is RadioButton) {
-            // Is the button now checked?
-            val checked = view.isChecked
-
-            // Check which radio button was clicked
-            when (view.getId()) {
-                R.id.radio_button_1 ->
-                    if (checked) {
-                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.ON
-                    }
-                R.id.radio_button_2 ->
-                    if (checked) {
-                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
-                    }
-                R.id.radio_button_3 ->
-                    if (checked) {
-                        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.OFF
-                    }
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
