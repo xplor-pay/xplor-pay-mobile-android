@@ -496,9 +496,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setOfflineModeEnabledText() {
         binding.apply {
             clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
-                lifecycleScope.launch {
-                    offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
-                }
+                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
             }, onError = {
                 offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
             })
