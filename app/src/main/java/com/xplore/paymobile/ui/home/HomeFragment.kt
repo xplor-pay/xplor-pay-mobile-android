@@ -103,6 +103,13 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         clearentWrapper.addOfflineModeEnabledListener(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (binding.offlineModeEnabled.isVisible) {
+            setOfflineModeEnabledText()
+        }
+    }
+
     private fun setupOfflineProcessingMockButtons() {
         binding.apply {
             processOfflineTransactions.setOnClickListener {
@@ -173,15 +180,46 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 viewModel.firstPairDone()
                 renderReader(it)
             } ?: run {
+                setPairFirstReaderButton()
                 binding.firstReader.visibility = View.VISIBLE
-                binding.readerContainer.visibility = View.GONE
+                binding.readerInfo.root.visibility = View.GONE
             }
         }
     }
 
     private fun renderReader(readerStatus: ReaderStatus?) {
+        setReaderInfoView()
         binding.firstReader.visibility = View.GONE
+        binding.readerInfo.root.visibility = View.VISIBLE
         setReaderState(ReaderState.fromReaderStatus(readerStatus))
+    }
+
+    private fun setReaderInfoView() {
+        binding.apply {
+            settingsSeparator.isVisible = true
+
+            val params = settingsContainer.layoutParams
+            (params as ViewGroup.MarginLayoutParams).marginStart = resources.getDimensionPixelOffset(R.dimen.margin_medium_small)
+
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(currentReader)
+            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.reader_info, ConstraintSet.END)
+            constraintSet.applyTo(currentReader)
+        }
+    }
+
+    private fun setPairFirstReaderButton() {
+        binding.apply {
+            settingsSeparator.isVisible = false
+
+            val params = settingsContainer.layoutParams
+            (params as ViewGroup.MarginLayoutParams).marginStart = 0
+
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(currentReader)
+            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.first_reader, ConstraintSet.END)
+            constraintSet.applyTo(currentReader)
+        }
     }
 
     private fun setNumericKeyPadBackground() {
@@ -222,9 +260,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setListeners() {
         binding.apply {
-            readerInfo.root.setOnClickListener {
-                openDevicesList()
-            }
             firstReader.setOnClickListener {
                 startPairingProcess()
             }
@@ -247,9 +282,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun startPairingProcess() =
         startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
-
-    private fun openDevicesList() =
-        startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
@@ -384,21 +416,17 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setReaderPaired(readerState: ReaderState.ReaderPaired) {
         binding.apply {
-            settingsSeparator.isVisible = true
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(binding.currentReader)
-            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.reader_container, ConstraintSet.END)
-            constraintSet.applyTo(binding.currentReader)
-
-            readerContainer.isVisible = true
-            readerState.apply {
-                devicesDropdown.text = reader.displayName
-                renderDeviceSignalStrength(signal)
-                renderDeviceBatteryLevel(battery)
-            }
             readerInfo.apply {
+                devicePaired.visibility = View.VISIBLE
+
                 noDeviceConnected.visibility = View.GONE
                 deviceIdle.visibility = View.GONE
+
+                readerState.apply {
+                    devicesDropdown.text = reader.displayName
+                    renderDeviceSignalStrength(signal)
+                    renderDeviceBatteryLevel(battery)
+                }
             }
         }
     }
@@ -438,8 +466,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setNoReaderPaired() {
         binding.apply {
-            devicesDropdown.text = getString(R.string.no_reader_message)
             readerInfo.apply {
+                devicesDropdown.text = getString(R.string.no_reader_message)
+
                 noDeviceConnected.visibility = View.VISIBLE
 
                 deviceIdle.visibility = View.GONE
@@ -450,8 +479,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setReaderUnavailable(readerState: ReaderState.ReaderUnavailable) {
         binding.apply {
-            devicesDropdown.text = readerState.reader.displayName
             readerInfo.apply {
+                devicesDropdown.text = readerState.reader.displayName
+
                 deviceIdle.visibility = View.VISIBLE
 
                 noDeviceConnected.visibility = View.GONE
@@ -463,6 +493,18 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         }
     }
 
+    private fun setOfflineModeEnabledText() {
+        binding.apply {
+            clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
+                lifecycleScope.launch {
+                    offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
+                }
+            }, onError = {
+                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
+            })
+        }
+    }
+
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
@@ -471,14 +513,10 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     override fun onOfflineModeChanged(enabled: Boolean) {
         lifecycleScope.launch {
-            clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
-                lifecycleScope.launch {
-                    binding.apply {
-                        offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size)
-                        offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
-                    }
-                }
-            }, onError = {})
+            binding.apply {
+                offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+                setOfflineModeEnabledText()
+            }
         }
     }
 }
