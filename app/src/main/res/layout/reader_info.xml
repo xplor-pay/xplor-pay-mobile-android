@@ -9,7 +9,7 @@
         android:id="@+id/devices_dropdown"
         style="@style/TextMedium"
         android:layout_width="wrap_content"
-        android:maxWidth="230dp"
+        android:maxWidth="@dimen/devices_dropdown_max_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -119,7 +119,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/offline_mode_enabled"
-        tools:text="$0.00" />
+        tools:text="$20.00" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/payment_method_layout"
