@@ -33,9 +33,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_offline_transactions" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:id="@+id/current_reader"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,52 +49,30 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/margin_large"
             android:paddingEnd="@dimen/margin_large"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_extra_small"
+            android:layout_marginEnd="@dimen/margin_extra_small"
             android:text="@string/first_reader_button_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:visibility="gone"/>
 
         <include
             android:id="@+id/reader_info"
             layout="@layout/reader_info"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_height="wrap_content" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/settings_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/margin_medium_small"
-            app:layout_constraintStart_toEndOf="@+id/reader_info"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+    </FrameLayout>
 
-            <View
-                android:id="@+id/settings_separator"
-                style="@style/Separator"
-                android:layout_width="@dimen/separator_width"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginStart="@dimen/margin_xsmall"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_settings"
-                android:contentDescription="@null"/>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:src="@drawable/ic_settings"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toEndOf="@+id/current_reader"
+        app:layout_constraintTop_toTopOf="@+id/current_reader"
+        app:layout_constraintBottom_toBottomOf="@+id/current_reader"/>
 
     <TextView
         android:id="@+id/offline_mode_enabled"

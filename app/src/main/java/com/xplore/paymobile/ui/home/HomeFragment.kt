@@ -103,13 +103,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         clearentWrapper.addOfflineModeEnabledListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (binding.offlineModeEnabled.isVisible) {
-            setOfflineModeEnabledText()
-        }
-    }
-
     private fun setupOfflineProcessingMockButtons() {
         binding.apply {
             processOfflineTransactions.setOnClickListener {
@@ -180,7 +173,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 viewModel.firstPairDone()
                 renderReader(it)
             } ?: run {
-                setPairFirstReaderButton()
                 binding.firstReader.visibility = View.VISIBLE
                 binding.readerInfo.root.visibility = View.GONE
             }
@@ -188,38 +180,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     }
 
     private fun renderReader(readerStatus: ReaderStatus?) {
-        setReaderInfoView()
         binding.firstReader.visibility = View.GONE
         binding.readerInfo.root.visibility = View.VISIBLE
         setReaderState(ReaderState.fromReaderStatus(readerStatus))
-    }
-
-    private fun setReaderInfoView() {
-        binding.apply {
-            settingsSeparator.isVisible = true
-
-            val params = settingsContainer.layoutParams
-            (params as ViewGroup.MarginLayoutParams).marginStart = resources.getDimensionPixelOffset(R.dimen.margin_medium_small)
-
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(currentReader)
-            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.reader_info, ConstraintSet.END)
-            constraintSet.applyTo(currentReader)
-        }
-    }
-
-    private fun setPairFirstReaderButton() {
-        binding.apply {
-            settingsSeparator.isVisible = false
-
-            val params = settingsContainer.layoutParams
-            (params as ViewGroup.MarginLayoutParams).marginStart = 0
-
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(currentReader)
-            constraintSet.connect(R.id.settings_container, ConstraintSet.START, R.id.first_reader, ConstraintSet.END)
-            constraintSet.applyTo(currentReader)
-        }
     }
 
     private fun setNumericKeyPadBackground() {
