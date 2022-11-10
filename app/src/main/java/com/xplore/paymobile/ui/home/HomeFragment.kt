@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -237,6 +239,10 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                     )
                 )
             }
+            settingsButton.setOnClickListener {
+                Toast.makeText(activity, "Settings", Toast.LENGTH_LONG).show()
+                // Start the Settings screen here
+            }
         }
     }
 
@@ -456,6 +462,16 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         }
     }
 
+    private fun setOfflineModeEnabledText() {
+        binding.apply {
+            clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
+                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
+            }, onError = {
+                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
+            })
+        }
+    }
+
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
@@ -464,7 +480,10 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     override fun onOfflineModeChanged(enabled: Boolean) {
         lifecycleScope.launch {
-            binding.offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+            binding.apply {
+                offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+                setOfflineModeEnabledText()
+            }
         }
     }
 }
