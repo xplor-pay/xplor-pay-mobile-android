@@ -224,8 +224,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                Toast.makeText(activity, "Settings", Toast.LENGTH_LONG).show()
-                // Start the Settings screen here
+                openDevicesList()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -249,6 +248,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun startPairingProcess() =
         startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
+
+    private fun openDevicesList() =
+        startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
