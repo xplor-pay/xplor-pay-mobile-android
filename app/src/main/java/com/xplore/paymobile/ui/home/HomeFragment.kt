@@ -224,7 +224,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                openDevicesList()
+                openSettings()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -413,6 +413,11 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 setTextIcon(deviceSignalStrength, signalState.iconResourceId)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setOfflineModeEnabledText()
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
