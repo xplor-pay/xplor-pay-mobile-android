@@ -47,8 +47,6 @@ class App : Application() {
         if (sharedPrefs.isSdkSetUp())
             return
 
-        clearentWrapper.storeAndForwardEnabled = true
-        clearentWrapper.storeAndForwardMode = StoreAndForwardMode.PROMPT
         sharedPrefs.sdkSetupComplete()
     }
 }

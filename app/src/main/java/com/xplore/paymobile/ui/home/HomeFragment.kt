@@ -224,7 +224,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                openDevicesList()
+                openSettings()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -240,8 +240,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 )
             }
             settingsButton.setOnClickListener {
-                Toast.makeText(activity, "Settings", Toast.LENGTH_LONG).show()
-                // Start the Settings screen here
+                openSettings()
             }
         }
     }
@@ -251,6 +250,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun openDevicesList() =
         startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
+
+    private fun openSettings() =
+        startSdkActivityForResult(ClearentAction.Settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
@@ -281,6 +283,11 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 intent.putExtra(
                     ClearentSDKActivity.CLEARENT_ACTION_KEY,
                     ClearentSDKActivity.CLEARENT_ACTION_DEVICES
+                )
+            is ClearentAction.Settings ->
+                intent.putExtra(
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_SETTINGS
                 )
             is ClearentAction.Transaction -> {
                 intent.putExtra(
@@ -406,6 +413,11 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                 setTextIcon(deviceSignalStrength, signalState.iconResourceId)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setOfflineModeEnabledText()
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {

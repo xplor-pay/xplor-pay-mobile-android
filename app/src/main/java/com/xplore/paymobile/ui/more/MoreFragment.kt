@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.offline.model.StoreAndForwardMode.*
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
@@ -109,12 +108,6 @@ class MoreFragment : Fragment() {
                 )
                 urlText.text =
                     if (isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX
-            }
-
-            when (clearentWrapper.storeAndForwardMode) {
-                ON -> radioButton1.isChecked = true
-                PROMPT -> radioButton2.isChecked = true
-                OFF -> radioButton3.isChecked = true
             }
         }
     }
