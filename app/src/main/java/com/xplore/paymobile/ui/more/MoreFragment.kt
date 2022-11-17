@@ -12,7 +12,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
@@ -69,8 +71,11 @@ class MoreFragment : Fragment() {
                     requireContext(),
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
                     publicKey,
-                    apiKey
+                    apiKey,
+                    //TODO proper key management
+                    OfflineModeConfig("PassPhrase")
                 )
+                clearentWrapper.setListener(ClearentDataSource)
                 BasicDialog(
                     getString(R.string.keys_alert_title),
                     getString(R.string.keys_update_message)
