@@ -9,9 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -105,11 +103,14 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setupOfflineProcessingMockButtons() {
         binding.apply {
-            processOfflineTransactions.setOnClickListener {
-                clearentWrapper.processOfflineTransactions()
+            addProcessedOfflineTransactionWithoutErrors.setOnClickListener {
+                clearentWrapper.mockOfflineTransactions(true, false)
+            }
+            addProcessedOfflineTransactionWithErrors.setOnClickListener {
+                clearentWrapper.mockOfflineTransactions(true, true)
             }
             addOfflineTransactions.setOnClickListener {
-                clearentWrapper.mockOfflineTransactions()
+                clearentWrapper.mockOfflineTransactions(false, false)
             }
         }
     }
@@ -247,9 +248,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun startPairingProcess() =
         startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
-
-    private fun openDevicesList() =
-        startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun openSettings() =
         startSdkActivityForResult(ClearentAction.Settings)
@@ -476,7 +474,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
 
     private fun setOfflineModeEnabledText() {
         binding.apply {
-            clearentWrapper.retrieveOfflineTransactions(onRetrieved = {
+            clearentWrapper.retrieveUnprocessedOfflineTransactions(onRetrieved = {
                 offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
             }, onError = {
                 offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
