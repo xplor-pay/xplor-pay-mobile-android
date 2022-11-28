@@ -18,20 +18,34 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:text="Add offline transactions"
+        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/process_offline_transactions"
+        android:id="@+id/add_processed_offline_transaction_without_errors"
         style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        android:text="Process offline transactions"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Add processed offline transactions without errors"
+        android:textSize="11sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/add_processed_offline_transaction_with_errors"
         app:layout_constraintTop_toBottomOf="@id/add_offline_transactions" />
+
+    <Button
+        android:id="@+id/add_processed_offline_transaction_with_errors"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Add processed offline transactions with errors"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/add_processed_offline_transaction_without_errors"
+        app:layout_constraintTop_toBottomOf="@id/add_offline_transactions"/>
 
     <FrameLayout
         android:id="@+id/current_reader"
@@ -40,7 +54,7 @@
         android:layout_marginTop="@dimen/margin_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/process_offline_transactions">
+        app:layout_constraintTop_toBottomOf="@id/add_processed_offline_transaction_with_errors">
 
         <Button
             android:id="@+id/first_reader"
@@ -154,3 +168,4 @@
         tools:text="Charge $20.00" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
