@@ -75,7 +75,7 @@ class MoreFragment : Fragment() {
                 ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
             }
             viewLogs.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
+                findNavController().navigate(R.id.action_navigation_settings_to_logsFragment)
             }
             deleteLogs.setOnClickListener {
                 ClearentWrapper.deleteLogs()
