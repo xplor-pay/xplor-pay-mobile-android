@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.xplore.paymobile"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "0.92"
 
@@ -39,23 +39,22 @@ android {
     hilt {
         enableAggregatingTask = true
     }
+    kapt {
+        correctErrorTypes = true
+    }
     namespace 'com.xplore.paymobile'
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
     // Kotlin navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -67,6 +66,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycles_version"
     // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycles_version"
     // ViewModels delegate for fragments
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
@@ -80,7 +81,7 @@ dependencies {
 
     // Timber logger for file logging
     implementation "com.jakewharton.timber:timber:$timber_version"
-
+    
     implementation "androidx.security:security-crypto:$crypto_security_version"
 
     // Clearent Idtech Android SDK
