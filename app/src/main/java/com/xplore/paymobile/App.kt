@@ -2,15 +2,20 @@ package com.xplore.paymobile
 
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.xplore.paymobile.datasource.RemoteDataSource
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application() {
 
     private lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
+
+    @Inject
+    lateinit var remoteDataSource: RemoteDataSource
 
     override fun onCreate() {
         super.onCreate()
