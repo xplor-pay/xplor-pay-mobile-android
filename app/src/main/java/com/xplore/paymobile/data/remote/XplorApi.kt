@@ -25,8 +25,9 @@ interface XplorApi {
         @Path("merchantId") merchantId: String
     ): Response<MerchantDetailsResponse>
 
+    // The body will be null if there are no terminals for respective merchant
     @GET("/api/quest/terminals")
     suspend fun fetchTerminals(
         @HeaderMap headers: Map<String, String>
-    ): Response<TerminalsResponse?>
+    ): Response<TerminalsResponse>
 }
