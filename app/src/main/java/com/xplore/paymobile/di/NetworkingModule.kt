@@ -1,11 +1,11 @@
 package com.xplore.paymobile.di
 
-import com.xplore.paymobile.api.XplorApi
-import com.xplore.paymobile.datasource.RemoteDataSource
+import com.xplore.paymobile.data.remote.XplorApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
@@ -23,7 +23,7 @@ object NetworkingModule {
 
     @Singleton
     @Provides
-    fun provideInterceptors(): HttpLoggingInterceptor {
+    fun provideLoggingInterceptor(): Interceptor {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return interceptor
@@ -31,16 +31,20 @@ object NetworkingModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideHttpClient(interceptor: Interceptor): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .build()
 
     @Provides
     @Singleton
-    fun provideRetrofit(converterFactory: Converter.Factory): Retrofit =
+    fun provideRetrofit(
+        client: OkHttpClient,
+        converterFactory: Converter.Factory
+    ): Retrofit =
         Retrofit.Builder()
             .baseUrl(XplorApi.BASE_URL)
+            .client(client)
             .addConverterFactory(converterFactory)
             .build()
 
@@ -48,8 +52,4 @@ object NetworkingModule {
     @Singleton
     fun provideRestaurantApi(retrofit: Retrofit): XplorApi =
         retrofit.create(XplorApi::class.java)
-
-    @Provides
-    @Singleton
-    fun providesRemoteDataSource(xplorApi: XplorApi): RemoteDataSource = RemoteDataSource(xplorApi)
 }
