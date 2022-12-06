@@ -28,5 +28,5 @@ interface XplorApi {
     @GET("/api/quest/terminals")
     suspend fun fetchTerminals(
         @HeaderMap headers: Map<String, String>
-    ): Response<TerminalsResponse>
+    ): Response<TerminalsResponse?>
 }
