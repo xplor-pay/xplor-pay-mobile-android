@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_payment">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_payment"
         android:name="com.xplore.paymobile.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_payment"
         tools:layout="@layout/fragment_home" />
 
     <fragment
@@ -18,17 +18,30 @@
         tools:layout="@layout/fragment_transactions" />
 
     <fragment
-        android:id="@+id/navigation_more"
-        android:name="com.xplore.paymobile.ui.more.MoreFragment"
-        android:label="@string/title_more"
-        tools:layout="@layout/fragment_more" >
+        android:id="@+id/navigation_batches"
+        android:name="com.xplore.paymobile.ui.batches.BatchesFragment"
+        android:label="@string/title_batches"
+        tools:layout="@layout/fragment_batches" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.xplore.paymobile.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" >
         <action
-            android:id="@+id/action_navigation_more_to_logsFragment"
+            android:id="@+id/action_navigation_settings_to_logsFragment"
             app:destination="@id/logsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_info"
+        android:name="com.xplore.paymobile.ui.info.InfoFragment"
+        android:label="@string/title_info"
+        tools:layout="@layout/fragment_info" />
+
     <fragment
         android:id="@+id/logsFragment"
-        android:name="com.xplore.paymobile.ui.more.LogsFragment"
+        android:name="com.xplore.paymobile.ui.settings.LogsFragment"
         android:label="fragment_logs"
         tools:layout="@layout/fragment_logs" />
 </navigation>

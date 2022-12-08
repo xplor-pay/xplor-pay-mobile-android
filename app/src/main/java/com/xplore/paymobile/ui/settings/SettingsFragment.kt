@@ -1,4 +1,4 @@
-package com.xplore.paymobile.ui.more
+package com.xplore.paymobile.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -15,22 +15,22 @@ import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
-import com.xplore.paymobile.databinding.FragmentMoreBinding
+import com.xplore.paymobile.databinding.FragmentSettingsBinding
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MoreFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
     companion object {
         private const val numberOfVisibleDigits = 0
     }
 
-    private val viewModel by viewModels<MoreViewModel>()
+    private val viewModel by viewModels<SettingsViewModel>()
 
-    private var _binding: FragmentMoreBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -41,7 +41,7 @@ class MoreFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMoreBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         populateUI()
 
@@ -75,7 +75,7 @@ class MoreFragment : Fragment() {
                 ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
             }
             viewLogs.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
+                findNavController().navigate(R.id.action_navigation_settings_to_logsFragment)
             }
             deleteLogs.setOnClickListener {
                 ClearentWrapper.deleteLogs()
