@@ -12,4 +12,5 @@
     <color name="button_disabled">#272431</color>
     <color name="button_pressed">#22a540</color>
     <color name="button_enabled">#2FAC10</color>
+    <color name="blue">#4185DE</color>
 </resources>

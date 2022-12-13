@@ -47,4 +47,16 @@
     <string name="keys_alert_title">Info</string>
     <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
     <string name="keys_update_message">New values were saved.</string>
+
+    <!-- Info screen -->
+    <string name="info_screen_description">We are here to help</string>
+    <string name="info_screen_call_message">Call: %1$s (8am - 12am EST)</string>
+    <string name="info_screen_terms_and_conditions"><u>Terms and conditions</u></string>
+    <string name="info_screen_call_button_text">Call Support</string>
+    <string name="info_screen_about">About</string>
+    <string name="info_screen_app_version">App version: %1$s</string>
+    <string name="info_screen_log_out_button_text">Log Out</string>
+    <string name="client_support_phone_number">866.435.0666</string>
+    <string name="terms_and_conditions_link">https://clearent.com/merchant-agreement/</string>
+
 </resources>
