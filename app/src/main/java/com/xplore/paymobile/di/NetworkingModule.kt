@@ -50,6 +50,6 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideRestaurantApi(retrofit: Retrofit): XplorApi =
+    fun provideXplorApi(retrofit: Retrofit): XplorApi =
         retrofit.create(XplorApi::class.java)
 }
