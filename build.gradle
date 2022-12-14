@@ -11,6 +11,7 @@ buildscript {
         room_version = "2.5.0-alpha01"
         timber_version = "5.0.1"
         crypto_security_version = "1.0.0"
+        okhttp3_version = "4.10.0"
     }
     repositories {
         google()
