@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentInfoBinding
+import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,8 +21,6 @@ class InfoFragment : Fragment() {
 
     private var _binding: FragmentInfoBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var clientSupportPhoneNumber: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,14 +34,13 @@ class InfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        clientSupportPhoneNumber = getString(R.string.client_support_phone_number)
         setupTextViews()
         setupClickListeners()
     }
 
     private fun setupTextViews() {
         binding.apply {
-            callMessage.text = getString(R.string.info_screen_call_message, clientSupportPhoneNumber)
+            callMessage.text = getString(R.string.info_screen_call_message, Constants.CLIENT_SUPPORT_PHONE_NUMBER)
             appVersion.text = getString(R.string.info_screen_app_version, BuildConfig.VERSION_NAME)
         }
     }
@@ -62,15 +60,14 @@ class InfoFragment : Fragment() {
     }
 
     private fun callClientSupport() {
-        val phoneIntent = Intent(Intent.ACTION_CALL)
-        phoneIntent.data = Uri.parse("tel:" + clientSupportPhoneNumber)
+        val phoneIntent = Intent(Intent.ACTION_DIAL)
+        phoneIntent.data = Uri.parse("tel:" + Constants.CLIENT_SUPPORT_PHONE_NUMBER)
         startActivity(phoneIntent)
     }
 
     private fun openTermsAndConditionsLink() {
-        val url = getString(R.string.terms_and_conditions_link)
         val linkIntent = Intent(Intent.ACTION_VIEW)
-        linkIntent.data = Uri.parse(url)
+        linkIntent.data = Uri.parse(Constants.TERMS_AND_CONDITIONS_LINK)
         startActivity(linkIntent)
     }
 
