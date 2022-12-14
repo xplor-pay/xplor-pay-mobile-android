@@ -4,13 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.xplore.paymobile.databinding.FragmentBatchesBinding
+import com.xplore.paymobile.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BatchesFragment : Fragment() {
+class BatchesFragment : BaseFragment() {
+
+    override val hasBottomNavigation: Boolean = true
 
     private val viewModel by viewModels<BatchesViewModel>()
 

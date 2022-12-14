@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.merchantselection.PostLoginMerchantSelectFragment">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        style="@style/TextBoldBig"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_big"
+        android:text="@string/take_payment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/payment_image_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/margin_medium"
+        android:src="@drawable/ic_payment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view"
+        app:tint="@color/color_secondary" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/merchant_select_fragment"
+        android:name="com.xplore.paymobile.ui.merchantselection.MerchantSelectFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_big"
+        app:layout_constraintTop_toBottomOf="@id/payment_image_view" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/next_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedBlack"
+        android:text="@string/next"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:layout_marginHorizontal="@dimen/margin_medium_big"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/merchant_select_fragment"
+        app:layout_constraintVertical_bias="1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
