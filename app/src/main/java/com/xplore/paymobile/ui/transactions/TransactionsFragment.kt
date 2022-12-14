@@ -8,8 +8,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
+import com.xplore.paymobile.ui.base.BaseFragment
 
-class TransactionsFragment : Fragment() {
+class TransactionsFragment : BaseFragment() {
+
+    override val hasBottomNavigation: Boolean = true
 
     private var _binding: FragmentTransactionsBinding? = null
 

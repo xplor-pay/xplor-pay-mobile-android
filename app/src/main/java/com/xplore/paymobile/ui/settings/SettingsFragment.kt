@@ -16,13 +16,16 @@ import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentSettingsBinding
+import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment() {
+
+    override val hasBottomNavigation: Boolean = true
 
     companion object {
         private const val numberOfVisibleDigits = 0

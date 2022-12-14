@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     }
 
     private var hintsShowed = false
+    private var showBottomNav = true
+
     private lateinit var binding: ActivityMainBinding
 
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
@@ -103,6 +105,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
+        navView.isVisible = showBottomNav
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
@@ -173,6 +176,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun renderHints() = lifecycleScope.launch {
         delay(HINTS_DISPLAY_DELAY)
         binding.hints.root.visibility = View.VISIBLE
+    }
+
+    fun showBottomNavigation(show: Boolean) {
+        showBottomNav = show
+        findViewById<BottomNavigationView>(R.id.nav_view)?.isVisible = show
     }
 
     class ListenerCallbackObserver(
