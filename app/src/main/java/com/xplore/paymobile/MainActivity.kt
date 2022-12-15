@@ -6,6 +6,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.isVisible
+import androidx.fragment.app.commit
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -18,14 +20,24 @@ import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.ui.login.LoginFragment
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
+
+    @Inject
+    lateinit var rds: RemoteDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -41,6 +53,10 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
+        // TODO: remove this, used to remove the auth token since there is no logout
+        val spds = SharedPreferencesDataSource(applicationContext)
+        spds.setAuthToken(null)
+
         super.onCreate(savedInstanceState)
 
         setupListener()
@@ -50,6 +66,33 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupViews()
+    }
+
+    private fun setupViews() {
+        setupWebViewLogin()
+        setupAppView()
+    }
+
+    private fun setupWebViewLogin() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(
+                R.id.login_fragment,
+                LoginFragment {
+                    binding.container.isVisible = true
+                    binding.loginFragment.isVisible = false
+
+                    // TODO: remove this, used for test purposes
+                    CoroutineScope(Dispatchers.IO).launch {
+                        rds.searchMerchants(SearchMerchantOptions(null, "1", "10"))
+                    }
+                }
+            )
+        }
+    }
+
+    private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
