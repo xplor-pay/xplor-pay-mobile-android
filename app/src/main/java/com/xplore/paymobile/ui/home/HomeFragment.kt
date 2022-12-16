@@ -17,10 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
-import com.clearent.idtech.android.wrapper.model.BatteryLifeState
-import com.clearent.idtech.android.wrapper.model.ReaderState
-import com.clearent.idtech.android.wrapper.model.ReaderStatus
-import com.clearent.idtech.android.wrapper.model.SignalState
+import com.clearent.idtech.android.wrapper.model.*
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
@@ -214,7 +211,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
             chargeButton.setOnClickListener {
                 startSdkActivityForResult(
                     ClearentAction.Transaction(
-                        chargeAmount.toDouble() / 100,
+                        PaymentInfo(chargeAmount.toDouble() / 100),
                         viewModel.shouldShowHints(),
                         shouldShowSignature,
                         if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
@@ -266,8 +263,8 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     ClearentSDKActivity.CLEARENT_ACTION_TRANSACTION
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_AMOUNT_KEY,
-                    clearentAction.amount
+                    ClearentSDKActivity.CLEARENT_PAYMENT_INFO_KEY,
+                    clearentAction.paymentInfo
                 )
                 intent.putExtra(
                     ClearentSDKActivity.CLEARENT_SHOW_HINTS,
