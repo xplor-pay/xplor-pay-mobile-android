@@ -27,13 +27,13 @@ fun setupWebView(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                // if the user gesture is absent ignore the url
-                if (request?.hasGesture() != true) return true
-
                 // if we are in our domain continue inside the app
-                if (request.url.host in HOST_NAMES) {
+                if (request?.url?.host in HOST_NAMES) {
                     return false
                 }
+
+                // if the user gesture is absent ignore the url
+                if (request?.hasGesture() != true) return true
 
                 // otherwise open a browser
                 Intent(Intent.ACTION_VIEW, request.url).run {
