@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.xplore.paymobile.BuildConfig
+import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentInfoBinding
 import com.xplore.paymobile.util.Constants
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InfoFragment : Fragment() {
-
-    private val viewModel by viewModels<InfoViewModel>()
 
     private var _binding: FragmentInfoBinding? = null
     private val binding get() = _binding!!
@@ -54,7 +53,10 @@ class InfoFragment : Fragment() {
                 openTermsAndConditionsLink()
             }
             logOutButton.setOnClickListener {
-                // TODO to be implemented
+                SharedPreferencesDataSource(requireContext()).setAuthToken(null)
+                val activity = activity as MainActivity
+                activity.logout()
+                activity.navigateToPaymentScreen()
             }
         }
     }

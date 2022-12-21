@@ -1,11 +1,13 @@
 package com.xplore.paymobile.ui.login
 
 import android.content.Context
+import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.setupWebView
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,6 +38,11 @@ class LoginViewModel @Inject constructor(
     }
 
     fun prepareWebView(webView: WebView, context: Context) {
+        SharedPreferencesDataSource(context).getAuthToken() ?: run {
+            // Clear all the cookies
+            CookieManager.getInstance().removeAllCookies(null)
+            CookieManager.getInstance().flush()
+        }
         setupWebView(webView, context, jsBridge) {
             webView.loadUrl(loginPageUrl)
         }

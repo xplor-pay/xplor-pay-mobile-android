@@ -12,6 +12,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
@@ -55,9 +57,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-        // TODO: remove this, used to remove the auth token since there is no logout
-        spds.setAuthToken(null)
 
         setupListener()
 
@@ -104,7 +103,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -122,6 +122,18 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         supportActionBar?.hide()
 
         askPermissions()
+    }
+
+    fun navigateToPaymentScreen() {
+        navController.navigate(R.id.navigation_payment)
+    }
+
+    fun logout() {
+        binding.apply {
+            loginFragment.isVisible = true
+            container.isVisible = false
+        }
+        setupWebViewLogin()
     }
 
     private fun askPermissions() =
