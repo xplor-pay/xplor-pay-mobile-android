@@ -22,7 +22,8 @@ object DataSourceModule {
     fun provideSharedPrefs(
         @ApplicationContext context: Context,
         webJsonConverter: WebJsonConverter
-    ): SharedPreferencesDataSource = SharedPreferencesDataSource(context, webJsonConverter)
+    ): SharedPreferencesDataSource =
+        SharedPreferencesDataSource(context, webJsonConverter)
 
     @Singleton
     @Provides

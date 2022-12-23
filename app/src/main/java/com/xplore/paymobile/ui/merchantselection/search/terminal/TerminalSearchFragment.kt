@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clearent.idtech.android.wrapper.ui.util.MarginItemDecoration
 import com.xplore.paymobile.R
@@ -14,10 +16,9 @@ import com.xplore.paymobile.databinding.FragmentMerchantSearchBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.ui.merchantselection.MerchantSelectSharedViewModel
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
-import com.xplore.paymobile.util.bundle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
-
 
 @AndroidEntryPoint
 class TerminalSearchFragment : BaseFragment() {
@@ -30,10 +31,8 @@ class TerminalSearchFragment : BaseFragment() {
     private val viewModel by viewModels<TerminalSearchViewModel>()
     private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
-    private val merchantId by bundle<String>()
-
-    private var adapter = MerchantsListAdapter(onItemClicked = {
-
+    private var adapter = MerchantsListAdapter(onItemClicked = { item, position ->
+        binding.okButton.isEnabled = item.isSelected
     })
 
     override fun onCreateView(
@@ -48,10 +47,22 @@ class TerminalSearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("TESTEST merchant id $merchantId")
+        setupTerminalsFlow()
         setupTitle()
         setupSearchBar()
         setupList()
+    }
+
+    private fun setupTerminalsFlow() {
+        viewModel.setTerminals(sharedViewModel.terminals)
+        lifecycleScope.launch {
+            viewModel.terminalsFlow.collect { list ->
+                Timber.d("TESTEST got terminals collect ${list.size}")
+                adapter.submitList(list.map {
+                    MerchantsListAdapter.MerchantItem(it.terminalName, it.terminalPKId)
+                })
+            }
+        }
     }
 
     private fun setupTitle() {
@@ -71,9 +82,7 @@ class TerminalSearchFragment : BaseFragment() {
             }
             searchEditText.doOnTextChanged { text, _, _, count ->
                 Timber.d("TESTEST text $text count $count")
-                if (count >= 3) {
-                    viewModel.searchForQuery(text.toString())
-                }
+                viewModel.searchForQuery(text.toString())
             }
         }
     }
@@ -83,16 +92,14 @@ class TerminalSearchFragment : BaseFragment() {
             itemsList.adapter = adapter
             itemsList.layoutManager = LinearLayoutManager(requireContext())
             itemsList.addItemDecoration(MarginItemDecoration(8, 0))
-            adapter.submitList(mockTerminalList())
+            okButton.setOnClickListener {
+                val selectedMerchant = adapter.currentList.find { it.isSelected }
+                selectedMerchant?.let {
+                    viewModel.saveTerminal(it)
+                }
+                findNavController().popBackStack()
+            }
         }
-    }
-
-    private fun mockTerminalList(): MutableList<MerchantsListAdapter.MerchantItem> {
-        val list = mutableListOf<MerchantsListAdapter.MerchantItem>()
-        for (index in 1..45) {
-            list.add(MerchantsListAdapter.MerchantItem("Terminal #$index"))
-        }
-        return list
     }
 
     override fun onDestroyView() {

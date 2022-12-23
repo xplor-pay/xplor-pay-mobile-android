@@ -3,6 +3,7 @@ package com.xplore.paymobile.data.datasource
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
 import com.xplore.paymobile.exceptions.AuthTokenException
+import okhttp3.ResponseBody
 
 class RemoteDataSource(
     private val xplorApi: XplorApi,
@@ -26,7 +27,16 @@ class RemoteDataSource(
     )
 
     suspend fun searchMerchants(searchMerchantOptions: SearchMerchantOptions) =
-        xplorApi.searchMerchants(getHeader(), searchMerchantOptions)
+        try {
+            val response = xplorApi.searchMerchants(getHeader(), searchMerchantOptions)
+            if (response.isSuccessful) {
+                NetworkResource.Success(response.body())
+            } else {
+                NetworkResource.Error(errorBody = response.errorBody())
+            }
+        } catch (ex: Exception) {
+            NetworkResource.Error(exception = ex)
+        }
 
     suspend fun getMerchantDetails(merchantId: String) =
         xplorApi.getMerchantDetails(
@@ -35,5 +45,20 @@ class RemoteDataSource(
         )
 
     suspend fun fetchTerminals(merchantId: String) =
-        xplorApi.fetchTerminals(getHeader(merchantId))
+        try {
+            val response = xplorApi.fetchTerminals(getHeader(merchantId))
+            if (response.isSuccessful) {
+                NetworkResource.Success(response.body())
+            } else {
+                NetworkResource.Error(errorBody = response.errorBody())
+            }
+        } catch (ex: Exception) {
+            NetworkResource.Error(exception = ex)
+        }
+}
+
+sealed class NetworkResource<out T> {
+    data class Success<T>(val data: T) : NetworkResource<T>()
+    data class Error(val exception: Exception? = null, val errorBody: ResponseBody? = null) :
+        NetworkResource<Nothing>()
 }

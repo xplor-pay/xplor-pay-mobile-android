@@ -60,4 +60,5 @@
     <string name="terminals">Terminals</string>
     <string name="search">Search</string>
     <string name="see_more">See more</string>
+    <string name="no_terminals_available">Looks like you don\'t have a terminal set up, please contact your sales rep now to get one set up.</string>
 </resources>

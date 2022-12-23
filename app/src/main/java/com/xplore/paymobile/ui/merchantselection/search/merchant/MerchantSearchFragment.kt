@@ -8,18 +8,18 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clearent.idtech.android.wrapper.ui.util.MarginItemDecoration
 import com.xplore.paymobile.R
+import com.xplore.paymobile.data.remote.model.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSearchBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.ui.merchantselection.MerchantSelectSharedViewModel
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
 import com.xplore.paymobile.ui.merchantselection.search.list.SeeMoreListAdapter
-import com.xplore.paymobile.ui.merchantselection.search.terminal.TerminalSearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -31,14 +31,16 @@ class MerchantSearchFragment : BaseFragment() {
 
     override val hasBottomNavigation: Boolean = false
 
-    private val viewModel by viewModels<TerminalSearchViewModel>()
+    private val viewModel by viewModels<MerchantSearchViewModel>()
     private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
-    private val itemsAdapter = MerchantsListAdapter(onItemClicked = {
-
+    private val itemsAdapter = MerchantsListAdapter(onItemClicked = { item, _ ->
+        binding.okButton.isEnabled = item.isSelected
     })
+
     private val seeMoreAdapter = SeeMoreListAdapter(onItemClicked = {
-        mockMerchantList()
+        showLoading()
+        viewModel.nextPage()
     })
     private val concatAdapter = ConcatAdapter(itemsAdapter, seeMoreAdapter)
 
@@ -54,9 +56,37 @@ class MerchantSearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupMerchantsFlow()
         setupTitle()
         setupSearchBar()
         setupList()
+    }
+
+    private fun setupMerchantsFlow() {
+        lifecycleScope.launch {
+            viewModel.resultsFlow.collect { merchants ->
+                Timber.d("TESTEST results ${merchants.size}")
+                if (seeMoreAdapter.currentList.isNotEmpty()) {
+                    val seeMoreItem = seeMoreAdapter.currentList[0]
+                    seeMoreItem.isLoading = false
+                    seeMoreAdapter.notifyItemChanged(0)
+                    if (merchants.size.mod(10) != 0 || merchants.isEmpty()) {
+                        hideSeeMore()
+                    }
+                }
+                submitList(merchants)
+            }
+        }
+    }
+
+    private fun submitList(merchants: List<Merchant>) {
+        itemsAdapter.submitList(merchants.map {
+            MerchantsListAdapter.MerchantItem(it.merchantName, it.merchantNumber)
+        }) {
+            if (viewModel.currentPage() == 1 && merchants.isNotEmpty()) {
+                binding.itemsList.scrollToPosition(0)
+            }
+        }
     }
 
     private fun setupTitle() {
@@ -71,12 +101,15 @@ class MerchantSearchFragment : BaseFragment() {
 
     private fun setupSearchBar() {
         binding.apply {
-            searchInputLayout.setOnFocusChangeListener { _, hasFocus ->
-
-            }
-            searchEditText.doOnTextChanged { text, _, _, count ->
-                if (count >= 3) {
+            searchEditText.doOnTextChanged { text, _, _, _ ->
+                Timber.d("TESTEST on text changed called $text")
+                if (text?.length!! >= 3) {
+                    submitList(emptyList())
                     viewModel.searchForQuery(text.toString())
+                    showLoading()
+                } else if (text.isEmpty()) {
+                    submitList(emptyList())
+                    hideSeeMore()
                 }
             }
         }
@@ -87,23 +120,31 @@ class MerchantSearchFragment : BaseFragment() {
             itemsList.adapter = concatAdapter
             itemsList.layoutManager = LinearLayoutManager(requireContext())
             itemsList.addItemDecoration(MarginItemDecoration(8, 0))
-            mockMerchantList()
+            showLoading()
+            viewModel.searchForQuery("")
+            okButton.setOnClickListener {
+                val selectedMerchant = itemsAdapter.currentList.find { it.isSelected }
+                selectedMerchant?.let {
+                    viewModel.saveMerchant(it)
+                }
+                viewModel.removeTerminal()
+                findNavController().popBackStack()
+            }
         }
     }
 
-    private fun mockMerchantList() {
-        lifecycleScope.launch {
-            val seeMoreButton = SeeMoreListAdapter.SeeMoreItem(getString(R.string.see_more), true)
-            seeMoreAdapter.submitList(listOf(seeMoreButton))
-            delay(2000)
-            seeMoreButton.isLoading = false
-            seeMoreAdapter.notifyItemChanged(0)
-            val currentList = itemsAdapter.currentList.toMutableList()
-            for (index in (currentList.size + 1)..(currentList.size + 10)) {
-                currentList.add(MerchantsListAdapter.MerchantItem("Merchant #$index"))
-            }
-            itemsAdapter.submitList(currentList)
-        }
+    private fun showLoading() {
+        val seeMoreButton = SeeMoreListAdapter.SeeMoreItem(getString(R.string.see_more), true)
+        seeMoreAdapter.submitList(listOf(seeMoreButton))
+    }
+
+    private fun hideSeeMore() {
+        seeMoreAdapter.submitList(emptyList())
+    }
+
+    private fun showSeeMore() {
+        val seeMoreButton = SeeMoreListAdapter.SeeMoreItem(getString(R.string.see_more), false)
+        seeMoreAdapter.submitList(listOf(seeMoreButton))
     }
 
     override fun onDestroyView() {
