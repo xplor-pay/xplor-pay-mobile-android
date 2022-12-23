@@ -71,4 +71,27 @@
             app:layout_constraintTop_toBottomOf="@id/terminal_text_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/no_terminals_text_view"
+        app:layout_constraintStart_toStartOf="@id/terminal_layout"
+        app:layout_constraintTop_toBottomOf="@id/terminal_layout"
+        app:layout_constraintEnd_toEndOf="@id/terminal_layout"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:textColor="@color/warning_red"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:text="@string/no_terminals_available"
+        android:layout_height="wrap_content"/>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/margin_extra_large"
+        android:layout_height="@dimen/margin_extra_large"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:indeterminateTint="@color/color_primary"
+        app:layout_constraintTop_toBottomOf="@id/terminal_layout"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

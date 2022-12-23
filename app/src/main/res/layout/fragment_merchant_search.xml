@@ -95,6 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_medium_big"
         android:layout_marginBottom="@dimen/margin_large"
+        android:enabled="false"
         android:text="@string/ok"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

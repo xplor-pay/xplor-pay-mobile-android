@@ -10,7 +10,8 @@ import retrofit2.http.*
 interface XplorApi {
 
     companion object {
-        const val BASE_URL = "https://api-qa.clearent.net"
+        const val BASE_URL_BOARDING = "https://boarding-qa.clearent.net"
+        const val BASE_URL_API = "https://api-qa.clearent.net"
     }
 
     @POST("/api/merchant-management/v1.0/search/Merchants")
@@ -26,7 +27,7 @@ interface XplorApi {
     ): Response<MerchantDetailsResponse>
 
     // The body will be null if there are no terminals for respective merchant
-    @GET("/api/quest/terminals")
+    @GET("$BASE_URL_API/api/quest/terminals")
     suspend fun fetchTerminals(
         @HeaderMap headers: Map<String, String>
     ): Response<TerminalsResponse>
