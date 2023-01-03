@@ -21,23 +21,24 @@ import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.data.datasource.RemoteDataSource
-import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.remote.model.Terminal
+import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.login.LoginFragment
-import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    @Inject
-    lateinit var rds: RemoteDataSource
+    @Inject lateinit var rds: RemoteDataSource
+    @Inject lateinit var  spds: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -53,11 +54,10 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
-        // TODO: remove this, used to remove the auth token since there is no logout
-        val spds = SharedPreferencesDataSource(applicationContext)
-        spds.setAuthToken(null)
-
         super.onCreate(savedInstanceState)
+
+        // TODO: remove this, used to remove the auth token since there is no logout
+        spds.setAuthToken(null)
 
         setupListener()
 
@@ -84,8 +84,17 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                     binding.loginFragment.isVisible = false
 
                     // TODO: remove this, used for test purposes
-                    CoroutineScope(Dispatchers.IO).launch {
-                        rds.searchMerchants(SearchMerchantOptions(null, "1", "10"))
+                    runBlocking {
+                        val response = rds.fetchTerminals("6588000000610659").body() as TerminalsResponse
+                        response.firstOrNull(Terminal::selected)?.also {
+                            Timber.d("TESTEST" + it.questJwt.token)
+                            ClearentWrapper.merchantHomeApiCredentials =
+                                ClearentWrapper.MerchantHomeApiCredentials(
+                                    "6588000000610659",
+                                    it.questJwt.token
+                                )
+                        }
+
                     }
                 }
             )

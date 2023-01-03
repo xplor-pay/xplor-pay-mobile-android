@@ -5,19 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.webkit.*
 import androidx.core.content.ContextCompat.startActivity
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.util.Constants.HOST_NAMES
-import com.xplore.paymobile.util.SharedPreferencesDataSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import javax.inject.Inject
 
 @SuppressLint("SetJavaScriptEnabled")
 fun setupWebView(
     webView: WebView,
     context: Context,
-    jsBridgeFlows: JSBridge.JSBridgeFlows,
+    jsBridge: JSBridge,
     onDone: () -> Unit
 ) {
     webView.run {
@@ -53,18 +52,16 @@ fun setupWebView(
             setGeolocationEnabled(false)
             allowContentAccess = false
         }
-        addJavascriptInterface(JSBridge(context, jsBridgeFlows), "Android")
+        addJavascriptInterface(jsBridge, "Android")
     }
     onDone()
 }
 
-class JSBridge(
-    context: Context,
-    private val jsBridgeFlows: JSBridgeFlows
+class JSBridge @Inject constructor(
+    val jsBridgeFlows: JSBridgeFlows,
+    private val webJsonConverter: WebJsonConverter,
+    private val sharedPrefs: SharedPreferencesDataSource
 ) {
-
-    private val sharedPrefs = SharedPreferencesDataSource(context)
-    private val jsonConverter: Gson = GsonBuilder().create()
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     init {
@@ -81,7 +78,7 @@ class JSBridge(
         backgroundScope.launch {
             Timber.d("received authTokenUpdated: $message")
 
-            val authToken = message.toAuthToken()
+            val authToken = webJsonConverter.jsonToAuthToken(message)
 
             if (authToken == sharedPrefs.getAuthToken()) return@launch
 
@@ -95,7 +92,7 @@ class JSBridge(
         backgroundScope.launch {
             Timber.d("received merchantChanged: $message")
 
-            val merchant = message.toMerchant()
+            val merchant = webJsonConverter.jsonToMerchant(message)
 
             if (merchant == sharedPrefs.getMerchant()) return@launch
 
@@ -111,7 +108,7 @@ class JSBridge(
 
             sharedPrefs.setAuthToken(null)
 
-            jsBridgeFlows.loggedOutFlow.emit(message.toLoggedOut())
+            jsBridgeFlows.loggedOutFlow.emit(webJsonConverter.jsonToLoggedOut(message))
         }
     }
 
@@ -120,7 +117,7 @@ class JSBridge(
         backgroundScope.launch {
             Timber.d("received userRolesLoaded: $message")
 
-            val userRoles = message.toUserRoles()
+            val userRoles = webJsonConverter.jsonToUserRoles(message)
 
             if (userRoles == sharedPrefs.getUserRoles()) return@launch
 
@@ -128,11 +125,6 @@ class JSBridge(
             jsBridgeFlows.userRolesFlow.emit(userRoles)
         }
     }
-
-    private fun String?.toAuthToken() = jsonConverter.fromJson(this, AuthToken::class.java)
-    private fun String?.toMerchant() = jsonConverter.fromJson(this, Merchant::class.java)
-    private fun String?.toLoggedOut() = jsonConverter.fromJson(this, LoggedOut::class.java)
-    private fun String?.toUserRoles() = jsonConverter.fromJson(this, UserRoles::class.java)
 
     data class JSBridgeFlows(
         val authTokenFlow: MutableSharedFlow<AuthToken?> = MutableSharedFlow(),

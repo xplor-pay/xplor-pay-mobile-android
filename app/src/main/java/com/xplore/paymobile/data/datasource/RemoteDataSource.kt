@@ -3,12 +3,8 @@ package com.xplore.paymobile.data.datasource
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
 import com.xplore.paymobile.exceptions.AuthTokenException
-import com.xplore.paymobile.util.SharedPreferencesDataSource
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class RemoteDataSource @Inject constructor(
+class RemoteDataSource(
     private val xplorApi: XplorApi,
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {

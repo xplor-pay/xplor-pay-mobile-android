@@ -2,9 +2,9 @@ package com.xplore.paymobile.ui.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
-import com.xplore.paymobile.util.SharedPreferencesDataSource
-import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
+import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

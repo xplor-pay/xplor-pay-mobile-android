@@ -1,4 +1,4 @@
-package com.xplore.paymobile.util
+package com.xplore.paymobile.data.datasource
 
 import android.content.Context
 import androidx.core.content.edit

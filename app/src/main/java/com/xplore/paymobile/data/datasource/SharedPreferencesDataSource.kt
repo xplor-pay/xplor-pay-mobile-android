@@ -1,14 +1,18 @@
-package com.xplore.paymobile.util
+package com.xplore.paymobile.data.datasource
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.xplore.paymobile.data.web.AuthToken
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.data.web.UserRoles
+import com.xplore.paymobile.data.web.WebJsonConverter
+import javax.inject.Inject
 
-class SharedPreferencesDataSource(context: Context) {
+class SharedPreferencesDataSource @Inject constructor(
+    context: Context,
+    private val webJsonConverter: WebJsonConverter
+) {
 
     companion object {
         private const val KEY_PREFERENCES = "com.xplore.paymobile.READER_PREFERENCES"
@@ -19,34 +23,29 @@ class SharedPreferencesDataSource(context: Context) {
     }
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
-    private val jsonConverter: Gson = GsonBuilder().create()
 
     fun setFirstPair(firstPair: FirstPair) =
         sharedPrefs.edit { putInt(FIRST_PAIR, firstPair.ordinal) }
 
     fun getFirstPair(): FirstPair = FirstPair.fromOrdinal(retrieveFirstPair())
 
-    fun setAuthToken(authToken: String?) =
-        sharedPrefs.edit { putString(AUTH_TOKEN, authToken) }
+    fun setAuthToken(authToken: String?) = sharedPrefs.edit { putString(AUTH_TOKEN, authToken) }
 
-    fun getAuthToken(): AuthToken? = sharedPrefs.getString(AUTH_TOKEN, null).toAuthToken()
+    fun getAuthToken(): AuthToken? =
+        sharedPrefs.getString(AUTH_TOKEN, null)?.let { webJsonConverter.jsonToAuthToken(it) }
 
-    fun setMerchant(merchant: String) =
-        sharedPrefs.edit { putString(MERCHANT, merchant) }
+    fun setMerchant(merchant: String) = sharedPrefs.edit { putString(MERCHANT, merchant) }
 
-    fun getMerchant(): Merchant? = sharedPrefs.getString(MERCHANT, null).toMerchant()
+    fun getMerchant(): Merchant? =
+        sharedPrefs.getString(MERCHANT, null)?.let { webJsonConverter.jsonToMerchant(it) }
 
-    fun setUserRoles(userRoles: String) =
-        sharedPrefs.edit { putString(USER_ROLES, userRoles) }
+    fun setUserRoles(userRoles: String) = sharedPrefs.edit { putString(USER_ROLES, userRoles) }
 
-    fun getUserRoles(): UserRoles? = sharedPrefs.getString(USER_ROLES, null).toUserRoles()
+    fun getUserRoles(): UserRoles? =
+        sharedPrefs.getString(USER_ROLES, null)?.let { webJsonConverter.jsonToUserRoles(it) }
 
     private fun retrieveFirstPair(): Int =
         sharedPrefs.getInt(FIRST_PAIR, FirstPair.NOT_DONE.ordinal)
-
-    private fun String?.toAuthToken() = jsonConverter.fromJson(this, AuthToken::class.java)
-    private fun String?.toMerchant() = jsonConverter.fromJson(this, Merchant::class.java)
-    private fun String?.toUserRoles() = jsonConverter.fromJson(this, UserRoles::class.java)
 
     enum class FirstPair {
         NOT_DONE, SKIPPED, DONE;
