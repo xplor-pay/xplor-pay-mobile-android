@@ -35,11 +35,13 @@ class InfoFragment : Fragment() {
 
         setupTextViews()
         setupClickListeners()
+        (activity as MainActivity).checkForAppUpdate { binding.updateButton.isEnabled = true }
     }
 
     private fun setupTextViews() {
         binding.apply {
-            callMessage.text = getString(R.string.info_screen_call_message, Constants.CLIENT_SUPPORT_PHONE_NUMBER)
+            callMessage.text =
+                getString(R.string.info_screen_call_message, Constants.CLIENT_SUPPORT_PHONE_NUMBER)
             appVersion.text = getString(R.string.info_screen_app_version, BuildConfig.VERSION_NAME)
         }
     }
@@ -51,6 +53,9 @@ class InfoFragment : Fragment() {
             }
             termsAndConditionsButton.setOnClickListener {
                 openTermsAndConditionsLink()
+            }
+            updateButton.setOnClickListener {
+                (activity as MainActivity).updateApp()
             }
             logOutButton.setOnClickListener {
                 SharedPreferencesDataSource(requireContext()).setAuthToken(null)

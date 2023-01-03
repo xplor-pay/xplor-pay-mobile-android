@@ -21,6 +21,12 @@ import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
@@ -48,6 +54,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+
+    private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(this)
+    private lateinit var appUpdateInfo: AppUpdateInfo
 
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
@@ -124,6 +133,28 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         askPermissions()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                updateApp()
+            }
+        }
+    }
+
+    fun checkForAppUpdate(enableUpdateButton: () -> Unit) {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            this.appUpdateInfo = appUpdateInfo
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
+                    AppUpdateType.IMMEDIATE
+                )
+            ) {
+                enableUpdateButton()
+            }
+        }
+    }
+
     fun navigateToPaymentScreen() {
         navController.navigate(R.id.navigation_payment)
     }
@@ -134,6 +165,14 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             container.isVisible = false
         }
         setupWebViewLogin()
+    }
+
+    fun updateApp() {
+        appUpdateManager.startUpdateFlow(
+            appUpdateInfo, this, AppUpdateOptions.newBuilder(
+                AppUpdateType.IMMEDIATE
+            ).setAllowAssetPackDeletion(false).build()
+        )
     }
 
     private fun askPermissions() =
