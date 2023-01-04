@@ -33,6 +33,10 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
+        <!-- ensure safe browsing -->
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
     </application>
 
 </manifest>

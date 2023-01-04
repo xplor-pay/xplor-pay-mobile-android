@@ -3,7 +3,7 @@ package com.xplore.paymobile
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.util.Constants
-import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
+import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 

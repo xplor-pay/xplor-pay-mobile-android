@@ -1,6 +1,10 @@
 package com.xplore.paymobile.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.xplore.paymobile.data.remote.XplorApi
+import com.xplore.paymobile.data.web.JSBridge
+import com.xplore.paymobile.data.web.WebJsonConverter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +24,17 @@ object NetworkingModule {
     @Singleton
     @Provides
     fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create()
+
+    @Singleton
+    @Provides
+    fun provideJsonConverter(): Gson = GsonBuilder().create()
+
+    @Singleton
+    @Provides
+    fun provideWebJsonConverter(gson: Gson): WebJsonConverter = WebJsonConverter(gson)
+
+    @Provides
+    fun provideJsBridgeFlows(): JSBridge.JSBridgeFlows = JSBridge.JSBridgeFlows()
 
     @Singleton
     @Provides

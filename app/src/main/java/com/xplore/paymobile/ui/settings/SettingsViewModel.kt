@@ -2,7 +2,7 @@ package com.xplore.paymobile.ui.settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
+import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

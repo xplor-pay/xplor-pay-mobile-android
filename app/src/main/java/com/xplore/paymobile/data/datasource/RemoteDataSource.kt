@@ -2,21 +2,23 @@ package com.xplore.paymobile.data.datasource
 
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.xplore.paymobile.exceptions.AuthTokenException
 
-@Singleton
-class RemoteDataSource @Inject constructor(
-    private val xplorApi: XplorApi
+class RemoteDataSource(
+    private val xplorApi: XplorApi,
+    private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
 
-    var authToken: String? = null
+    private val authToken
+        get() = sharedPreferencesDataSource.getAuthToken()?.bearerToken
 
-    private fun getHeader() = mapOf(
-        "Content-Type" to "application/json",
-        "Accept" to "application/json, text/plain, */*",
-        "Authorization" to authToken!!
-    )
+    private fun getHeader() = authToken?.let { token ->
+        mapOf(
+            "Content-Type" to "application/json",
+            "Accept" to "application/json, text/plain, */*",
+            "Authorization" to token
+        )
+    } ?: throw AuthTokenException("Missing authToken from shared preferences. AuthToken is null.")
 
     private fun getHeader(merchantId: String) = mapOf(
         *getHeader().toList().toTypedArray(),

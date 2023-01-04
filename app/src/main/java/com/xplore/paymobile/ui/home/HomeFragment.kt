@@ -30,7 +30,7 @@ import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
-import com.xplore.paymobile.util.SharedPreferencesDataSource.FirstPair
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
