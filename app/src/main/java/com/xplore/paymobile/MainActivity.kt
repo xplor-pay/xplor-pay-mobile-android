@@ -35,9 +35,7 @@ import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
-    private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(this)
+    private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var appUpdateInfo: AppUpdateInfo
 
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
@@ -70,6 +68,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

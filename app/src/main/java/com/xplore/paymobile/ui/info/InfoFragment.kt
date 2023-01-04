@@ -10,13 +10,17 @@ import androidx.fragment.app.Fragment
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.FragmentInfoBinding
 import com.xplore.paymobile.util.Constants
-import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class InfoFragment : Fragment() {
+
+    @Inject
+    lateinit var sharedPrefs: SharedPreferencesDataSource
 
     private var _binding: FragmentInfoBinding? = null
     private val binding get() = _binding!!
@@ -58,7 +62,7 @@ class InfoFragment : Fragment() {
                 (activity as MainActivity).updateApp()
             }
             logOutButton.setOnClickListener {
-                SharedPreferencesDataSource(requireContext()).setAuthToken(null)
+                sharedPrefs.setAuthToken(null)
                 val activity = activity as MainActivity
                 activity.logout()
                 activity.navigateToPaymentScreen()
