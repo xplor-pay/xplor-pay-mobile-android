@@ -43,6 +43,11 @@ class LoginViewModel @Inject constructor(
             // Clear all the cookies
             CookieManager.getInstance().removeAllCookies(null)
             CookieManager.getInstance().flush()
+
+            webView.clearCache(true)
+            webView.clearFormData()
+            webView.clearHistory()
+            webView.clearSslPreferences()
         }
         setupWebView(webView, context, jsBridge) {
             webView.loadUrl(loginPageUrl)

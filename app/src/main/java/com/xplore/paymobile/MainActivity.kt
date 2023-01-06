@@ -155,16 +155,13 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         }
     }
 
-    fun navigateToPaymentScreen() {
-        navController.navigate(R.id.navigation_payment)
-    }
-
     fun logout() {
         binding.apply {
             loginFragment.isVisible = true
             container.isVisible = false
         }
         setupWebViewLogin()
+        navController.navigate(R.id.navigation_payment)
     }
 
     fun updateApp() {

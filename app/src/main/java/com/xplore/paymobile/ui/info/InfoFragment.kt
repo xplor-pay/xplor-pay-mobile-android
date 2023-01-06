@@ -63,9 +63,7 @@ class InfoFragment : Fragment() {
             }
             logOutButton.setOnClickListener {
                 sharedPrefs.setAuthToken(null)
-                val activity = activity as MainActivity
-                activity.logout()
-                activity.navigateToPaymentScreen()
+                (activity as MainActivity).logout()
             }
         }
     }
