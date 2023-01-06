@@ -8,6 +8,9 @@
     <string name="next">Next</string>
     <string name="cancel">Cancel</string>
 
+    <string name="logout_dialog_title">You are logged out</string>
+    <string name="logout_dialog_description">Please log back in.</string>
+
     <!-- Home screen -->
     <string name="battery_life">%1$d%%</string>
     <string name="charge_amount">Charge %1$s</string>

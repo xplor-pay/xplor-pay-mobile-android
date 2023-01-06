@@ -10,8 +10,7 @@ import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.setupWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import com.xplore.paymobile.LoginEvents
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,9 +26,6 @@ class LoginViewModel @Inject constructor(
     }
 
     var onLoginSuccessful: () -> Unit = {}
-
-    private val _loginEventsFlow = MutableSharedFlow<LoginEvents>()
-    val loginEventsFlow: SharedFlow<LoginEvents> = _loginEventsFlow
 
     init {
         viewModelScope.launch {
@@ -55,9 +51,5 @@ class LoginViewModel @Inject constructor(
         setupWebView(webView, context, jsBridge) {
             webView.loadUrl(loginPageUrl)
         }
-    }
-
-    sealed class LoginEvents {
-        object LoginSuccessful : LoginEvents()
     }
 }

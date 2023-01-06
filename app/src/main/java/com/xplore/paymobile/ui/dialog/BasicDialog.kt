@@ -6,7 +6,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.xplore.paymobile.R
 
-class BasicDialog(private val title: String, private val message: String) : DialogFragment() {
+class BasicDialog(
+    private val title: String,
+    private val message: String,
+    private val onPositiveButtonClick: () -> Unit = {}
+) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
@@ -15,6 +19,7 @@ class BasicDialog(private val title: String, private val message: String) : Dial
             setMessage(message)
             setPositiveButton(R.string.ok) { _, _ ->
                 dismiss()
+                onPositiveButtonClick()
             }
         }
         return builder.create()
