@@ -5,11 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
+import com.xplore.paymobile.ui.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class TransactionsFragment : Fragment() {
+@AndroidEntryPoint
+class TransactionsFragment : BaseFragment() {
+
+    override val viewModel by viewModels<TransactionsViewModel>()
 
     private var _binding: FragmentTransactionsBinding? = null
 

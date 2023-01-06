@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.LoginEvents
 import com.xplore.paymobile.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,9 +49,9 @@ class LoginFragment(
         }
     }
 
-    private fun handleLoginEvents(loginEvent: LoginViewModel.LoginEvents) {
+    private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
-            LoginViewModel.LoginEvents.LoginSuccessful -> onLoginSuccessful()
+            LoginEvents.LoginSuccessful -> onLoginSuccessful()
         }
     }
 
