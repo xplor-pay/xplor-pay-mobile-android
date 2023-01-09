@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.xplore.paymobile.R
-import com.xplore.paymobile.data.remote.model.Merchant
 import com.xplore.paymobile.data.remote.model.Terminal
+import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSelectBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

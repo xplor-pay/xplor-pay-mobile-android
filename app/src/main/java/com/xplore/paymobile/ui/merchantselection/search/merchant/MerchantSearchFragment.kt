@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clearent.idtech.android.wrapper.ui.util.MarginItemDecoration
 import com.xplore.paymobile.R
-import com.xplore.paymobile.data.remote.model.Merchant
+import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSearchBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.ui.merchantselection.MerchantSelectSharedViewModel

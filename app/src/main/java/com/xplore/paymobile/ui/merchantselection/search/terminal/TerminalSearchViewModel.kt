@@ -2,10 +2,9 @@ package com.xplore.paymobile.ui.merchantselection.search.terminal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
-import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TerminalSearchViewModel @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
     private val sharedPrefs: SharedPreferencesDataSource
 ) :
     ViewModel() {
