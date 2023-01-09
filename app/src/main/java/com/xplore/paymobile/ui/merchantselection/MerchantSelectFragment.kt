@@ -140,22 +140,26 @@ class MerchantSelectFragment : Fragment() {
 
     private fun setupMerchantName(merchant: Merchant?) {
         with(binding) {
-            merchantTextView.text = merchant?.merchantName ?: getString(R.string.merchant)
+            merchant?.merchantName?.let {
+                merchantTextLayout.editText?.setText(it)
+            }
         }
     }
 
     private fun setupTerminalName(terminal: Terminal?) {
         with(binding) {
-            terminalTextView.text = terminal?.terminalName ?: getString(R.string.terminal)
+            terminal?.terminalName?.let {
+                terminalTextLayout.editText?.setText(it)
+            }
         }
     }
 
     private fun setupButtons() {
         with(binding) {
-            merchantLayout.setOnClickListener {
+            merchantClickArea.setOnClickListener {
                 findNavController().navigate(R.id.merchant_search_fragment)
             }
-            terminalLayout.setOnClickListener {
+            terminalClickArea.setOnClickListener {
                 findNavController().navigate(R.id.terminal_search_fragment)
             }
         }
