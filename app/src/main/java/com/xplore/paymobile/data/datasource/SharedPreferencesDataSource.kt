@@ -37,10 +37,13 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun setMerchant(merchant: String) = sharedPrefs.edit { putString(MERCHANT, merchant) }
 
-    fun setMerchant(merchant: Merchant) = sharedPrefs.edit { putString(MERCHANT, webJsonConverter.toJson(merchant)) }
+    fun setMerchant(merchant: Merchant) =
+        sharedPrefs.edit { putString(MERCHANT, webJsonConverter.toJson(merchant)) }
 
     fun getMerchant(): Merchant? =
         sharedPrefs.getString(MERCHANT, null)?.let { webJsonConverter.jsonToMerchant(it) }
+
+    fun clearMerchant() = sharedPrefs.edit { remove(MERCHANT) }
 
     fun setTerminal(terminal: Terminal) =
         sharedPrefs.edit { putString(TERMINAL, webJsonConverter.toJson(terminal)) }
@@ -48,7 +51,8 @@ class SharedPreferencesDataSource @Inject constructor(
     fun clearTerminal() =
         sharedPrefs.edit { remove(TERMINAL) }
 
-    fun getTerminal(): Terminal? = sharedPrefs.getString(TERMINAL, null)?.let { webJsonConverter.jsonToTerminal(it) }
+    fun getTerminal(): Terminal? =
+        sharedPrefs.getString(TERMINAL, null)?.let { webJsonConverter.jsonToTerminal(it) }
 
     fun setUserRoles(userRoles: String) = sharedPrefs.edit { putString(USER_ROLES, userRoles) }
 

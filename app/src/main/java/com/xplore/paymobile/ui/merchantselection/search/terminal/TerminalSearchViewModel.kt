@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +25,6 @@ class TerminalSearchViewModel @Inject constructor(
     fun setTerminals(list: List<Terminal>) {
         terminals = list
         viewModelScope.launch {
-            Timber.d("TESTEST emit ${terminals.size}")
             _sortedTerminalsFlow.emit(terminals)
         }
     }

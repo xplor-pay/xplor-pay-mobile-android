@@ -117,13 +117,13 @@ class MerchantSelectFragment : Fragment() {
     private fun setupTerminalFlow() {
         lifecycleScope.launch {
             viewModel.selectedTerminalFlow.collect { terminal ->
-                Timber.d("TESTEST terminal ${terminal?.terminalName}")
+                Timber.d("Selected terminal is ${terminal?.terminalName}")
                 setupTerminalName(terminal)
             }
         }
         lifecycleScope.launch {
             viewModel.terminalsFlow.collect { terminals ->
-                Timber.d("TESTEST terminals $terminals")
+                Timber.d("Received terminals $terminals")
                 sharedViewModel.terminals = terminals
             }
         }
@@ -132,7 +132,7 @@ class MerchantSelectFragment : Fragment() {
     private fun setupMerchantFlow() {
         lifecycleScope.launch {
             viewModel.merchantFlow.collect { merchant ->
-                Timber.d("TESTEST merchant ${merchant?.merchantName}")
+                Timber.d("Selected merchant is ${merchant?.merchantName}")
                 setupMerchantName(merchant)
             }
         }

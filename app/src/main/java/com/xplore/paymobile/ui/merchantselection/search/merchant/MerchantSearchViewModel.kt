@@ -26,9 +26,7 @@ class MerchantSearchViewModel @Inject constructor(
         viewModelScope.launch {
             paginationHelper.resultsFlow.collect { merchants ->
                 val totalResults = mutableListOf<Merchant>()
-                Timber.d("TESTEST collect page ${paginationHelper.currentPage}")
                 if (paginationHelper.currentPage >= 2) {
-                    Timber.d("TESTEST addAll ${_resultsFlow.value.size}")
                     totalResults.addAll(_resultsFlow.value)
                 }
                 totalResults.addAll(merchants)
@@ -39,7 +37,7 @@ class MerchantSearchViewModel @Inject constructor(
 
     fun searchForQuery(query: String) {
         viewModelScope.launch {
-            Timber.d("search for $query")
+            Timber.d("Search merchants for $query")
             paginationHelper.updateQuery(query)
         }
     }
@@ -55,7 +53,6 @@ class MerchantSearchViewModel @Inject constructor(
             sharedPrefs.setMerchant(merchant)
             sharedPrefs.clearTerminal()
         }
-        Timber.d("TESTEST saved merchant ${sharedPrefs.getMerchant()?.merchantName}")
     }
 
     fun removeTerminal() {
