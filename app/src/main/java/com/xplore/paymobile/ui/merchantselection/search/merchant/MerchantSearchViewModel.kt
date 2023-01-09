@@ -2,9 +2,9 @@ package com.xplore.paymobile.ui.merchantselection.search.merchant
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xplore.paymobile.data.remote.model.Merchant
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
-import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +21,6 @@ class MerchantSearchViewModel @Inject constructor(
 
     private val _resultsFlow = MutableStateFlow<List<Merchant>>(listOf())
     val resultsFlow: Flow<List<Merchant>> = _resultsFlow
-//    private val _errorFlow = MutableStateFlow<List<??>>(listOf())
-//    val errorFlow: StateFlow<List<??>> = _resultsFlow
 
     init {
         viewModelScope.launch {
@@ -30,7 +28,6 @@ class MerchantSearchViewModel @Inject constructor(
                 val totalResults = mutableListOf<Merchant>()
                 Timber.d("TESTEST collect page ${paginationHelper.currentPage}")
                 if (paginationHelper.currentPage >= 2) {
-                    //todo improve
                     Timber.d("TESTEST addAll ${_resultsFlow.value.size}")
                     totalResults.addAll(_resultsFlow.value)
                 }

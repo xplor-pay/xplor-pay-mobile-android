@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
-import com.xplore.paymobile.data.remote.model.Merchant
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.data.remote.model.TerminalsResponse
-import com.xplore.paymobile.util.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.Merchant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

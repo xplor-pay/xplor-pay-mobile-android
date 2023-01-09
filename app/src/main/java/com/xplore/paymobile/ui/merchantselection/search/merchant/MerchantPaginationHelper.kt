@@ -2,14 +2,15 @@ package com.xplore.paymobile.ui.merchantselection.search.merchant
 
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
-import com.xplore.paymobile.data.remote.model.Merchant
 import com.xplore.paymobile.data.remote.model.MerchantsResponse
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
+import com.xplore.paymobile.data.web.Merchant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class MerchantPaginationHelper @Inject constructor(private val remoteDataSource: RemoteDataSource) {
@@ -51,7 +52,7 @@ class MerchantPaginationHelper @Inject constructor(private val remoteDataSource:
                     _resultsFlow.emit(merchants.content)
                 }
                 is NetworkResource.Error -> {
-//                    val error = merchantsResource.
+                    Timber.d("Merchants request failed")
                 }
             }
         }
