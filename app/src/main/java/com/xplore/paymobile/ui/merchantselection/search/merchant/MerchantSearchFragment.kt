@@ -65,7 +65,7 @@ class MerchantSearchFragment : BaseFragment() {
     private fun setupMerchantsFlow() {
         lifecycleScope.launch {
             viewModel.resultsFlow.collect { merchants ->
-                Timber.d("TESTEST results ${merchants.size}")
+                Timber.d("Received merchants ${merchants.size}")
                 if (seeMoreAdapter.currentList.isNotEmpty()) {
                     val seeMoreItem = seeMoreAdapter.currentList[0]
                     seeMoreItem.isLoading = false
@@ -102,7 +102,6 @@ class MerchantSearchFragment : BaseFragment() {
     private fun setupSearchBar() {
         binding.apply {
             searchEditText.doOnTextChanged { text, _, _, _ ->
-                Timber.d("TESTEST on text changed called $text")
                 if (text?.length!! >= 3) {
                     submitList(emptyList())
                     viewModel.searchForQuery(text.toString())

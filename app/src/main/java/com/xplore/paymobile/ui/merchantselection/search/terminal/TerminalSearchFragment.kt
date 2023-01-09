@@ -18,7 +18,6 @@ import com.xplore.paymobile.ui.merchantselection.MerchantSelectSharedViewModel
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class TerminalSearchFragment : BaseFragment() {
@@ -31,7 +30,7 @@ class TerminalSearchFragment : BaseFragment() {
     private val viewModel by viewModels<TerminalSearchViewModel>()
     private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
-    private var adapter = MerchantsListAdapter(onItemClicked = { item, position ->
+    private var adapter = MerchantsListAdapter(onItemClicked = { item, _ ->
         binding.okButton.isEnabled = item.isSelected
     })
 
@@ -57,7 +56,6 @@ class TerminalSearchFragment : BaseFragment() {
         viewModel.setTerminals(sharedViewModel.terminals)
         lifecycleScope.launch {
             viewModel.terminalsFlow.collect { list ->
-                Timber.d("TESTEST got terminals collect ${list.size}")
                 adapter.submitList(list.map {
                     MerchantsListAdapter.MerchantItem(it.terminalName, it.terminalPKId)
                 })
@@ -77,11 +75,7 @@ class TerminalSearchFragment : BaseFragment() {
 
     private fun setupSearchBar() {
         binding.apply {
-            searchInputLayout.setOnFocusChangeListener { _, hasFocus ->
-
-            }
-            searchEditText.doOnTextChanged { text, _, _, count ->
-                Timber.d("TESTEST text $text count $count")
+            searchEditText.doOnTextChanged { text, _, _, _ ->
                 viewModel.searchForQuery(text.toString())
             }
         }

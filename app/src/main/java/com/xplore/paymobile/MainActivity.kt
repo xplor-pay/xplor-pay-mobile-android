@@ -80,6 +80,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             replace(
                 R.id.login_fragment,
                 LoginFragment {
+                    //TODO Provisional, clearing merchant and terminal should be moved to logout method
+                    spds.clearMerchant()
+                    spds.clearTerminal()
                     binding.container.isVisible = true
                     binding.loginFragment.isVisible = false
                 }
