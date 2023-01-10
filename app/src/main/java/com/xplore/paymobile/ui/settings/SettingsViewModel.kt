@@ -1,23 +1,9 @@
 package com.xplore.paymobile.ui.settings
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
+import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    application: Application,
-    private val encryptedPrefs: EncryptedSharedPrefsDataSource
-) : AndroidViewModel(application) {
-
-    fun setApiKey(apiKey: String) = encryptedPrefs.setApiKey(apiKey)
-
-    fun getApiKey() = encryptedPrefs.getApiKey()
-
-    fun setPublicKey(publicKey: String) = encryptedPrefs.setPublicKey(publicKey)
-
-    fun getPublicKey() = encryptedPrefs.getPublicKey()
-
+class SettingsViewModel @Inject constructor(): ViewModel() {
 }
