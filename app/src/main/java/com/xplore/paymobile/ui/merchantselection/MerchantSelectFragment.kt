@@ -60,7 +60,7 @@ class MerchantSelectFragment : Fragment() {
                         sharedViewModel.setAllowNext(false)
                     }
                     false -> {
-                        binding.merchantLayout.isClickable = true
+                        binding.merchantClickArea.isClickable = true
                         checkEdgeCases()
                     }
                 }
@@ -69,8 +69,8 @@ class MerchantSelectFragment : Fragment() {
     }
 
     private fun disableInputs() {
-        binding.terminalLayout.isClickable = false
-        binding.merchantLayout.isClickable = false
+        binding.terminalClickArea.isClickable = false
+        binding.merchantClickArea.isClickable = false
     }
 
     private fun checkEdgeCases() {
@@ -82,27 +82,27 @@ class MerchantSelectFragment : Fragment() {
                 allTerminals.size == 1 && allTerminals[0].terminalPKId == selectedTerminal?.terminalPKId -> {
                     showNoTerminalsWarning(false)
                     sharedViewModel.setAllowNext(true)
-                    binding.terminalLayout.isClickable = false
+                    binding.terminalClickArea.isClickable = false
                 }
                 allTerminals.isEmpty() && selectedTerminal == null -> {
                     showNoTerminalsWarning(true)
                     sharedViewModel.setAllowNext(true)
-                    binding.terminalLayout.isClickable = false
+                    binding.terminalClickArea.isClickable = false
                 }
                 selectedTerminal == null -> {
                     sharedViewModel.setAllowNext(false)
-                    binding.terminalLayout.isClickable = true
+                    binding.terminalClickArea.isClickable = true
                 }
                 else -> {
                     showNoTerminalsWarning(false)
                     sharedViewModel.setAllowNext(true)
-                    binding.terminalLayout.isClickable = true
+                    binding.terminalClickArea.isClickable = true
                 }
             }
         } else {
             showNoTerminalsWarning(false)
             sharedViewModel.setAllowNext(false)
-            binding.terminalLayout.isClickable = false
+            binding.terminalClickArea.isClickable = false
         }
     }
 
