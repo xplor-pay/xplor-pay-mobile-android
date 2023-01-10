@@ -22,6 +22,7 @@ class LoginViewModel @Inject constructor(
         private const val loginPageUrl = "https://my-qa.clearent.net/ui/home"
     }
 
+    var onLoginSuccessful: () -> Unit = {}
     private val _loginEventsFlow = MutableSharedFlow<LoginEvents>()
     val loginEventsFlow: SharedFlow<LoginEvents> = _loginEventsFlow
 

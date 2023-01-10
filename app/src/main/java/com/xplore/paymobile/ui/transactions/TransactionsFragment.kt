@@ -4,17 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class TransactionsFragment : Fragment() {
 
-    private var _binding: FragmentTransactionsBinding? = null
+    private val viewModel by viewModels<TransactionsViewModel>()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,17 +24,22 @@ class TransactionsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val transactionsViewModel =
-            ViewModelProvider(this).get(TransactionsViewModel::class.java)
-
         _binding = FragmentTransactionsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textTransactions
-        transactionsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViews()
+    }
+
+    private fun setupViews() {
+        binding.apply {
+            lifecycleScope.launch {
+                viewModel.prepareWebView(webView, requireContext())
+            }
         }
-        return root
     }
 
     override fun onDestroyView() {

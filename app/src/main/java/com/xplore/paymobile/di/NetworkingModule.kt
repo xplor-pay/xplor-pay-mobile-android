@@ -2,7 +2,9 @@ package com.xplore.paymobile.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
+import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.WebJsonConverter
 import dagger.Module
@@ -15,11 +17,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkingModule {
+
+    private const val XPLOR_API_NAME = "XplorApi"
+    private const val XPLOR_BOARDING_API_NAME = "XplorBoardingApi"
+    private const val CLEARENT_GATEWAY_API_NAME = "ClearentGatewayApi"
 
     @Singleton
     @Provides
@@ -53,7 +60,8 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
+    @Named(XPLOR_API_NAME)
+    fun provideRetrofitXplorApi(
         client: OkHttpClient,
         converterFactory: Converter.Factory
     ): Retrofit =
@@ -65,6 +73,42 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideXplorApi(retrofit: Retrofit): XplorApi =
+    fun provideXplorApi(@Named(XPLOR_API_NAME) retrofit: Retrofit): XplorApi =
         retrofit.create(XplorApi::class.java)
+
+    @Provides
+    @Singleton
+    @Named(XPLOR_BOARDING_API_NAME)
+    fun provideRetrofitXplorBoardingApi(
+        client: OkHttpClient,
+        converterFactory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(XplorBoardingApi.BASE_URL)
+            .client(client)
+            .addConverterFactory(converterFactory)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideXplorBoardingApi(@Named(XPLOR_BOARDING_API_NAME) retrofit: Retrofit): XplorBoardingApi =
+        retrofit.create(XplorBoardingApi::class.java)
+
+    @Provides
+    @Singleton
+    @Named(CLEARENT_GATEWAY_API_NAME)
+    fun provideRetrofitClearentGatewayApi(
+        client: OkHttpClient,
+        converterFactory: Converter.Factory
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(ClearentGatewayApi.BASE_URL)
+            .client(client)
+            .addConverterFactory(converterFactory)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideClearentGatewayApi(@Named(CLEARENT_GATEWAY_API_NAME) retrofit: Retrofit): ClearentGatewayApi =
+        retrofit.create(ClearentGatewayApi::class.java)
 }
