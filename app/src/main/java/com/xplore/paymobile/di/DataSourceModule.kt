@@ -4,7 +4,9 @@ import android.content.Context
 import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
+import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.WebJsonConverter
 import dagger.Module
 import dagger.Provides
@@ -32,6 +34,10 @@ object DataSourceModule {
     @Singleton
     @Provides
     fun provideRemoteDataSource(
-        xplorApi: XplorApi, sharedPreferencesDataSource: SharedPreferencesDataSource
-    ): RemoteDataSource = RemoteDataSource(xplorApi, sharedPreferencesDataSource)
+        xplorApi: XplorApi,
+        xplorBoardingApi: XplorBoardingApi,
+        clearentGatewayApi: ClearentGatewayApi,
+        sharedPreferencesDataSource: SharedPreferencesDataSource
+    ): RemoteDataSource =
+        RemoteDataSource(xplorApi, xplorBoardingApi, clearentGatewayApi, sharedPreferencesDataSource)
 }

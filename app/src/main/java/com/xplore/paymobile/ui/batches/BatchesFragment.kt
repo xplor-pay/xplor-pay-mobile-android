@@ -26,6 +26,19 @@ class BatchesFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViews()
+    }
+
+    private fun setupViews() {
+        binding.apply {
+            viewModel.prepareWebView(webView, requireContext())
+            webView.reload()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
