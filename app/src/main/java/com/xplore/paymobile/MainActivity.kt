@@ -27,7 +27,6 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -39,11 +38,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    @Inject
-    lateinit var rds: RemoteDataSource
-
-    @Inject
-    lateinit var spds: SharedPreferencesDataSource
+    @Inject lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -67,6 +62,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
         super.onCreate(savedInstanceState)
 
+        // TODO: remove this, used to remove the auth token since there is no logout
+        sharedPreferencesDataSource.setAuthToken(null)
+
         setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -89,7 +87,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             setReorderingAllowed(true)
             replace(
                 R.id.login_fragment,
-                LoginFragment {
+                LoginFragment.newInstance {
                     binding.container.isVisible = true
                     binding.loginFragment.isVisible = false
                 }
