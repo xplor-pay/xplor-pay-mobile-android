@@ -5,7 +5,6 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.setupWebView
-import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,7 +14,7 @@ class BatchesViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private val batchesPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/openbatches"
+        private const val batchesPageUrl = "https://my-qa.clearent.net/ui/openbatches"
     }
 
     fun prepareWebView(webView: WebView, context: Context) {

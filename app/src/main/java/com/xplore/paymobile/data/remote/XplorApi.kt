@@ -1,6 +1,5 @@
 package com.xplore.paymobile.data.remote
 
-import com.clearent.idtech.android.BuildConfig
 import com.xplore.paymobile.data.remote.model.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -8,8 +7,7 @@ import retrofit2.http.*
 interface XplorApi {
 
     companion object {
-        val BASE_URL =
-            if (BuildConfig.DEBUG) "https://api-qa.clearent.net" else "https://api.clearent.net"
+        const val BASE_URL = "https://api-qa.clearent.net"
     }
 
     @GET("/api/merchantfrontendplatform/v1.0/features/web/{merchantId}")

@@ -12,7 +12,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -21,34 +20,32 @@ import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.play.core.appupdate.AppUpdateInfo
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.UpdateAvailability
+import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.remote.model.Terminal
+import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
+
+    @Inject lateinit var remoteDataSource: RemoteDataSource
+    @Inject lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
     private var hintsShowed = false
-    private var showBottomNav = true
-
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
-
-    private lateinit var appUpdateManager: AppUpdateManager
-    private lateinit var appUpdateInfo: AppUpdateInfo
 
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
@@ -59,11 +56,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
         super.onCreate(savedInstanceState)
 
+        // TODO: remove this, used to remove the auth token since there is no logout
+        sharedPreferencesDataSource.setAuthToken(null)
+
         setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-        appUpdateManager = AppUpdateManagerFactory.create(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -84,6 +82,23 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                 LoginFragment.newInstance {
                     binding.container.isVisible = true
                     binding.loginFragment.isVisible = false
+
+                    // TODO: remove this, used for test purposes
+                    runBlocking {
+                        val merchantNumber = "6588000000610659"
+                        val terminals =
+                            remoteDataSource.fetchTerminals(merchantNumber).body() as TerminalsResponse
+
+                        terminals.firstOrNull(Terminal::selected)?.also {
+                            Timber.d("TESTEST" + it.questJwt.token)
+                            ClearentWrapper.merchantHomeApiCredentials =
+                                ClearentWrapper.MerchantHomeApiCredentials(
+                                    merchantNumber,
+                                    it.questJwt.token
+                                )
+                            remoteDataSource.foo = it.questJwt.token
+                        }
+                    }
                 }
             )
         }
@@ -91,10 +106,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
-        navView.isVisible = showBottomNav
 
-        navController = findNavController(R.id.nav_host_fragment_activity_main)
-
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -112,45 +125,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         supportActionBar?.hide()
 
         askPermissions()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                updateApp()
-            }
-        }
-    }
-
-    fun checkForAppUpdate(enableUpdateButton: () -> Unit) {
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            this.appUpdateInfo = appUpdateInfo
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
-                    AppUpdateType.IMMEDIATE
-                )
-            ) {
-                enableUpdateButton()
-            }
-        }
-    }
-
-    fun logout() {
-        binding.apply {
-            loginFragment.isVisible = true
-            container.isVisible = false
-        }
-        setupWebViewLogin()
-        navController.navigate(R.id.navigation_payment)
-    }
-
-    fun updateApp() {
-        appUpdateManager.startUpdateFlow(
-            appUpdateInfo, this, AppUpdateOptions.newBuilder(
-                AppUpdateType.IMMEDIATE
-            ).setAllowAssetPackDeletion(false).build()
-        )
     }
 
     private fun askPermissions() =
@@ -202,11 +176,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun renderHints() = lifecycleScope.launch {
         delay(HINTS_DISPLAY_DELAY)
         binding.hints.root.visibility = View.VISIBLE
-    }
-
-    fun showBottomNavigation(show: Boolean) {
-        showBottomNav = show
-        findViewById<BottomNavigationView>(R.id.nav_view)?.isVisible = show
     }
 
     class ListenerCallbackObserver(

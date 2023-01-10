@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.xplore.paymobile.ui.base.BaseFragment
 
 @AndroidEntryPoint
-class TransactionsFragment : BaseFragment() {
-
-    override val hasBottomNavigation: Boolean = true
+class TransactionsFragment : Fragment() {
 
     private val viewModel by viewModels<TransactionsViewModel>()
 

@@ -5,7 +5,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -25,7 +24,9 @@ class LoginFragment : Fragment() {
         private const val ON_LOGIN_SUCCESSFUL_KEY = "ON_LOGIN_SUCCESSFUL_KEY"
 
         fun newInstance(onLoginSuccessful: () -> Unit) = LoginFragment().apply {
-            arguments = bundleOf(ON_LOGIN_SUCCESSFUL_KEY to OnLoginSuccessful(onLoginSuccessful))
+            arguments = Bundle().apply {
+                putParcelable(ON_LOGIN_SUCCESSFUL_KEY, OnLoginSuccessful(onLoginSuccessful))
+            }
         }
 
         @Parcelize
