@@ -1,181 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/sandbox_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="18dp"
-        android:text="@string/environment_sandbox"
-        android:textColor="@color/teal_200"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/prod_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="18dp"
-        android:text="@string/environment_production"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@id/sandbox_label"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/url_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/label_url"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/switch_button"
-        app:layout_constraintStart_toStartOf="@id/sandbox_label"
-        app:layout_constraintTop_toBottomOf="@id/switch_button" />
-
-    <TextView
-        android:id="@+id/url_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="@id/url_label"
-        app:layout_constraintStart_toStartOf="@id/url_label"
-        app:layout_constraintTop_toBottomOf="@id/url_label" />
-
-    <TextView
-        android:id="@+id/version_number"
-        style="@style/TextPrimaryStartSingleLine14"
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/layout_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/url_text" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/api_key_label"
-        android:layout_width="0dp"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/merchant_select_fragment"
+        android:name="com.xplore.paymobile.ui.merchantselection.MerchantSelectFragment"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/label_api_key"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/version_number"
-        app:layout_constraintStart_toStartOf="@id/version_number"
-        app:layout_constraintTop_toBottomOf="@id/version_number" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/api_key_text_input"
-        style="@style/TextInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:endIconMode="password_toggle"
-        app:layout_constraintEnd_toEndOf="@id/api_key_label"
-        app:layout_constraintStart_toStartOf="@id/api_key_label"
-        app:layout_constraintTop_toBottomOf="@id/api_key_label">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/public_key_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/label_public_key"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/api_key_text_input"
-        app:layout_constraintStart_toStartOf="@id/api_key_text_input"
-        app:layout_constraintTop_toBottomOf="@id/api_key_text_input" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/public_key_text_input"
-        style="@style/TextInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:endIconMode="password_toggle"
-        app:layout_constraintEnd_toEndOf="@id/public_key_label"
-        app:layout_constraintStart_toStartOf="@id/public_key_label"
-        app:layout_constraintTop_toBottomOf="@id/public_key_label">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/save_keys"
-        app:backgroundTint="@color/teal_200"
-        android:theme="@style/SaveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/button_save_keys_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/public_key_text_input" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/view_logs"
-        style="@style/LoggerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/button_view_logs_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/save_keys" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/delete_logs"
-        style="@style/LoggerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/button_delete_logs_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_logs" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/share_logs"
-        style="@style/LoggerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/button_share_logs_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete_logs" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        android:layout_marginTop="@dimen/margin_big" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
