@@ -14,34 +14,23 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.simpleframework.xml.convert.AnnotationStrategy
-import org.simpleframework.xml.core.Persister
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import javax.inject.Named
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkingModule {
 
-    @Singleton
-    @Provides
-    @JSON
-    fun provideRetrofitJsonConverter(): Converter.Factory = GsonConverterFactory.create()
+    private const val XPLOR_API_NAME = "XplorApi"
+    private const val XPLOR_BOARDING_API_NAME = "XplorBoardingApi"
+    private const val CLEARENT_GATEWAY_API_NAME = "ClearentGatewayApi"
 
     @Singleton
     @Provides
-    @XML
-    fun provideRetrofitXMLConverter(): Converter.Factory =
-        SimpleXmlConverterFactory.createNonStrict(
-            Persister(
-                AnnotationStrategy()
-            )
-        )
+    fun provideRetrofitJsonConverter(): Converter.Factory = GsonConverterFactory.create()
 
     @Singleton
     @Provides
@@ -71,10 +60,10 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    @Named("Xplor")
+    @Named(XPLOR_API_NAME)
     fun provideRetrofitXplorApi(
         client: OkHttpClient,
-        @JSON converterFactory: Converter.Factory
+        converterFactory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(XplorApi.BASE_URL)
@@ -84,17 +73,16 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideXplorApi(@Named("Xplor") retrofit: Retrofit): XplorApi =
+    fun provideXplorApi(@Named(XPLOR_API_NAME) retrofit: Retrofit): XplorApi =
         retrofit.create(XplorApi::class.java)
 
     @Provides
     @Singleton
-    @Named("XplorBoarding")
+    @Named(XPLOR_BOARDING_API_NAME)
     fun provideRetrofitXplorBoardingApi(
         client: OkHttpClient,
-        @JSON converterFactory: Converter.Factory
-    ): Retrofit =
-        Retrofit.Builder()
+        converterFactory: Converter.Factory
+    ): Retrofit = Retrofit.Builder()
             .baseUrl(XplorBoardingApi.BASE_URL)
             .client(client)
             .addConverterFactory(converterFactory)
@@ -102,17 +90,16 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideXplorBoardingApi(@Named("XplorBoarding") retrofit: Retrofit): XplorBoardingApi =
+    fun provideXplorBoardingApi(@Named(XPLOR_BOARDING_API_NAME) retrofit: Retrofit): XplorBoardingApi =
         retrofit.create(XplorBoardingApi::class.java)
 
     @Provides
     @Singleton
-    @Named("ClearentGateway")
+    @Named(CLEARENT_GATEWAY_API_NAME)
     fun provideRetrofitClearentGatewayApi(
         client: OkHttpClient,
-        @JSON converterFactory: Converter.Factory
-    ): Retrofit =
-        Retrofit.Builder()
+        converterFactory: Converter.Factory
+    ): Retrofit = Retrofit.Builder()
             .baseUrl(ClearentGatewayApi.BASE_URL)
             .client(client)
             .addConverterFactory(converterFactory)
@@ -120,14 +107,6 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideClearentGatewayApi(@Named("ClearentGateway") retrofit: Retrofit): ClearentGatewayApi =
+    fun provideClearentGatewayApi(@Named(CLEARENT_GATEWAY_API_NAME) retrofit: Retrofit): ClearentGatewayApi =
         retrofit.create(ClearentGatewayApi::class.java)
 }
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class JSON
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class XML

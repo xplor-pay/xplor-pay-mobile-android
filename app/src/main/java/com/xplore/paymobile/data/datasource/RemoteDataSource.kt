@@ -19,8 +19,8 @@ class RemoteDataSource(
     private val authToken
         get() = sharedPreferencesDataSource.getAuthToken()?.bearerToken
 
-    // TODO: Replace with quest jwt from terminal
-    var foo = ""
+    // TODO: Replace with quest jwt from terminal inside the shared prefs
+    var vtToken = ""
 
     private fun getXplorApiHeader() = authToken?.let { token ->
         mapOf(
@@ -37,7 +37,7 @@ class RemoteDataSource(
     private fun getClearentGatewayApiHeader() = mapOf(
         "Content-Type" to "application/json",
         "Accept" to "application/json, text/plain, */*",
-        "Authorization" to "vt-token $foo"
+        "Authorization" to "vt-token $vtToken"
     )
 
     private fun getOpenBatchFilters() = mapOf(
