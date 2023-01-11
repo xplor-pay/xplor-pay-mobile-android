@@ -24,8 +24,7 @@ class TransactionsViewModel @Inject constructor(
     suspend fun prepareWebView(webView: WebView, context: Context) {
         val openBatch = remoteDataSource.getOpenBatch()
 
-        if (openBatch !is NetworkResource.Success)
-            return
+        if (openBatch !is NetworkResource.Success) return
 
         val batchNumber = openBatch.data?.payload?.batches?.batch?.get(0)?.id ?: return
         val terminalId = openBatch.data.payload?.batches?.batch?.get(0)?.terminalID ?: return
