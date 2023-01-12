@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentSettingsBinding
 import com.xplore.paymobile.ui.base.BaseFragment
@@ -15,8 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingsFragment : BaseFragment() {
 
     override val hasBottomNavigation: Boolean = true
-
-    private val viewModel by viewModels<SettingsViewModel>()
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -32,6 +30,19 @@ class SettingsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
+        setupDevSettings()
+    }
+
+    private fun setupDevSettings() {
+        with(binding) {
+            devSettingsButton.setOnClickListener {
+                findNavController().navigate(R.id.navigation_settings_old)
+            }
+        }
+    }
+
+    private fun setupToolbar() {
         with(binding) {
             toolbarLayout.toolbarTitle.text = getString(R.string.title_settings)
             toolbarLayout.backButton.isVisible = false

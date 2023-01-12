@@ -19,4 +19,17 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         android:layout_marginTop="@dimen/margin_big" />
 
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/dev_settings_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedBlack"
+        android:text="Developer settings"
+        android:layout_marginVertical="@dimen/margin_large"
+        android:layout_marginHorizontal="@dimen/margin_medium_big"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/merchant_select_fragment"
+        app:layout_constraintVertical_bias="1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
