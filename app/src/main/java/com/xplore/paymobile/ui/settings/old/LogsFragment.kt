@@ -1,4 +1,4 @@
-package com.xplore.paymobile.ui.settings
+package com.xplore.paymobile.ui.settings.old
 
 import android.os.Bundle
 import android.view.LayoutInflater

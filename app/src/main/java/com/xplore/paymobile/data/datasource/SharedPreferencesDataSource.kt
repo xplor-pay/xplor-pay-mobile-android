@@ -2,7 +2,7 @@ package com.xplore.paymobile.data.datasource
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.gson.GsonBuilder
+import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.data.web.AuthToken
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.data.web.UserRoles
@@ -19,6 +19,7 @@ class SharedPreferencesDataSource @Inject constructor(
         private const val FIRST_PAIR = "FIRST_PAIR_KEY"
         private const val AUTH_TOKEN = "AUTH_TOKEN_KEY"
         private const val MERCHANT = "MERCHANT_KEY"
+        private const val TERMINAL = "TERMINAL_KEY"
         private const val USER_ROLES = "USER_ROLES_KEY"
     }
 
@@ -36,8 +37,22 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun setMerchant(merchant: String) = sharedPrefs.edit { putString(MERCHANT, merchant) }
 
+    fun setMerchant(merchant: Merchant) =
+        sharedPrefs.edit { putString(MERCHANT, webJsonConverter.toJson(merchant)) }
+
     fun getMerchant(): Merchant? =
         sharedPrefs.getString(MERCHANT, null)?.let { webJsonConverter.jsonToMerchant(it) }
+
+    fun clearMerchant() = sharedPrefs.edit { remove(MERCHANT) }
+
+    fun setTerminal(terminal: Terminal) =
+        sharedPrefs.edit { putString(TERMINAL, webJsonConverter.toJson(terminal)) }
+
+    fun clearTerminal() =
+        sharedPrefs.edit { remove(TERMINAL) }
+
+    fun getTerminal(): Terminal? =
+        sharedPrefs.getString(TERMINAL, null)?.let { webJsonConverter.jsonToTerminal(it) }
 
     fun setUserRoles(userRoles: String) = sharedPrefs.edit { putString(USER_ROLES, userRoles) }
 

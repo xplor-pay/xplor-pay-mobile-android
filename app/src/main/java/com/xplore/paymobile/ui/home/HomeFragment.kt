@@ -29,6 +29,7 @@ import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
@@ -37,7 +38,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), ReaderStatusListener {
+class HomeFragment : BaseFragment(), ReaderStatusListener {
+
+    override val hasBottomNavigation: Boolean = true
 
     companion object {
         private const val DEFAULT_CHARGE_AMOUNT = "$0.00"

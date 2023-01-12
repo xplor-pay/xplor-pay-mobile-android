@@ -2,10 +2,12 @@ package com.xplore.paymobile
 
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application() {
@@ -24,7 +26,7 @@ class App : Application() {
 
     private fun initSdkWrapper() {
         val apiKey = encryptedPrefs.getApiKey()
-        val publicKey = encryptedPrefs.getPublicKey()
+        val publicKey = resources.getString(R.string.public_key)
         ClearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,

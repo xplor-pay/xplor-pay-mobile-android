@@ -1,4 +1,4 @@
-package com.xplore.paymobile.ui.settings
+package com.xplore.paymobile.ui.settings.old
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
+class OldSettingsViewModel @Inject constructor(
     application: Application,
     private val encryptedPrefs: EncryptedSharedPrefsDataSource
 ) : AndroidViewModel(application) {

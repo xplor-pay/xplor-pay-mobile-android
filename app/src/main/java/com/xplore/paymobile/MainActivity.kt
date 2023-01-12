@@ -29,27 +29,29 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
-import com.xplore.paymobile.data.remote.model.Terminal
-import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    @Inject lateinit var rds: RemoteDataSource
-    @Inject lateinit var  spds: SharedPreferencesDataSource
+    @Inject
+    lateinit var rds: RemoteDataSource
+
+    @Inject
+    lateinit var spds: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
     private var hintsShowed = false
+    private var showBottomNav = true
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
@@ -90,20 +92,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                 LoginFragment {
                     binding.container.isVisible = true
                     binding.loginFragment.isVisible = false
-
-                    // TODO: remove this, used for test purposes
-                    runBlocking {
-                        val response = rds.fetchTerminals("6588000000610659").body() as TerminalsResponse
-                        response.firstOrNull(Terminal::selected)?.also {
-                            Timber.d("TESTEST" + it.questJwt.token)
-                            ClearentWrapper.merchantHomeApiCredentials =
-                                ClearentWrapper.MerchantHomeApiCredentials(
-                                    "6588000000610659",
-                                    it.questJwt.token
-                                )
-                        }
-
-                    }
                 }
             )
         }
@@ -111,6 +99,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
+        navView.isVisible = showBottomNav
 
         navController = findNavController(R.id.nav_host_fragment_activity_main)
 
@@ -221,6 +210,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun renderHints() = lifecycleScope.launch {
         delay(HINTS_DISPLAY_DELAY)
         binding.hints.root.visibility = View.VISIBLE
+    }
+
+    fun showBottomNavigation(show: Boolean) {
+        showBottomNav = show
+        findViewById<BottomNavigationView>(R.id.nav_view)?.isVisible = show
     }
 
     class ListenerCallbackObserver(

@@ -2,9 +2,11 @@ package com.xplore.paymobile.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.WebJsonConverter
+import com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantPaginationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,7 +60,7 @@ object NetworkingModule {
         converterFactory: Converter.Factory
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl(XplorApi.BASE_URL)
+            .baseUrl(XplorApi.BASE_URL_BOARDING)
             .client(client)
             .addConverterFactory(converterFactory)
             .build()
@@ -67,4 +69,8 @@ object NetworkingModule {
     @Singleton
     fun provideXplorApi(retrofit: Retrofit): XplorApi =
         retrofit.create(XplorApi::class.java)
+
+    @Provides
+    fun providePaginationHelper(remoteDataSource: RemoteDataSource): MerchantPaginationHelper =
+        MerchantPaginationHelper(remoteDataSource)
 }

@@ -6,18 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.FragmentInfoBinding
+import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class InfoFragment : Fragment() {
+class InfoFragment : BaseFragment() {
+
+    override val hasBottomNavigation: Boolean = true
 
     @Inject
     lateinit var sharedPrefs: SharedPreferencesDataSource
