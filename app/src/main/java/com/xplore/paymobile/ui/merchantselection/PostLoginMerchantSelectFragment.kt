@@ -22,7 +22,6 @@ class PostLoginMerchantSelectFragment : BaseFragment() {
 
     override val hasBottomNavigation: Boolean = false
 
-    private val viewModel by viewModels<PostLoginMerchantSelectViewModel>()
     private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
     override fun onCreateView(
