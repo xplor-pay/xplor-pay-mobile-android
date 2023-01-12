@@ -6,6 +6,9 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     compileSdk 32
 
@@ -20,7 +23,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            resValue("string", "public_key", localProperties['publicKey'])
+        }
         release {
+            resValue("string", "public_key", localProperties['publicKey'])
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
