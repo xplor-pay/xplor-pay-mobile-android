@@ -31,15 +31,6 @@ class SettingsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
-        setupDevSettings()
-    }
-
-    private fun setupDevSettings() {
-        with(binding) {
-            devSettingsButton.setOnClickListener {
-                findNavController().navigate(R.id.navigation_settings_old)
-            }
-        }
     }
 
     private fun setupToolbar() {
