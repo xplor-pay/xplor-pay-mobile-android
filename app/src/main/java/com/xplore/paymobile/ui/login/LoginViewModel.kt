@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.setupWebView
+import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,7 +23,7 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val loginPageUrl = "https://my-qa.clearent.net/ui/home"
+        private val loginPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/home"
     }
 
     var onLoginSuccessful: () -> Unit = {}

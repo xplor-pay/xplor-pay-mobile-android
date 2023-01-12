@@ -27,18 +27,15 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
-
-    @Inject lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -61,9 +58,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-        // TODO: remove this, used to remove the auth token since there is no logout
-        sharedPreferencesDataSource.setAuthToken(null)
 
         setupListener()
 

@@ -48,8 +48,7 @@ class SharedPreferencesDataSource @Inject constructor(
     fun setTerminal(terminal: Terminal) =
         sharedPrefs.edit { putString(TERMINAL, webJsonConverter.toJson(terminal)) }
 
-    fun clearTerminal() =
-        sharedPrefs.edit { remove(TERMINAL) }
+    fun clearTerminal() = sharedPrefs.edit { remove(TERMINAL) }
 
     fun getTerminal(): Terminal? =
         sharedPrefs.getString(TERMINAL, null)?.let { webJsonConverter.jsonToTerminal(it) }

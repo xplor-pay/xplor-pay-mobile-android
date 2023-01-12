@@ -85,10 +85,10 @@ object NetworkingModule {
         client: OkHttpClient,
         converterFactory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
-            .baseUrl(XplorBoardingApi.BASE_URL)
-            .client(client)
-            .addConverterFactory(converterFactory)
-            .build()
+        .baseUrl(XplorBoardingApi.BASE_URL)
+        .client(client)
+        .addConverterFactory(converterFactory)
+        .build()
 
     @Provides
     @Singleton
@@ -102,10 +102,10 @@ object NetworkingModule {
         client: OkHttpClient,
         converterFactory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
-            .baseUrl(ClearentGatewayApi.BASE_URL)
-            .client(client)
-            .addConverterFactory(converterFactory)
-            .build()
+        .baseUrl(ClearentGatewayApi.BASE_URL)
+        .client(client)
+        .addConverterFactory(converterFactory)
+        .build()
 
     @Provides
     @Singleton

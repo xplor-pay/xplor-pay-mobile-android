@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
@@ -21,17 +20,16 @@ import com.clearent.idtech.android.wrapper.model.BatteryLifeState
 import com.clearent.idtech.android.wrapper.model.ReaderState
 import com.clearent.idtech.android.wrapper.model.ReaderStatus
 import com.clearent.idtech.android.wrapper.model.SignalState
+import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
-import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.base.BaseFragment
-import com.xplore.paymobile.ui.dialog.BasicDialog
-import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -234,13 +232,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener {
         startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
-        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
-            BasicDialog(
-                getString(R.string.keys_alert_title),
-                getString(R.string.keys_alert_message)
-            ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
-            return
-        }
         if (transactionOngoing)
             return
 

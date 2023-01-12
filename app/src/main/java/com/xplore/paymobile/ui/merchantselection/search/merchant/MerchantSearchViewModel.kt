@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.merchantselection.search.merchant
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
@@ -16,8 +17,9 @@ import javax.inject.Inject
 class MerchantSearchViewModel @Inject constructor(
     private val paginationHelper: MerchantPaginationHelper,
     private val sharedPrefs: SharedPreferencesDataSource
-) :
-    ViewModel() {
+) : ViewModel() {
+
+    private val clearentWrapper = ClearentWrapper
 
     private val _resultsFlow = MutableStateFlow<List<Merchant>>(listOf())
     val resultsFlow: Flow<List<Merchant>> = _resultsFlow
@@ -47,11 +49,14 @@ class MerchantSearchViewModel @Inject constructor(
     }
 
     fun saveMerchant(merchantItem: MerchantsListAdapter.MerchantItem) {
-        val merchant =
-            _resultsFlow.value.find { it.merchantName == merchantItem.name && it.merchantNumber == merchantItem.id }
-        merchant?.let {
+        val merchant = _resultsFlow.value.find {
+            it.merchantName == merchantItem.name && it.merchantNumber == merchantItem.id
+        }
+        merchant?.also {
             sharedPrefs.setMerchant(merchant)
             sharedPrefs.clearTerminal()
+
+            clearentWrapper.merchantHomeApiCredentials = null
         }
     }
 

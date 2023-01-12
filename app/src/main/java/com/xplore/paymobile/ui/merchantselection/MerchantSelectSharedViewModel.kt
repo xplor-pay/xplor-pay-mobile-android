@@ -11,7 +11,6 @@ class MerchantSelectSharedViewModel : ViewModel() {
 
     var terminals: List<Terminal> = emptyList()
 
-
     private val _allowNext = MutableStateFlow(true)
     val allowNext: Flow<Boolean> = _allowNext
 
