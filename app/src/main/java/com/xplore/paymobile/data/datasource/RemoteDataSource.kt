@@ -1,19 +1,29 @@
 package com.xplore.paymobile.data.datasource
 
+import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
+import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
 import com.xplore.paymobile.exceptions.AuthTokenException
+import com.xplore.paymobile.exceptions.VtTokenException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 
 class RemoteDataSource(
     private val xplorApi: XplorApi,
+    private val xplorBoardingApi: XplorBoardingApi,
+    private val clearentGatewayApi: ClearentGatewayApi,
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
 
     private val authToken
         get() = sharedPreferencesDataSource.getAuthToken()?.bearerToken
 
-    private fun getHeader() = authToken?.let { token ->
+    private val vtToken
+        get() = sharedPreferencesDataSource.getTerminal()?.questJwt?.token
+
+    private fun getXplorApiHeader() = authToken?.let { token ->
         mapOf(
             "Content-Type" to "application/json",
             "Accept" to "application/json, text/plain, */*",
@@ -21,44 +31,78 @@ class RemoteDataSource(
         )
     } ?: throw AuthTokenException("Missing authToken from shared preferences. AuthToken is null.")
 
-    private fun getHeader(merchantId: String) = mapOf(
-        *getHeader().toList().toTypedArray(),
-        "MerchantId" to merchantId
+    private fun getXplorApiHeader(merchantId: String) = mapOf(
+        *getXplorApiHeader().toList().toTypedArray(), "MerchantId" to merchantId
     )
 
-    suspend fun searchMerchants(searchMerchantOptions: SearchMerchantOptions) =
-        try {
-            val response = xplorApi.searchMerchants(getHeader(), searchMerchantOptions)
-            if (response.isSuccessful) {
-                NetworkResource.Success(response.body())
-            } else {
-                NetworkResource.Error(errorBody = response.errorBody())
-            }
-        } catch (ex: Exception) {
-            NetworkResource.Error(exception = ex)
-        }
-
-    suspend fun getMerchantDetails(merchantId: String) =
-        xplorApi.getMerchantDetails(
-            getHeader(merchantId),
-            merchantId
+    private fun getClearentGatewayApiHeader() = vtToken?.let { token ->
+        mapOf(
+            "Content-Type" to "application/json",
+            "Accept" to "application/json, text/plain, */*",
+            "Authorization" to "vt-token $token"
         )
+    } ?: throw VtTokenException("Missing terminal from shared preferences. vt-token is null.")
 
-    suspend fun fetchTerminals(merchantId: String) =
+    private fun getOpenBatchFilters() = mapOf(
+        "level" to "merchant", "status" to "OPEN"
+    )
+
+    suspend fun searchMerchants(searchMerchantOptions: SearchMerchantOptions) = try {
+        val response = xplorBoardingApi.searchMerchants(getXplorApiHeader(), searchMerchantOptions)
+        if (response.isSuccessful) {
+            NetworkResource.Success(response.body())
+        } else {
+            NetworkResource.Error(errorBody = response.errorBody())
+        }
+    } catch (ex: Exception) {
+        NetworkResource.Error(exception = ex)
+    }
+
+    suspend fun getMerchantDetails(merchantId: String) = try {
+        val response = xplorApi.getMerchantDetails(
+            getXplorApiHeader(merchantId), merchantId
+        )
+        if (response.isSuccessful) {
+            NetworkResource.Success(response.body())
+        } else {
+            NetworkResource.Error(errorBody = response.errorBody())
+        }
+    } catch (ex: Exception) {
+        NetworkResource.Error(exception = ex)
+    }
+
+    suspend fun fetchTerminals(merchantId: String) = try {
+        val response = xplorApi.fetchTerminals(getXplorApiHeader(merchantId))
+        if (response.isSuccessful) {
+            NetworkResource.Success(response.body())
+        } else {
+            NetworkResource.Error(errorBody = response.errorBody())
+        }
+    } catch (ex: Exception) {
+        NetworkResource.Error(exception = ex)
+    }
+
+    suspend fun getOpenBatch() = withContext(Dispatchers.IO) {
         try {
-            val response = xplorApi.fetchTerminals(getHeader(merchantId))
-            if (response.isSuccessful) {
+            val response = clearentGatewayApi.getOpenBatch(
+                getClearentGatewayApiHeader(), getOpenBatchFilters()
+            )
+
+            return@withContext if (response.isSuccessful) {
                 NetworkResource.Success(response.body())
             } else {
                 NetworkResource.Error(errorBody = response.errorBody())
             }
         } catch (ex: Exception) {
-            NetworkResource.Error(exception = ex)
+            return@withContext NetworkResource.Error(exception = ex)
         }
+    }
 }
 
 sealed class NetworkResource<out T> {
     data class Success<T>(val data: T) : NetworkResource<T>()
-    data class Error(val exception: Exception? = null, val errorBody: ResponseBody? = null) :
-        NetworkResource<Nothing>()
+    data class Error(
+        val exception: Exception? = null,
+        val errorBody: ResponseBody? = null
+    ) : NetworkResource<Nothing>()
 }

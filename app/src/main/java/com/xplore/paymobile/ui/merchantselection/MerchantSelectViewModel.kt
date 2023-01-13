@@ -65,6 +65,5 @@ class MerchantSelectViewModel @Inject constructor(
     }
 
     fun getMerchant() = sharedPrefs.getMerchant()
-
     fun getTerminal() = sharedPrefs.getTerminal()
 }

@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.merchantselection.search.terminal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
@@ -14,8 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TerminalSearchViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource
-) :
-    ViewModel() {
+) : ViewModel() {
+
+    private val clearentWrapper = ClearentWrapper
 
     private val _sortedTerminalsFlow = MutableStateFlow<List<Terminal>>(listOf())
     val terminalsFlow: Flow<List<Terminal>> = _sortedTerminalsFlow
@@ -40,12 +42,17 @@ class TerminalSearchViewModel @Inject constructor(
         }
     }
 
-    fun saveTerminal(terminal: MerchantsListAdapter.MerchantItem) {
-        val toSave = terminals.find { item ->
-            item.terminalPKId == terminal.id
+    fun saveTerminal(merchantItem: MerchantsListAdapter.MerchantItem) {
+        val selectedTerminal = terminals.find { item ->
+            item.terminalPKId == merchantItem.id
         }
-        toSave?.let {
-            sharedPrefs.setTerminal(toSave)
+        selectedTerminal?.also { terminal ->
+            sharedPrefs.setTerminal(terminal)
+            clearentWrapper.merchantHomeApiCredentials =
+                ClearentWrapper.MerchantHomeApiCredentials(
+                    merchantId = merchantItem.id,
+                    vtToken = terminal.questJwt.token
+                )
         }
     }
 }

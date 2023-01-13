@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,7 +15,6 @@ import com.xplore.paymobile.R
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSearchBinding
 import com.xplore.paymobile.ui.base.BaseFragment
-import com.xplore.paymobile.ui.merchantselection.MerchantSelectSharedViewModel
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
 import com.xplore.paymobile.ui.merchantselection.search.list.SeeMoreListAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +30,6 @@ class MerchantSearchFragment : BaseFragment() {
     override val hasBottomNavigation: Boolean = false
 
     private val viewModel by viewModels<MerchantSearchViewModel>()
-    private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
     private val itemsAdapter = MerchantsListAdapter(onItemClicked = { item, _ ->
         binding.okButton.isEnabled = item.isSelected

@@ -174,5 +174,4 @@ class MerchantSelectFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
