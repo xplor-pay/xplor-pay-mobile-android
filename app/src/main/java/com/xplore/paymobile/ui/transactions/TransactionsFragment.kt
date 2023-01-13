@@ -43,7 +43,6 @@ class TransactionsFragment : BaseFragment() {
                 viewModel.prepareWebView(webView, requireContext())
             }
         }
-        return root
     }
 
     override fun onDestroyView() {

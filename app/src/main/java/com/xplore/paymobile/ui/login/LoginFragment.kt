@@ -71,9 +71,9 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun handleLoginEvents(loginEvent: LoginViewModel.LoginEvents) {
+    private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
-            LoginViewModel.LoginEvents.LoginSuccessful -> viewModel.onLoginSuccessful()
+            LoginEvents.LoginSuccessful -> viewModel.onLoginSuccessful()
         }
     }
 
