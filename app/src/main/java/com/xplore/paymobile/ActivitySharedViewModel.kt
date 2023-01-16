@@ -11,18 +11,31 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class ActivityViewModel @Inject constructor(
-    private val jsBridge: JSBridge
+open class ActivitySharedViewModel @Inject constructor(
+    val jsBridge: JSBridge
 ) : ViewModel() {
 
-    protected val _loginEventsFlow = MutableSharedFlow<LoginEvents>()
+    var allowLogout = true
+
+    private val _loginEventsFlow = MutableSharedFlow<LoginEvents>()
     val loginEventsFlow: SharedFlow<LoginEvents> = _loginEventsFlow
 
     init {
         viewModelScope.launch {
             jsBridge.jsBridgeFlows.loggedOutFlow.collectLatest { loggedOut ->
-                loggedOut?.also {
-                    _loginEventsFlow.emit(LoginEvents.Logout)
+                if (allowLogout) {
+                    allowLogout = false
+                    loggedOut?.also {
+                        _loginEventsFlow.emit(LoginEvents.Logout)
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            jsBridge.jsBridgeFlows.authTokenFlow.collectLatest { authToken ->
+                authToken?.also {
+                    _loginEventsFlow.emit(LoginEvents.LoginSuccessful)
                 }
             }
         }

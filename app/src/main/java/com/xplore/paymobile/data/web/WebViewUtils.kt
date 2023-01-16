@@ -10,6 +10,8 @@ import com.xplore.paymobile.util.Constants.HOST_NAMES
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.net.HttpURLConnection.HTTP_FORBIDDEN
+import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 import javax.inject.Inject
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -26,6 +28,14 @@ fun setupWebView(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
+                // if we are detecting a logout event
+                if (request?.url.toString()
+                        .contains("https://pgqa.clearent.net/_layouts/PG/signout.aspx")
+                ) {
+                    jsBridge.logout()
+                    return false
+                }
+
                 // if we are in our domain continue inside the app
                 if (request?.url?.host in HOST_NAMES) {
                     return false
@@ -41,6 +51,21 @@ fun setupWebView(
 
                 return true
             }
+
+            override fun onReceivedHttpError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+
+                val statusCode = errorResponse?.statusCode
+                if (statusCode == HTTP_UNAUTHORIZED || statusCode == HTTP_FORBIDDEN) {
+                    jsBridge.logout()
+                }
+            }
+
+
         }
 
         settings.apply {
@@ -106,8 +131,6 @@ class JSBridge @Inject constructor(
         backgroundScope.launch {
             Timber.d("received userLoggedOut: $message")
 
-            sharedPrefs.setAuthToken(null)
-
             jsBridgeFlows.loggedOutFlow.emit(webJsonConverter.jsonToLoggedOut(message))
         }
     }
@@ -125,6 +148,8 @@ class JSBridge @Inject constructor(
             jsBridgeFlows.userRolesFlow.emit(userRoles)
         }
     }
+
+    fun logout() = backgroundScope.launch { jsBridgeFlows.loggedOutFlow.emit(LoggedOut(true)) }
 
     data class JSBridgeFlows(
         val authTokenFlow: MutableSharedFlow<AuthToken?> = MutableSharedFlow(),
