@@ -12,8 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.xplore.paymobile.ActivitySharedViewModel
-import com.xplore.paymobile.LoginEvents
+import com.xplore.paymobile.data.web.LoginEvents
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentLoginBinding
 import com.xplore.paymobile.util.parcelable
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +36,7 @@ class LoginFragment : Fragment() {
     }
 
     private val viewModel by viewModels<LoginViewModel>()
-    private val sharedViewModel by activityViewModels<ActivitySharedViewModel>()
+    private val sharedViewModel by activityViewModels<WebEventsSharedViewModel>()
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!

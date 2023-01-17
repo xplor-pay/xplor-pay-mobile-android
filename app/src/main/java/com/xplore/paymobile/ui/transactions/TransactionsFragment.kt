@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.xplore.paymobile.ActivitySharedViewModel
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ class TransactionsFragment : BaseFragment() {
     override val hasBottomNavigation: Boolean = true
 
     private val viewModel by viewModels<TransactionsViewModel>()
-    private val sharedViewModel by activityViewModels<ActivitySharedViewModel>()
+    private val sharedViewModel by activityViewModels<WebEventsSharedViewModel>()
 
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!

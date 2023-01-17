@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.xplore.paymobile.ActivitySharedViewModel
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentBatchesBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +17,7 @@ class BatchesFragment : BaseFragment() {
     override val hasBottomNavigation: Boolean = true
 
     private val viewModel by viewModels<BatchesViewModel>()
-    private val sharedViewModel by activityViewModels<ActivitySharedViewModel>()
+    private val sharedViewModel by activityViewModels<WebEventsSharedViewModel>()
 
     private var _binding: FragmentBatchesBinding? = null
     private val binding get() = _binding!!

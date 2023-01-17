@@ -26,6 +26,8 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.LoginEvents
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
@@ -38,7 +40,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    private val viewModel by viewModels<ActivitySharedViewModel>()
+    private val viewModel by viewModels<WebEventsSharedViewModel>()
 
     @Inject
     lateinit var  sharedPreferencesDataSource: SharedPreferencesDataSource

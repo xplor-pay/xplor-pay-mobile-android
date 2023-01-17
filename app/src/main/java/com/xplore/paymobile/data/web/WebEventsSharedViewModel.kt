@@ -1,8 +1,7 @@
-package com.xplore.paymobile
+package com.xplore.paymobile.data.web
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xplore.paymobile.data.web.JSBridge
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class ActivitySharedViewModel @Inject constructor(
+open class WebEventsSharedViewModel @Inject constructor(
     val jsBridge: JSBridge
 ) : ViewModel() {
 
