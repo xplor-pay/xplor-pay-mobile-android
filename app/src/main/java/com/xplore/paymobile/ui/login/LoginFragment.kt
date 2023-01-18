@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.data.web.LoginEvents
@@ -86,7 +87,10 @@ class LoginFragment : Fragment() {
                     GroupedUserRoles.NoAccess -> BasicDialog(
                         "",
                         getString(R.string.no_access_dialog_description)
-                    ).show(parentFragmentManager, BasicDialog::class.java.simpleName)
+                    ) { (requireActivity() as? MainActivity)?.logout() }.show(
+                        parentFragmentManager,
+                        BasicDialog::class.java.simpleName
+                    )
                     GroupedUserRoles.MerchantHomeRoles -> {}
                 }
             }

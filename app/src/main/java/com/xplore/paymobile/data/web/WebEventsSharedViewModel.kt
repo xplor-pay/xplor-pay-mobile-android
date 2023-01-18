@@ -32,9 +32,9 @@ open class WebEventsSharedViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            jsBridge.jsBridgeFlows.authTokenFlow.collectLatest { authToken ->
-                authToken?.also {
-                    _loginEventsFlow.emit(LoginEvents.LoginSuccessful)
+            jsBridge.jsBridgeFlows.userRolesFlow.collectLatest { userRoles ->
+                userRoles?.also {
+                    _loginEventsFlow.emit(LoginEvents.LoginSuccessful(userRoles))
                 }
             }
         }
@@ -42,6 +42,6 @@ open class WebEventsSharedViewModel @Inject constructor(
 }
 
 sealed class LoginEvents {
-    object LoginSuccessful : LoginEvents()
+    data class LoginSuccessful(var userRoles: UserRoles) : LoginEvents()
     object Logout : LoginEvents()
 }

@@ -89,6 +89,9 @@ class JSBridge @Inject constructor(
 ) {
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+    private var shouldRefreshUserRoles = false
+    private var lastAuthTokenUsed = ""
+
     init {
         backgroundScope.launch {
             jsBridgeFlows.authTokenFlow.emit(sharedPrefs.getAuthToken())
@@ -103,12 +106,16 @@ class JSBridge @Inject constructor(
         backgroundScope.launch {
             Timber.d("received authTokenUpdated: $message")
 
+            if (lastAuthTokenUsed != message) {
+                shouldRefreshUserRoles = true
+                lastAuthTokenUsed = message
+            }
+
             val authToken = webJsonConverter.jsonToAuthToken(message)
 
             if (authToken == sharedPrefs.getAuthToken()) return@launch
 
             sharedPrefs.setAuthToken(message)
-            jsBridgeFlows.authTokenFlow.emit(authToken)
         }
     }
 
@@ -142,8 +149,9 @@ class JSBridge @Inject constructor(
 
             val userRoles = webJsonConverter.jsonToUserRoles(message)
 
-            if (userRoles == sharedPrefs.getUserRoles()) return@launch
+            if (!shouldRefreshUserRoles) return@launch
 
+            shouldRefreshUserRoles = false
             sharedPrefs.setUserRoles(message)
             jsBridgeFlows.userRolesFlow.emit(userRoles)
         }
