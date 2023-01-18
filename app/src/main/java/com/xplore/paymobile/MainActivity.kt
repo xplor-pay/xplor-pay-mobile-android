@@ -40,14 +40,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    private val viewModel by viewModels<WebEventsSharedViewModel>()
-
     @Inject
-    lateinit var  sharedPreferencesDataSource: SharedPreferencesDataSource
+    lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
+
+    private val viewModel by viewModels<WebEventsSharedViewModel>()
 
     private var hintsShowed = false
     private var showBottomNav = true

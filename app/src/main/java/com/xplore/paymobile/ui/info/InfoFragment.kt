@@ -41,7 +41,7 @@ class InfoFragment : BaseFragment() {
 
         setupTextViews()
         setupClickListeners()
-        (activity as MainActivity).checkForAppUpdate { binding.updateButton.isEnabled = true }
+        (requireActivity() as? MainActivity)?.checkForAppUpdate { binding.updateButton.isEnabled = true }
     }
 
     private fun setupTextViews() {
@@ -61,11 +61,11 @@ class InfoFragment : BaseFragment() {
                 openTermsAndConditionsLink()
             }
             updateButton.setOnClickListener {
-                (activity as MainActivity).updateApp()
+                (requireActivity() as? MainActivity)?.updateApp()
             }
             logOutButton.setOnClickListener {
                 sharedPrefs.setAuthToken(null)
-                (activity as MainActivity).logout()
+                (requireActivity() as? MainActivity)?.logout()
             }
         }
     }

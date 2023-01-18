@@ -12,10 +12,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.MainActivity
+import com.xplore.paymobile.R
+import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.data.web.LoginEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentLoginBinding
 import com.xplore.paymobile.util.parcelable
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -76,9 +80,19 @@ class LoginFragment : Fragment() {
 
     private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
-            LoginEvents.LoginSuccessful -> {
+            is LoginEvents.LoginSuccessful -> {
                 sharedViewModel.allowLogout = true
-                viewModel.onLoginSuccessful()
+                when (GroupedUserRoles.fromString(loginEvent.userRoles.roles)) {
+                    GroupedUserRoles.VirtualTerminalRoles -> viewModel.onLoginSuccessful()
+                    GroupedUserRoles.NoAccess -> BasicDialog(
+                        "",
+                        getString(R.string.no_access_dialog_description)
+                    ) { (requireActivity() as? MainActivity)?.logout() }.show(
+                        parentFragmentManager,
+                        BasicDialog::class.java.simpleName
+                    )
+                    GroupedUserRoles.MerchantHomeRoles -> {}
+                }
             }
         }
     }
