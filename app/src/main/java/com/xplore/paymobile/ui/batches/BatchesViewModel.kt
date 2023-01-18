@@ -10,15 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class BatchesViewModel @Inject constructor(
-    private val jsBridge: JSBridge
-) : ViewModel() {
+class BatchesViewModel @Inject constructor() : ViewModel() {
 
     companion object {
         private val batchesPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/openbatches"
     }
 
-    fun prepareWebView(webView: WebView, context: Context) {
+    fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
         setupWebView(webView, context, jsBridge) {
             webView.loadUrl(batchesPageUrl)
         }

@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.data.web.LoginEvents
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentLoginBinding
 import com.xplore.paymobile.util.parcelable
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +36,7 @@ class LoginFragment : Fragment() {
     }
 
     private val viewModel by viewModels<LoginViewModel>()
+    private val sharedViewModel by activityViewModels<WebEventsSharedViewModel>()
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
@@ -63,22 +67,25 @@ class LoginFragment : Fragment() {
     private fun setupViewModel() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.loginEventsFlow.collect { loginEvent ->
+                sharedViewModel.loginEventsFlow.collect { loginEvent ->
                     handleLoginEvents(loginEvent)
                 }
             }
         }
     }
 
-    private fun handleLoginEvents(loginEvent: LoginViewModel.LoginEvents) {
+    private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
-            LoginViewModel.LoginEvents.LoginSuccessful -> viewModel.onLoginSuccessful()
+            LoginEvents.LoginSuccessful -> {
+                sharedViewModel.allowLogout = true
+                viewModel.onLoginSuccessful()
+            }
         }
     }
 
     private fun setupViews() {
         binding.apply {
-            viewModel.prepareWebView(webView, requireContext())
+            viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
         }
     }
 

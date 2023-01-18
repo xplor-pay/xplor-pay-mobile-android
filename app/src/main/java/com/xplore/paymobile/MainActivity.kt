@@ -3,15 +3,13 @@ package com.xplore.paymobile
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
 import androidx.fragment.app.commit
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -27,15 +25,25 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.LoginEvents
+import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
+
+    private val viewModel by viewModels<WebEventsSharedViewModel>()
+
+    @Inject
+    lateinit var  sharedPreferencesDataSource: SharedPreferencesDataSource
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -59,6 +67,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
         super.onCreate(savedInstanceState)
 
+        sharedPreferencesDataSource.setAuthToken(null)
+
         setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -69,11 +79,32 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         setContentView(binding.root)
 
         setupViews()
+        setupLoginEventsFlow()
     }
 
     private fun setupViews() {
         setupWebViewLogin()
         setupAppView()
+    }
+
+    private fun setupLoginEventsFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loginEventsFlow.collect { loginEvent ->
+                    when (loginEvent) {
+                        LoginEvents.Logout -> {
+                            BasicDialog(
+                                getString(R.string.logout_dialog_title),
+                                getString(R.string.logout_dialog_description)
+                            ) { logout() }.show(
+                                supportFragmentManager,
+                                BasicDialog::class.java.simpleName
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun setupWebViewLogin() {
@@ -137,6 +168,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     }
 
     fun logout() {
+        sharedPreferencesDataSource.setAuthToken(null)
         binding.apply {
             loginFragment.isVisible = true
             container.isVisible = false
