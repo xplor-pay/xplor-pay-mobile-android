@@ -8,7 +8,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.remote.model.Terminal
@@ -51,17 +53,19 @@ class MerchantSelectFragment : Fragment() {
 
     private fun setupLoadingFlow() {
         lifecycleScope.launch {
-            viewModel.loadingFlow.collect { isLoading ->
-                showLoading(isLoading)
-                when (isLoading) {
-                    true -> {
-                        showNoTerminalsWarning(false)
-                        disableInputs()
-                        sharedViewModel.setAllowNext(false)
-                    }
-                    false -> {
-                        binding.merchantClickArea.isClickable = true
-                        checkEdgeCases()
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadingFlow.collect { isLoading ->
+                    showLoading(isLoading)
+                    when (isLoading) {
+                        true -> {
+                            showNoTerminalsWarning(false)
+                            disableInputs()
+                            sharedViewModel.setAllowNext(false)
+                        }
+                        false -> {
+                            binding.merchantClickArea.isClickable = true
+                            checkEdgeCases()
+                        }
                     }
                 }
             }
@@ -116,21 +120,33 @@ class MerchantSelectFragment : Fragment() {
 
     private fun setupTerminalFlow() {
         lifecycleScope.launch {
-            viewModel.selectedTerminalFlow.collect { terminal ->
-                Timber.d("Selected terminal is ${terminal?.terminalName}")
-                setupTerminalName(terminal)
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.terminalsFlow.collect { terminals ->
-                Timber.d("Received terminals $terminals")
-                sharedViewModel.terminals = terminals
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.selectedTerminalFlow.collect { terminalSelection ->
+                        when (terminalSelection) {
+                            is TerminalSelection.TerminalAvailable -> {
+                                Timber.d("Selected terminal is ${terminalSelection.terminal.terminalName}")
+                                setupTerminalName(terminalSelection.terminal)
+                            }
+                            is TerminalSelection.NoTerminal -> {
+                                Timber.d("No terminal selected")
+                                setupTerminalName(null)
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.terminalsFlow.collect { terminals ->
+                        Timber.d("Received terminals $terminals")
+                        sharedViewModel.terminals = terminals
+                    }
+                }
             }
         }
     }
 
     private fun setupMerchantFlow() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             viewModel.merchantFlow.collect { merchant ->
                 Timber.d("Selected merchant is ${merchant?.merchantName}")
                 setupMerchantName(merchant)
@@ -148,8 +164,10 @@ class MerchantSelectFragment : Fragment() {
 
     private fun setupTerminalName(terminal: Terminal?) {
         with(binding) {
-            terminal?.terminalName?.let {
+            terminal?.terminalName?.also {
                 terminalTextLayout.editText?.setText(it)
+            } ?: run {
+                terminalTextLayout.editText?.setText("")
             }
         }
     }

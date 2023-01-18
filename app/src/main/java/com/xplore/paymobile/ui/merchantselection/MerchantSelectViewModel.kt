@@ -25,8 +25,9 @@ class MerchantSelectViewModel @Inject constructor(
     private val _merchantFlow = MutableStateFlow<Merchant?>(null)
     val merchantFlow: Flow<Merchant?> = _merchantFlow
 
-    private val _selectedTerminalFlow = MutableStateFlow<Terminal?>(null)
-    val selectedTerminalFlow: Flow<Terminal?> = _selectedTerminalFlow
+    private val _selectedTerminalFlow =
+        MutableStateFlow<TerminalSelection>(TerminalSelection.NoTerminal)
+    val selectedTerminalFlow: Flow<TerminalSelection> = _selectedTerminalFlow
 
     private val _terminalsFlow = MutableStateFlow<List<Terminal>>(emptyList())
     val terminalsFlow: Flow<List<Terminal>> = _terminalsFlow
@@ -40,9 +41,9 @@ class MerchantSelectViewModel @Inject constructor(
             sharedPrefs.getMerchant()?.also { merchant ->
                 _merchantFlow.emit(merchant)
                 sharedPrefs.getTerminal()?.also { terminal ->
-                    _selectedTerminalFlow.emit(terminal)
+                    _selectedTerminalFlow.emit(TerminalSelection.TerminalAvailable(terminal))
                 } ?: run {
-                    _selectedTerminalFlow.emit(null)
+                    _selectedTerminalFlow.emit(TerminalSelection.NoTerminal)
                 }
                 withContext(Dispatchers.IO) {
                     fetchTerminals(merchant.merchantNumber)
@@ -66,4 +67,9 @@ class MerchantSelectViewModel @Inject constructor(
 
     fun getMerchant() = sharedPrefs.getMerchant()
     fun getTerminal() = sharedPrefs.getTerminal()
+}
+
+sealed class TerminalSelection {
+    data class TerminalAvailable(val terminal: Terminal) : TerminalSelection()
+    object NoTerminal : TerminalSelection()
 }
