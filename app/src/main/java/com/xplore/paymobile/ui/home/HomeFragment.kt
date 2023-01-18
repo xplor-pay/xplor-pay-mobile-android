@@ -18,10 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.OfflineModeEnabledListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
-import com.clearent.idtech.android.wrapper.model.BatteryLifeState
-import com.clearent.idtech.android.wrapper.model.ReaderState
-import com.clearent.idtech.android.wrapper.model.ReaderStatus
-import com.clearent.idtech.android.wrapper.model.SignalState
+import com.clearent.idtech.android.wrapper.model.*
 import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
@@ -233,7 +230,7 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
             chargeButton.setOnClickListener {
                 startSdkActivityForResult(
                     ClearentAction.Transaction(
-                        chargeAmount.toDouble() / 100,
+                        PaymentInfo(chargeAmount.toDouble() / 100),
                         viewModel.shouldShowHints(),
                         shouldShowSignature,
                         if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
@@ -253,7 +250,9 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         startSdkActivityForResult(ClearentAction.Settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
-        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
+        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey()
+                .isEmpty() || viewModel.getPublicKey().isEmpty())
+        ) {
             BasicDialog(
                 getString(R.string.keys_alert_title),
                 getString(R.string.keys_alert_message)
@@ -293,8 +292,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
                     ClearentSDKActivity.CLEARENT_ACTION_TRANSACTION
                 )
                 intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_AMOUNT_KEY,
-                    clearentAction.amount
+                    ClearentSDKActivity.CLEARENT_PAYMENT_INFO_KEY,
+                    clearentAction.paymentInfo
                 )
                 intent.putExtra(
                     ClearentSDKActivity.CLEARENT_SHOW_HINTS,
@@ -475,7 +474,8 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
     private fun setOfflineModeEnabledText() {
         binding.apply {
             clearentWrapper.retrieveUnprocessedOfflineTransactions(onRetrieved = {
-                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, it.size.toString())
+                offlineModeEnabled.text =
+                    getString(R.string.offline_mode_enabled_text, it.size.toString())
             }, onError = {
                 offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
             })

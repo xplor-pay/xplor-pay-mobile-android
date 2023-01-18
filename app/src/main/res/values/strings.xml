@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">XplorPayMobile</string>
+    <string name="app_name">Xplor Pay SDK</string>
     <string name="title_home">Home</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_more">More</string>

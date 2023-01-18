@@ -81,9 +81,12 @@ dependencies {
 
     // Timber logger for file logging
     implementation "com.jakewharton.timber:timber:$timber_version"
-    
+
     implementation "androidx.security:security-crypto:$crypto_security_version"
 
     // Clearent Idtech Android SDK
-    implementation project (':clearent-idtech-android')
+    implementation project(':clearent-idtech-android')
+
+    //Splash screen
+    implementation 'androidx.core:core-splashscreen:1.0.0'
 }
