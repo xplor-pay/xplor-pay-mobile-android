@@ -22,4 +22,7 @@ object Constants {
 
     val BASE_URL_WEB_PAGE =
         if (BuildConfig.DEBUG) "https://my-qa.clearent.net" else "https://my.clearent.net"
+
+    val SIGNOUT_WEB_PAGE_URL =
+        if (BuildConfig.DEBUG) "https://pgqa.clearent.net/_layouts/PG/signout.aspx" else "https://pg.clearent.net/_layouts/PG/signout.aspx"
 }

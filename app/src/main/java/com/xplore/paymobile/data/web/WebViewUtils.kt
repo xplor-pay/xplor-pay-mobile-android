@@ -6,6 +6,7 @@ import android.content.Intent
 import android.webkit.*
 import androidx.core.content.ContextCompat.startActivity
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.Constants.HOST_NAMES
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -29,8 +30,7 @@ fun setupWebView(
                 request: WebResourceRequest?
             ): Boolean {
                 // if we are detecting a logout event
-                if (request?.url.toString()
-                        .contains("https://pgqa.clearent.net/_layouts/PG/signout.aspx")
+                if (request?.url.toString().contains(Constants.SIGNOUT_WEB_PAGE_URL)
                 ) {
                     jsBridge.logout()
                     return false
