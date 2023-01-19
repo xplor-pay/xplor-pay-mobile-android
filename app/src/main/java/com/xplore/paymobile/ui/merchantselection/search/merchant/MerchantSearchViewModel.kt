@@ -19,7 +19,7 @@ class MerchantSearchViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource
 ) : ViewModel() {
 
-    private val clearentWrapper = ClearentWrapper
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     private val _resultsFlow = MutableStateFlow<List<Merchant>>(listOf())
     val resultsFlow: Flow<List<Merchant>> = _resultsFlow

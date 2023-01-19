@@ -40,6 +40,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
+    private val viewModel by viewModels<WebEventsSharedViewModel>()
+
     @Inject
     lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
-    private val viewModel by viewModels<WebEventsSharedViewModel>()
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     private var hintsShowed = false
     private var showBottomNav = true
@@ -189,12 +191,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
     private fun setupListener() {
-        ClearentWrapper.setListener(ClearentDataSource)
+        clearentWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ClearentWrapper.removeListener()
+        clearentWrapper.removeListener()
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {

@@ -48,7 +48,7 @@
         android:id="@+id/navigation_settings"
         android:name="com.xplore.paymobile.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/fragment_settings_sdk"/>
 
     <fragment
         android:id="@+id/navigation_settings_old"

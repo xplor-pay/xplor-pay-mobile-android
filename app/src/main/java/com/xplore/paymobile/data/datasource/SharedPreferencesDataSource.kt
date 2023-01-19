@@ -21,6 +21,7 @@ class SharedPreferencesDataSource @Inject constructor(
         private const val MERCHANT = "MERCHANT_KEY"
         private const val TERMINAL = "TERMINAL_KEY"
         private const val USER_ROLES = "USER_ROLES_KEY"
+        private const val SDK_FIRST_SET_UP = "SDK_SET_UP_KEY"
     }
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
@@ -29,6 +30,10 @@ class SharedPreferencesDataSource @Inject constructor(
         sharedPrefs.edit { putInt(FIRST_PAIR, firstPair.ordinal) }
 
     fun getFirstPair(): FirstPair = FirstPair.fromOrdinal(retrieveFirstPair())
+
+    fun isSdkSetUp(): Boolean = sharedPrefs.getBoolean(SDK_FIRST_SET_UP, false)
+
+    fun sdkSetupComplete() = sharedPrefs.edit { putBoolean(SDK_FIRST_SET_UP, true) }
 
     fun setAuthToken(authToken: String?) = sharedPrefs.edit { putString(AUTH_TOKEN, authToken) }
 
