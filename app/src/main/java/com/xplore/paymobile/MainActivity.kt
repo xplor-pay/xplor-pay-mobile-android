@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         private const val HINTS_DISPLAY_DELAY = 3000L
     }
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private var hintsShowed = false
     private lateinit var binding: ActivityMainBinding
 
@@ -72,12 +74,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         multiplePermissionsLauncher.launch(checkPermissionsToRequest(context = applicationContext))
 
     private fun setupListener() {
-        ClearentWrapper.setListener(ClearentDataSource)
+        clearentWrapper.setListener(ClearentDataSource)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ClearentWrapper.removeListener()
+        clearentWrapper.removeListener()
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {

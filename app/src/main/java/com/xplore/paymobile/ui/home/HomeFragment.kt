@@ -16,12 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.listener.OfflineModeEnabledListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.*
+import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
-import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentHomeBinding
@@ -34,13 +35,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), ReaderStatusListener {
+class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListener {
 
     companion object {
         private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
     }
 
     private val viewModel by viewModels<HomeViewModel>()
+
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     private var chargeAmount = ""
     private var transactionOngoing = false
@@ -84,13 +87,29 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         if (viewModel.shouldShowHints())
             showHints()
 
+        setupOfflineProcessingMockButtons()
         setNumericKeyPadBackground()
         handlePaymentMethodButtonState()
         setupPaymentMethodClickListeners()
         renderChargeAmount()
         setUpNumpad()
         setListeners()
-        ClearentWrapper.addReaderStatusListener(this)
+        clearentWrapper.addReaderStatusListener(this)
+        clearentWrapper.addOfflineModeEnabledListener(this)
+    }
+
+    private fun setupOfflineProcessingMockButtons() {
+        binding.apply {
+            addProcessedOfflineTransactionWithoutErrors.setOnClickListener {
+                clearentWrapper.mockOfflineTransactions(true, false)
+            }
+            addProcessedOfflineTransactionWithErrors.setOnClickListener {
+                clearentWrapper.mockOfflineTransactions(true, true)
+            }
+            addOfflineTransactions.setOnClickListener {
+                clearentWrapper.mockOfflineTransactions(false, false)
+            }
+        }
     }
 
     private fun setupPaymentMethodClickListeners() {
@@ -203,7 +222,7 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     private fun setListeners() {
         binding.apply {
             readerInfo.root.setOnClickListener {
-                openDevicesList()
+                openSettings()
             }
             firstReader.setOnClickListener {
                 startPairingProcess()
@@ -218,17 +237,22 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                     )
                 )
             }
+            settingsButton.setOnClickListener {
+                openSettings()
+            }
         }
     }
 
     private fun startPairingProcess() =
         startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
 
-    private fun openDevicesList() =
-        startSdkActivityForResult(ClearentAction.DevicesList(viewModel.shouldShowHints()))
+    private fun openSettings() =
+        startSdkActivityForResult(ClearentAction.Settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
-        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey().isEmpty() || viewModel.getPublicKey().isEmpty())) {
+        if (clearentAction is ClearentAction.Transaction && (viewModel.getApiKey()
+                .isEmpty() || viewModel.getPublicKey().isEmpty())
+        ) {
             BasicDialog(
                 getString(R.string.keys_alert_title),
                 getString(R.string.keys_alert_message)
@@ -256,6 +280,11 @@ class HomeFragment : Fragment(), ReaderStatusListener {
                 intent.putExtra(
                     ClearentSDKActivity.CLEARENT_ACTION_KEY,
                     ClearentSDKActivity.CLEARENT_ACTION_DEVICES
+                )
+            is ClearentAction.Settings ->
+                intent.putExtra(
+                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                    ClearentSDKActivity.CLEARENT_ACTION_SETTINGS
                 )
             is ClearentAction.Transaction -> {
                 intent.putExtra(
@@ -286,7 +315,8 @@ class HomeFragment : Fragment(), ReaderStatusListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        ClearentWrapper.removeReaderStatusListener(this)
+        clearentWrapper.removeReaderStatusListener(this)
+        clearentWrapper.removeOfflineModeEnabledListener(this)
     }
 
     private fun renderChargeAmount() {
@@ -382,6 +412,11 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setOfflineModeEnabledText()
+    }
+
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
         binding.apply {
             readerInfo.apply {
@@ -436,9 +471,29 @@ class HomeFragment : Fragment(), ReaderStatusListener {
         }
     }
 
+    private fun setOfflineModeEnabledText() {
+        binding.apply {
+            clearentWrapper.retrieveUnprocessedOfflineTransactions(onRetrieved = {
+                offlineModeEnabled.text =
+                    getString(R.string.offline_mode_enabled_text, it.size.toString())
+            }, onError = {
+                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
+            })
+        }
+    }
+
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
+        }
+    }
+
+    override fun onOfflineModeChanged(enabled: Boolean) {
+        lifecycleScope.launch {
+            binding.apply {
+                offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
+                setOfflineModeEnabledText()
+            }
         }
     }
 }

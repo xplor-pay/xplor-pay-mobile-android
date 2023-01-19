@@ -2,15 +2,24 @@ package com.xplore.paymobile
 
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.EncryptedSharedPrefsDataSource
+import com.xplore.paymobile.util.SharedPreferencesDataSource
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application() {
 
-    private lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
+    @Inject
+    internal lateinit var encryptedPrefs: EncryptedSharedPrefsDataSource
+
+    @Inject
+    internal lateinit var sharedPrefs: SharedPreferencesDataSource
 
     override fun onCreate() {
         super.onCreate()
@@ -18,18 +27,25 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
         initSdkWrapper()
     }
 
     private fun initSdkWrapper() {
         val apiKey = encryptedPrefs.getApiKey()
         val publicKey = encryptedPrefs.getPublicKey()
-        ClearentWrapper.initializeSDK(
+        clearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,
             publicKey,
-            apiKey
+            apiKey,
+            //TODO proper key management
+            OfflineModeConfig("PassPhrase")
         )
+
+        // set up the sdk store and forward mode once so we don't override user preferences
+        if (sharedPrefs.isSdkSetUp())
+            return
+
+        sharedPrefs.sdkSetupComplete()
     }
 }

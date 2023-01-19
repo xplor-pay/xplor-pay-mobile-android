@@ -24,4 +24,5 @@
     <dimen name="numeric_key_pad_corner_size">8dp</dimen>
 <!--    Should be 1 dp higher than the numpad's corner size -->
     <dimen name="numeric_key_pad_background_corner_size">9dp</dimen>
+    <dimen name="devices_dropdown_max_width">230dp</dimen>
 </resources>

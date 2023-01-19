@@ -8,9 +8,14 @@ class SharedPreferencesDataSource(context: Context) {
     companion object {
         private const val KEY_PREFERENCES = "com.xplore.paymobile.READER_PREFERENCES"
         private const val FIRST_PAIR = "FIRST_PAIR_KEY"
+        private const val SDK_FIRST_SET_UP = "SDK_SET_UP_KEY"
     }
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
+
+    fun isSdkSetUp(): Boolean = sharedPrefs.getBoolean(SDK_FIRST_SET_UP, false)
+
+    fun sdkSetupComplete() = sharedPrefs.edit { putBoolean(SDK_FIRST_SET_UP, true) }
 
     fun setFirstPair(firstPair: FirstPair) =
         sharedPrefs.edit { putInt(FIRST_PAIR, firstPair.ordinal) }

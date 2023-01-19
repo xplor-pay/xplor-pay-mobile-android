@@ -9,55 +9,119 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/hints_dialog"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/add_offline_transactions"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Add offline transactions"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/add_processed_offline_transaction_without_errors"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Add processed offline transactions without errors"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/add_processed_offline_transaction_with_errors"
+        app:layout_constraintTop_toBottomOf="@id/add_offline_transactions" />
+
+    <Button
+        android:id="@+id/add_processed_offline_transaction_with_errors"
+        style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Add processed offline transactions with errors"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/add_processed_offline_transaction_without_errors"
+        app:layout_constraintTop_toBottomOf="@id/add_offline_transactions"/>
 
     <FrameLayout
         android:id="@+id/current_reader"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/add_processed_offline_transaction_with_errors">
 
         <Button
             android:id="@+id/first_reader"
             style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:text="@string/first_reader_button_text" />
+            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_extra_small"
+            android:layout_marginEnd="@dimen/margin_extra_small"
+            android:text="@string/first_reader_button_text"
+            android:visibility="gone"/>
 
         <include
             android:id="@+id/reader_info"
             layout="@layout/reader_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingStart="@dimen/padding_small"
+        android:paddingEnd="@dimen/padding_small"
+        android:src="@drawable/ic_settings"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toEndOf="@+id/current_reader"
+        app:layout_constraintTop_toTopOf="@+id/current_reader"
+        app:layout_constraintBottom_toBottomOf="@+id/current_reader"/>
+
+    <TextView
+        android:id="@+id/offline_mode_enabled"
+        style="@style/TextSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textColor="@color/offline_mode_warning"
+        android:drawablePadding="@dimen/margin_extra_small"
+        app:drawableStartCompat="@drawable/ic_warning_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_reader"
+        tools:text="Offline mode (0)"/>
 
     <TextView
         android:id="@+id/charge_amount_text"
         style="@style/TextBoldLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_extra_large"
+        android:layout_marginTop="@dimen/margin_large"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_reader"
+        app:layout_constraintTop_toBottomOf="@id/offline_mode_enabled"
         tools:text="$20.00" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        app:layout_constraintTop_toBottomOf="@id/charge_amount_text"
         android:id="@+id/payment_method_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium">
+        android:layout_marginEnd="@dimen/margin_medium"
+        app:layout_constraintTop_toBottomOf="@id/charge_amount_text">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/card_reader_button"
@@ -104,3 +168,4 @@
         tools:text="Charge $20.00" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

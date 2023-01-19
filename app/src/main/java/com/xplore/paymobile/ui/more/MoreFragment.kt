@@ -12,7 +12,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentMoreBinding
@@ -29,6 +31,8 @@ class MoreFragment : Fragment() {
     }
 
     private val viewModel by viewModels<MoreViewModel>()
+
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     private var _binding: FragmentMoreBinding? = null
 
@@ -60,15 +64,18 @@ class MoreFragment : Fragment() {
                 val publicKey = publicKeyTextInput.editText?.text?.toString() ?: ""
                 viewModel.setApiKey(apiKey)
                 viewModel.setPublicKey(publicKey)
-                if (ClearentWrapper.currentReader?.isConnected == true) {
-                    ClearentWrapper.disconnect()
+                if (clearentWrapper.currentReader?.isConnected == true) {
+                    clearentWrapper.disconnect()
                 }
-                ClearentWrapper.initializeSDK(
+                clearentWrapper.initializeSDK(
                     requireContext(),
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
                     publicKey,
-                    apiKey
+                    apiKey,
+                    //TODO proper key management
+                    OfflineModeConfig("PassPhrase")
                 )
+                clearentWrapper.setListener(ClearentDataSource)
                 BasicDialog(
                     getString(R.string.keys_alert_title),
                     getString(R.string.keys_update_message)
@@ -78,7 +85,7 @@ class MoreFragment : Fragment() {
                 findNavController().navigate(R.id.action_navigation_more_to_logsFragment)
             }
             deleteLogs.setOnClickListener {
-                ClearentWrapper.deleteLogs()
+                clearentWrapper.deleteLogs()
                 Toast.makeText(requireContext(), "Logs deleted", Toast.LENGTH_SHORT).show()
             }
             shareLogs.setOnClickListener {
@@ -110,11 +117,12 @@ class MoreFragment : Fragment() {
         }
     }
 
+
     private fun shareLogsFile() {
         val senderIntent = Intent(Intent.ACTION_SEND)
 
         // Get the file we want to share
-        val file = ClearentWrapper.getLogFile(requireContext())
+        val file = clearentWrapper.getLogFile(requireContext())
 
         // Try to retrieve the uri of the file
         val fileUri: Uri? = try {
