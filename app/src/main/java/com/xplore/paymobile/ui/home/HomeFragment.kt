@@ -93,6 +93,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         if (viewModel.shouldShowHints())
             showHints()
 
+        setTerminalState()
         setNumericKeyPadBackground()
         handlePaymentMethodButtonState()
         setupPaymentMethodClickListeners()
@@ -394,7 +395,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
 
     override fun onResume() {
         super.onResume()
-        setTerminalState()
         setOfflineModeEnabledText()
     }
 
