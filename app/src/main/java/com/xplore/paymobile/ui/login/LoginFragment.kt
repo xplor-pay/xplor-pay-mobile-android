@@ -5,7 +5,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,8 +17,8 @@ import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.data.web.LoginEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentLoginBinding
-import com.xplore.paymobile.util.parcelable
 import com.xplore.paymobile.ui.dialog.BasicDialog
+import com.xplore.paymobile.util.parcelable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -31,12 +30,21 @@ class LoginFragment : Fragment() {
 
         private const val ON_LOGIN_SUCCESSFUL_KEY = "ON_LOGIN_SUCCESSFUL_KEY"
 
-        fun newInstance(onLoginSuccessful: () -> Unit) = LoginFragment().apply {
-            arguments = bundleOf(ON_LOGIN_SUCCESSFUL_KEY to OnLoginSuccessful(onLoginSuccessful))
-        }
+//        @JvmStatic
+//        fun newInstance(onLoginSuccessful: () -> Unit) = LoginFragment().apply {
+//            arguments = bundleOf(ON_LOGIN_SUCCESSFUL_KEY to OnLoginSuccessful(onLoginSuccessful))
+//        }
 
-        @Parcelize
-        data class OnLoginSuccessful(val data: () -> Unit) : Parcelable
+        @JvmStatic
+        fun newInstance(onLoginSuccessful: OnLoginSuccessful): LoginFragment {
+            val myFragment = LoginFragment()
+
+            val args = Bundle()
+            args.putParcelable(ON_LOGIN_SUCCESSFUL_KEY, onLoginSuccessful)
+            myFragment.arguments = args
+
+            return myFragment
+        }
     }
 
     private val viewModel by viewModels<LoginViewModel>()
@@ -48,9 +56,14 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setupArguments()
+    }
+
+    private fun setupArguments() {
         arguments?.parcelable<OnLoginSuccessful>(ON_LOGIN_SUCCESSFUL_KEY)?.data?.also {
             viewModel.onLoginSuccessful = it
         }
+        arguments?.remove(ON_LOGIN_SUCCESSFUL_KEY)
     }
 
     override fun onCreateView(
@@ -94,6 +107,7 @@ class LoginFragment : Fragment() {
                     GroupedUserRoles.MerchantHomeRoles -> {}
                 }
             }
+            else -> {}
         }
     }
 
@@ -107,4 +121,7 @@ class LoginFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    @Parcelize
+    data class OnLoginSuccessful(val data: () -> Unit) : Parcelable
 }

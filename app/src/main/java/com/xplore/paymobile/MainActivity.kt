@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                                 BasicDialog::class.java.simpleName
                             )
                         }
+                        else -> {}
                     }
                 }
             }
@@ -112,10 +113,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             setReorderingAllowed(true)
             replace(
                 R.id.login_fragment,
-                LoginFragment.newInstance {
-                    binding.container.isVisible = true
-                    binding.loginFragment.isVisible = false
-                }
+                LoginFragment.newInstance(
+                    LoginFragment.OnLoginSuccessful {
+                        binding.container.isVisible = true
+                        binding.loginFragment.isVisible = false
+                    }
+                )
             )
         }
     }

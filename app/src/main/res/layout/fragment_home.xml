@@ -39,6 +39,17 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/no_eligible_terminal"
+        style="@style/TextSecondaryLight14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_no_eligible_terminal_warning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_reader"
+        app:drawableStartCompat="@drawable/ic_error" />
+
+    <TextView
         android:id="@+id/charge_amount_text"
         style="@style/TextBoldLarge"
         android:layout_width="wrap_content"
@@ -50,30 +61,30 @@
         tools:text="$20.00" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        app:layout_constraintTop_toBottomOf="@id/charge_amount_text"
         android:id="@+id/payment_method_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_marginTop="@dimen/margin_small"
         android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium">
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:weightSum="1"
+        app:layout_constraintTop_toBottomOf="@id/charge_amount_text">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/card_reader_button"
-            android:layout_weight="0.5"
             style="@style/PaymentMethodButtonLeft"
-            android:text="@string/payment_method_reader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/payment_method_reader" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/manual_entry_button"
             style="@style/PaymentMethodButtonRight"
-            android:text="@string/payment_method_manual"
-            android:layout_weight="0.5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/payment_method_manual" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include

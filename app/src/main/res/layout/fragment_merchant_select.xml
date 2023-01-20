@@ -100,13 +100,11 @@
             app:layout_constraintTop_toTopOf="@id/terminal_text_layout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/no_terminals_text_view"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/no_terminals"
+        android:name="com.xplore.paymobile.ui.NoEligibleTerminalFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/no_terminals_available"
-        android:textColor="@color/warning_red"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/terminal_layout"
         app:layout_constraintStart_toStartOf="@id/terminal_layout"
