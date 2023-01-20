@@ -135,12 +135,12 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/save_keys"
-        app:backgroundTint="@color/teal_200"
-        android:theme="@style/SaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:text="@string/button_save_keys_text"
+        android:theme="@style/SaveButton"
+        app:backgroundTint="@color/teal_200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/public_key_text_input" />

@@ -17,7 +17,7 @@ class TerminalSearchViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource
 ) : ViewModel() {
 
-    private val clearentWrapper = ClearentWrapper
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     private val _sortedTerminalsFlow = MutableStateFlow<List<Terminal>>(listOf())
     val terminalsFlow: Flow<List<Terminal>> = _sortedTerminalsFlow

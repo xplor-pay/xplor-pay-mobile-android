@@ -46,13 +46,14 @@
     <string name="button_view_logs_text">VIEW LOGS</string>
     <string name="button_delete_logs_text">DELETE LOGS</string>
     <string name="button_share_logs_text">SHARE LOGS</string>
-    <string name="first_reader_button_text">Pair your first reader</string>
+    <string name="first_reader_button_text">Pair new reader</string>
     <string name="hints_skip_pairing_button_text">Skip pairing for now</string>
     <string name="first_pairing_tip_text">Lets start by pairing your reader with your mobile app. Click on the button above.</string>
     <string name="ok">OK</string>
     <string name="keys_alert_title">Info</string>
     <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
     <string name="keys_update_message">New values were saved.</string>
+    <string name="offline_mode_enabled_text">Offline mode (%1$s)</string>
 
     <!-- Info screen -->
     <string name="info_screen_description">We are here to help</string>
