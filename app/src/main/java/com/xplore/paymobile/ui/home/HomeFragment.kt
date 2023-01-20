@@ -216,7 +216,10 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
             chargeButton.setOnClickListener {
                 startSdkActivityForResult(
                     ClearentAction.Transaction(
-                        PaymentInfo(chargeAmount.toDouble() / 100),
+                        PaymentInfo(
+                            amount = chargeAmount.toDouble() / 100,
+                            softwareType = "Xplor Pay Mobile"
+                        ),
                         viewModel.shouldShowHints(),
                         shouldShowSignature,
                         if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
