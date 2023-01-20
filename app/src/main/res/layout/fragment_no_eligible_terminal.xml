@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/no_eligible_terminal_text"
-        style="@style/TextSecondaryLight14"
+        style="@style/TextWarningMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/no_eligible_terminal_available" />

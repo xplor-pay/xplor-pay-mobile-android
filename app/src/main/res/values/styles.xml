@@ -32,6 +32,16 @@
         <item name="android:textSize">@dimen/text_size_large</item>
     </style>
 
+    <style name="TextWarningSmall" parent="TextSmall">
+        <item name="android:textColor">@color/warning_red</item>
+        <item name="android:gravity">start</item>
+    </style>
+
+    <style name="TextWarningMedium" parent="TextMedium">
+        <item name="android:textColor">@color/warning_red</item>
+        <item name="android:gravity">start</item>
+    </style>
+
     <style name="Separator" parent="">
         <item name="android:background">@color/gray</item>
     </style>

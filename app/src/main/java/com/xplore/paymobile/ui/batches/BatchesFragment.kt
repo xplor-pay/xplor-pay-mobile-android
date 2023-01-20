@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
@@ -39,8 +40,16 @@ class BatchesFragment : BaseFragment() {
 
     private fun setupViews() {
         binding.apply {
-            viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
-            webView.reload()
+            if (viewModel.terminalAvailable()) {
+                webView.isVisible = true
+                noEligibleTerminalWarning.isVisible = true
+
+                viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+                webView.reload()
+            } else {
+                webView.isVisible = false
+                noEligibleTerminalWarning.isVisible = true
+            }
         }
     }
 

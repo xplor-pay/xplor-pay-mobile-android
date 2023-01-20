@@ -300,14 +300,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
     private fun renderChargeAmount() {
         binding.apply {
             chargeAmountText.text = formatChargeAmount()
-
-            val isTerminalSelected = sharedPrefs.getTerminal() != null
-
-            if (!isTerminalSelected) {
-                chargeButton.isEnabled = false
-                chargeButton.text = getString(R.string.charge_amount, "")
-                return
-            }
+            chargeButton.isEnabled = sharedPrefs.getTerminal() != null
 
             if (chargeAmount.isBlank()) {
                 chargeButton.isEnabled = false
@@ -401,7 +394,12 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
 
     override fun onResume() {
         super.onResume()
+        setTerminalState()
         setOfflineModeEnabledText()
+    }
+
+    private fun setTerminalState() {
+        binding.noEligibleTerminal.isVisible = viewModel.terminal == null
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
