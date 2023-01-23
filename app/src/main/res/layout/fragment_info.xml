@@ -13,33 +13,33 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:text="@string/title_info"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/description"
         style="@style/TextViewColorPrimaryBold20"
-        android:textColor="@color/color_secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_extra_large"
         android:text="@string/info_screen_description"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        android:textColor="@color/color_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
     <View
         android:id="@+id/first_separator"
         style="@style/Separator"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/margin_extra_small"
         android:layout_marginStart="@dimen/margin_big"
+        android:layout_marginTop="@dimen/margin_extra_small"
         android:layout_marginEnd="@dimen/margin_big"
-        app:layout_constraintTop_toBottomOf="@id/description"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/description" />
 
     <TextView
         android:id="@+id/call_message"
@@ -47,58 +47,59 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/first_separator"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Call: 866.435.0666 (8am - 12am EST)"/>
-
-    <TextView
-        android:id="@+id/terms_and_conditions_button"
-        style="@style/TextViewColorPrimarySize14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/info_screen_terms_and_conditions"
-        android:textColor="@color/blue"
-        app:layout_constraintTop_toBottomOf="@id/call_message"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/first_separator"
+        tools:text="Call: 866.435.0666 (8am - 12am EST)" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/call_button"
         style="@style/ShapeAppearanceOverlay.Button.RoundedWhite"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginStart="@dimen/margin_medium_big"
+        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginEnd="@dimen/margin_medium_big"
         android:text="@string/info_screen_call_button_text"
-        app:layout_constraintTop_toBottomOf="@id/terms_and_conditions_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/call_message" />
 
     <TextView
         android:id="@+id/about"
         style="@style/TextViewColorPrimaryBold20"
-        android:textColor="@color/color_secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_big"
         android:text="@string/info_screen_about"
-        app:layout_constraintTop_toBottomOf="@id/call_button"
+        android:textColor="@color/color_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/call_button" />
 
     <View
         android:id="@+id/second_separator"
         style="@style/Separator"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/margin_extra_small"
         android:layout_marginStart="@dimen/margin_big"
+        android:layout_marginTop="@dimen/margin_extra_small"
         android:layout_marginEnd="@dimen/margin_big"
-        app:layout_constraintTop_toBottomOf="@id/about"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/about" />
+
+    <TextView
+        android:id="@+id/terms_and_conditions_button"
+        style="@style/TextViewColorPrimarySize14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="@string/info_screen_terms_and_conditions"
+        android:textColor="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/second_separator" />
 
     <TextView
         android:id="@+id/app_version"
@@ -106,48 +107,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/second_separator"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="App version: 1.12"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/terms_and_conditions_button"
+        tools:text="App version: 1.12" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/update_button"
         style="@style/ShapeAppearanceOverlay.Button.RoundedBlack"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginStart="@dimen/margin_medium_big"
+        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginEnd="@dimen/margin_medium_big"
-        android:text="@string/info_screen_update_button_text"
         android:enabled="false"
-        app:layout_constraintTop_toBottomOf="@id/app_version"
+        android:text="@string/info_screen_update_button_text"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/app_version" />
 
     <View
         android:id="@+id/third_separator"
         style="@style/Separator"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginStart="@dimen/margin_big"
+        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginEnd="@dimen/margin_big"
-        app:layout_constraintTop_toBottomOf="@id/update_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/update_button" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/log_out_button"
         style="@style/ShapeAppearanceOverlay.Button.RoundedWhite"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginStart="@dimen/margin_medium_big"
+        android:layout_marginTop="@dimen/margin_big"
         android:layout_marginEnd="@dimen/margin_medium_big"
         android:text="@string/info_screen_log_out_button_text"
-        app:layout_constraintTop_toBottomOf="@id/third_separator"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/third_separator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
