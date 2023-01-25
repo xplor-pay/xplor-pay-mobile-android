@@ -1,0 +1,62 @@
+package com.xplore.paymobile.data.web
+
+import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.xplore.paymobile.data.datasource.NetworkResource
+import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.remote.model.TerminalsResponse
+import kotlinx.coroutines.*
+import timber.log.Timber
+import javax.inject.Inject
+
+class VTRefreshManager @Inject constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val sharedPrefs: SharedPreferencesDataSource
+) {
+
+    private val timerScope = CoroutineScope(Dispatchers.IO)
+    private var timerJob: Job? = null
+
+    fun startTimer(refreshFirst: Boolean = true) {
+        Timber.d("Start VT refresh timer")
+        timerScope.launch {
+            if (timerJob?.isActive == true) {
+                Timber.d("Cancel previous timer")
+                timerJob?.cancelAndJoin()
+            }
+            if (refreshFirst) refreshToken()
+            launchTimer()
+        }
+    }
+
+    private fun launchTimer() {
+        Timber.d("Launch VT refresh timer")
+        timerJob = timerScope.launch {
+            while (true) {
+                delay(10000)
+                refreshToken()
+            }
+        }
+    }
+
+    private suspend fun refreshToken() {
+        Timber.d("Start token refresh")
+        val merchant = sharedPrefs.getMerchant() ?: return
+        val terminal = sharedPrefs.getTerminal() ?: return
+
+        val terminalsResponse = remoteDataSource.fetchTerminals(merchant.merchantNumber)
+        if (terminalsResponse is NetworkResource.Success<TerminalsResponse?>) {
+            val newTerminal = terminalsResponse.data?.find { found ->
+                found.terminalPKId == terminal.terminalPKId
+            }
+            newTerminal?.let {
+                Timber.d("Token refresh successful")
+                ClearentWrapper.getInstance().merchantHomeApiCredentials =
+                    ClearentWrapper.MerchantHomeApiCredentials(
+                        merchantId = merchant.merchantNumber,
+                        vtToken = newTerminal.questJwt.token
+                    )
+            }
+        }
+    }
+}

@@ -6,6 +6,7 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
+import com.xplore.paymobile.data.web.VTRefreshManager
 import com.xplore.paymobile.data.web.setupWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
+    private val vtRefreshManager: VTRefreshManager
 ) : ViewModel() {
 
     companion object {
@@ -36,5 +38,9 @@ class LoginViewModel @Inject constructor(
         setupWebView(webView, context, jsBridge) {
             webView.loadUrl(loginPageUrl)
         }
+    }
+
+    fun startVTRefreshTimer() {
+        vtRefreshManager.startTimer(true)
     }
 }
