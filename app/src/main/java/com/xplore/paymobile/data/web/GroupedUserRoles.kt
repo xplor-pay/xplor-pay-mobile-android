@@ -1,8 +1,8 @@
 package com.xplore.paymobile.data.web
 
-sealed class GroupedUserRoles(val roles: Set<String>) {
+sealed class GroupedUserRoles(val roles: List<String>? = null) {
     object VirtualTerminalRoles : GroupedUserRoles(
-        setOf(
+        listOf(
             "VirtualTerminalUser",
             "VTAccountAnalysts",
             "VTAccountOwners",
@@ -11,28 +11,12 @@ sealed class GroupedUserRoles(val roles: Set<String>) {
             "VTClearentAdministrators"
         )
     )
-
-    object MerchantHomeRoles : GroupedUserRoles(
-        setOf(
-            "MerchantHomeUser",
-            "CustomerSupport",
-            "SalesRep"
-        )
-    )
-
-    object NoAccess : GroupedUserRoles(setOf(""))
+    object MerchantHomeRoles : GroupedUserRoles(listOf("MerchantHomeUser", "CustomerSupport", "SalesRep"))
+    object NoAccess : GroupedUserRoles(listOf(""))
 
     companion object {
-        fun fromString(value: List<String>): GroupedUserRoles {
-            // Manual check due to reflection ordering unpredictability
-            // The user may have multiple roles but role priority must be preserved
-            if (VirtualTerminalRoles.roles.intersect(value.toSet()).isNotEmpty())
-                return VirtualTerminalRoles
-
-            if (MerchantHomeRoles.roles.intersect(value.toSet()).isNotEmpty())
-                return MerchantHomeRoles
-
-            return NoAccess
-        }
+        fun fromString(value: List<String>) = GroupedUserRoles::class.sealedSubclasses.find {
+            it.objectInstance?.roles!!.intersect(value).isNotEmpty()
+        }?.objectInstance ?: NoAccess
     }
 }
