@@ -14,6 +14,10 @@ class VTRefreshManager @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource
 ) {
 
+    companion object {
+        const val VT_REFRESH_TIME = 1000*60*10L
+    }
+
     private val timerScope = CoroutineScope(Dispatchers.IO)
     private var timerJob: Job? = null
 
@@ -33,7 +37,7 @@ class VTRefreshManager @Inject constructor(
         Timber.d("Launch VT refresh timer")
         timerJob = timerScope.launch {
             while (true) {
-                delay(10000)
+                delay(VT_REFRESH_TIME)
                 refreshToken()
             }
         }
