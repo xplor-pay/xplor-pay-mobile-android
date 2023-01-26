@@ -11,6 +11,7 @@ import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.FragmentInfoBinding
+import com.xplore.paymobile.ui.PhoneUtils
 import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +56,7 @@ class InfoFragment : BaseFragment() {
     private fun setupClickListeners() {
         binding.apply {
             callButton.setOnClickListener {
-                callClientSupport()
+                PhoneUtils.dialNumber(requireContext(), Constants.CLIENT_SUPPORT_PHONE_NUMBER)
             }
             termsAndConditionsButton.setOnClickListener {
                 openTermsAndConditionsLink()
@@ -68,12 +69,6 @@ class InfoFragment : BaseFragment() {
                 (requireActivity() as? MainActivity)?.logout()
             }
         }
-    }
-
-    private fun callClientSupport() {
-        val phoneIntent = Intent(Intent.ACTION_DIAL)
-        phoneIntent.data = Uri.parse("tel:" + Constants.CLIENT_SUPPORT_PHONE_NUMBER)
-        startActivity(phoneIntent)
     }
 
     private fun openTermsAndConditionsLink() {

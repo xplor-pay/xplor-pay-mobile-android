@@ -111,7 +111,7 @@ class MerchantSelectFragment : Fragment() {
     }
 
     private fun showNoTerminalsWarning(show: Boolean) {
-        binding.noTerminalsTextView.isVisible = show
+        binding.noTerminals.isVisible = show
     }
 
     private fun showLoading(loading: Boolean) {
@@ -138,6 +138,11 @@ class MerchantSelectFragment : Fragment() {
                 launch {
                     viewModel.terminalsFlow.collect { terminals ->
                         Timber.d("Received terminals $terminals")
+                        if (terminals.isEmpty()) {
+                            binding.noTerminals.isVisible = true
+
+                            return@collect
+                        }
                         sharedViewModel.terminals = terminals
                     }
                 }
