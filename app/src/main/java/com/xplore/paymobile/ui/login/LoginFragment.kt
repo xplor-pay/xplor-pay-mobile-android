@@ -30,11 +30,6 @@ class LoginFragment : Fragment() {
 
         private const val ON_LOGIN_SUCCESSFUL_KEY = "ON_LOGIN_SUCCESSFUL_KEY"
 
-//        @JvmStatic
-//        fun newInstance(onLoginSuccessful: () -> Unit) = LoginFragment().apply {
-//            arguments = bundleOf(ON_LOGIN_SUCCESSFUL_KEY to OnLoginSuccessful(onLoginSuccessful))
-//        }
-
         @JvmStatic
         fun newInstance(onLoginSuccessful: OnLoginSuccessful): LoginFragment {
             val myFragment = LoginFragment()

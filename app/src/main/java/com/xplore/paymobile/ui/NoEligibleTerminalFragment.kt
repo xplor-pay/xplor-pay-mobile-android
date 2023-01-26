@@ -33,18 +33,23 @@ class NoEligibleTerminalFragment : Fragment() {
             val contactNumber = getString(R.string.no_eligible_terminal_available_contact_number)
             val noEligibleTerminal =
                 getString(R.string.no_eligible_terminal_available, contactNumber)
-            val ss = SpannableString(noEligibleTerminal)
-            val cs = object : ClickableSpan() {
+            val noEligibleTerminalString = SpannableString(noEligibleTerminal)
+            val clickableString = object : ClickableSpan() {
                 override fun onClick(p0: View) {
                     PhoneUtils.dialNumber(requireContext(), Constants.CLIENT_SUPPORT_PHONE_NUMBER)
                 }
             }
             val contactNumberRange = contactNumber.toRegex().find(noEligibleTerminal)
             contactNumberRange?.range?.also { range ->
-                ss.setSpan(cs, range.first, range.last + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+                noEligibleTerminalString.setSpan(
+                    clickableString,
+                    range.first,
+                    range.last + 1,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                )
             }
 
-            noEligibleTerminalText.text = ss
+            noEligibleTerminalText.text = noEligibleTerminalString
             noEligibleTerminalText.movementMethod = LinkMovementMethod.getInstance()
         }
     }
