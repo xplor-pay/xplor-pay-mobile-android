@@ -40,7 +40,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener {
 
-    private val viewModel by viewModels<WebEventsSharedViewModel>()
+    private val webViewModel by viewModels<WebEventsSharedViewModel>()
+    private val viewModel by viewModels<MainViewModel>()
 
     @Inject
     lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
@@ -69,8 +70,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
         super.onCreate(savedInstanceState)
 
-        sharedPreferencesDataSource.setAuthToken(null)
-
         setupListener()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -80,6 +79,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        showLogin(viewModel.loginVisible)
         setupViews()
         setupLoginEventsFlow()
     }
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun setupLoginEventsFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.loginEventsFlow.collect { loginEvent ->
+                webViewModel.loginEventsFlow.collect { loginEvent ->
                     when (loginEvent) {
                         LoginEvents.Logout -> {
                             BasicDialog(
@@ -115,8 +115,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             replace(
                 R.id.login_fragment,
                 LoginFragment.newInstance {
-                    binding.container.isVisible = true
-                    binding.loginFragment.isVisible = false
+                    showLogin(false)
                 }
             )
         }
@@ -171,12 +170,15 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     fun logout() {
         sharedPreferencesDataSource.setAuthToken(null)
-        binding.apply {
-            loginFragment.isVisible = true
-            container.isVisible = false
-        }
+        showLogin(true)
         setupWebViewLogin()
         navController.navigate(R.id.navigation_payment)
+    }
+
+    private fun showLogin(show: Boolean) {
+        if (viewModel.loginVisible != show) viewModel.loginVisible = show
+        binding.container.isVisible = !show
+        binding.loginFragment.isVisible = show
     }
 
     fun updateApp() {
