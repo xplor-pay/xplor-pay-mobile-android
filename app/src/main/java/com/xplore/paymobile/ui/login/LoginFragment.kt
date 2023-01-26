@@ -94,12 +94,13 @@ class LoginFragment : Fragment() {
                     GroupedUserRoles.MerchantHomeRoles -> {}
                 }
             }
+            else -> {}
         }
     }
 
     private fun setupViews() {
         binding.apply {
-            viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+            viewModel.prepareWebView(webView, sharedViewModel.jsBridge, requireContext())
         }
     }
 

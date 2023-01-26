@@ -1,6 +1,7 @@
 package com.xplore.paymobile.data.web
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -14,6 +15,7 @@ import java.net.HttpURLConnection
 open class XplorWebView(
     webView: WebView,
     jsBridge: JSBridge,
+    context: Context,
     onWebViewSetupDone: (() -> Unit)? = null
 ) {
 
@@ -26,10 +28,13 @@ open class XplorWebView(
                     request: WebResourceRequest?
                 ): Boolean {
                     // if we are detecting a logout event
-                    if (request?.url.toString().contains(Constants.SIGNOUT_WEB_PAGE_URL)
-                    ) {
+                    if (request?.url.toString().contains(Constants.SIGNOUT_WEB_PAGE_URL)) {
                         jsBridge.logout()
                         return false
+                    }
+                    if (request?.url.toString().contains("https://my-qa.clearent.net/ui/home")) {
+                        webView.evaluateJavascript("window.triggerExternalEvent('merchantSelected', { merchantName: \\\"DAILY DONUTS ICE CREAM & DELI\\\", merchantNumber:'6588000000610659' });", null)
+                        return true
                     }
 
                     // if we are in our domain continue inside the app
