@@ -301,7 +301,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
     private fun renderChargeAmount() {
         binding.apply {
             chargeAmountText.text = formatChargeAmount()
-            chargeButton.isEnabled = sharedPrefs.getTerminal() != null
 
             if (chargeAmount.isBlank()) {
                 chargeButton.isEnabled = false
@@ -309,7 +308,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
                 return
             }
 
-            chargeButton.isEnabled = true
+            chargeButton.isEnabled = sharedPrefs.getTerminal() != null
             chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
         }
     }
