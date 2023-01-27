@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/TextViewPrimaryBold20"
+        style="@style/TextViewColorPrimaryBold20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/description"
-        style="@style/TextViewPrimaryBold20"
+        style="@style/TextViewColorPrimaryBold20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_extra_large"
@@ -67,7 +67,7 @@
 
     <TextView
         android:id="@+id/about"
-        style="@style/TextViewPrimaryBold20"
+        style="@style/TextViewColorPrimaryBold20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_big"
