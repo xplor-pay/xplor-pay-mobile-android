@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.data.web.MerchantChangesEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
 import com.xplore.paymobile.ui.base.BaseFragment
@@ -39,6 +42,7 @@ class TransactionsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViews()
+        setupMerchantChangesEventsFlow()
     }
 
     private fun setupViews() {
@@ -54,6 +58,18 @@ class TransactionsFragment : BaseFragment() {
             } else {
                 webView.isVisible = false
                 noEligibleTerminalWarning.isVisible = true
+            }
+        }
+    }
+
+    private fun setupMerchantChangesEventsFlow() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.merchantChangesEventsFlow.collect { merchantChangesEvent ->
+                    when (merchantChangesEvent) {
+                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged = true
+                    }
+                }
             }
         }
     }

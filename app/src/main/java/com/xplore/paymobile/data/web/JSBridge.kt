@@ -56,6 +56,7 @@ class JSBridge @Inject constructor(
             if (merchant == sharedPrefs.getMerchant()) return@launch
 
             sharedPrefs.setMerchant(message)
+            sharedPrefs.clearTerminal()
             jsBridgeFlows.merchantFlow.emit(merchant)
         }
     }
