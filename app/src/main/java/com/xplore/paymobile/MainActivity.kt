@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
                                 BasicDialog::class.java.simpleName
                             )
                         }
+                        else -> {}
                     }
                 }
             }

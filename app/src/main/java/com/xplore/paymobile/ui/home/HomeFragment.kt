@@ -24,6 +24,7 @@ import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEA
 import com.clearent.idtech.android.wrapper.ui.PaymentMethod
 import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.R
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
 import com.xplore.paymobile.databinding.FragmentHomeBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -32,15 +33,16 @@ import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledListener {
 
-    override val hasBottomNavigation: Boolean = true
-
     companion object {
         private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
     }
+
+    override val hasBottomNavigation: Boolean = true
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -52,6 +54,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    internal lateinit var sharedPrefs: SharedPreferencesDataSource
 
     private val activityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -88,6 +93,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         if (viewModel.shouldShowHints())
             showHints()
 
+        setTerminalState()
         setNumericKeyPadBackground()
         handlePaymentMethodButtonState()
         setupPaymentMethodClickListeners()
@@ -113,14 +119,10 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
     private fun handlePaymentMethodButtonState() {
         val isCardReader = viewModel.isCardReaderSelected
         with(binding) {
-            val cardReaderBgColor =
-                if (isCardReader) R.color.button_enabled else R.color.gray
-            val manualEntryBgColor =
-                if (!isCardReader) R.color.button_enabled else R.color.gray
-            val cardReaderTextColor =
-                if (isCardReader) R.color.button_enabled else R.color.black
-            val manualEntryTextColor =
-                if (!isCardReader) R.color.button_enabled else R.color.black
+            val cardReaderBgColor = if (isCardReader) R.color.button_enabled else R.color.gray
+            val manualEntryBgColor = if (!isCardReader) R.color.button_enabled else R.color.gray
+            val cardReaderTextColor = if (isCardReader) R.color.button_enabled else R.color.black
+            val manualEntryTextColor = if (!isCardReader) R.color.button_enabled else R.color.black
             cardReaderButton.strokeColor = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     requireContext(),
@@ -298,15 +300,16 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
 
     private fun renderChargeAmount() {
         binding.apply {
+            chargeAmountText.text = formatChargeAmount()
+
             if (chargeAmount.isBlank()) {
                 chargeButton.isEnabled = false
                 chargeButton.text = getString(R.string.charge_amount, "")
-            } else {
-                chargeButton.isEnabled = true
-                chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
+                return
             }
 
-            chargeAmountText.text = formatChargeAmount()
+            chargeButton.isEnabled = sharedPrefs.getTerminal() != null
+            chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
         }
     }
 
@@ -392,6 +395,10 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
     override fun onResume() {
         super.onResume()
         setOfflineModeEnabledText()
+    }
+
+    private fun setTerminalState() {
+        binding.noEligibleTerminal.isVisible = viewModel.terminal == null
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {

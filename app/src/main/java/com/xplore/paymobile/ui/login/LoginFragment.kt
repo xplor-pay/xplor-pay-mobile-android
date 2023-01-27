@@ -87,6 +87,7 @@ class LoginFragment : Fragment() {
                     GroupedUserRoles.MerchantHomeRoles -> {}
                 }
             }
+            else -> {}
         }
     }
 

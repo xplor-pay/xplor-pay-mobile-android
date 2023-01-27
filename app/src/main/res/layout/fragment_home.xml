@@ -25,12 +25,12 @@
             style="@style/ShapeAppearanceOverlay.Button.RoundedTransparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/margin_large"
-            android:paddingEnd="@dimen/margin_large"
             android:layout_marginStart="@dimen/margin_extra_small"
             android:layout_marginEnd="@dimen/margin_extra_small"
+            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/margin_large"
             android:text="@string/first_reader_button_text"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <include
             android:id="@+id/reader_info"
@@ -44,13 +44,13 @@
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:contentDescription="@null"
         android:paddingStart="@dimen/padding_small"
         android:paddingEnd="@dimen/padding_small"
         android:src="@drawable/ic_settings_reader"
-        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@+id/current_reader"
         app:layout_constraintStart_toEndOf="@+id/current_reader"
-        app:layout_constraintTop_toTopOf="@+id/current_reader"
-        app:layout_constraintBottom_toBottomOf="@+id/current_reader"/>
+        app:layout_constraintTop_toTopOf="@+id/current_reader" />
 
     <TextView
         android:id="@+id/offline_mode_enabled"
@@ -58,13 +58,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
-        android:textColor="@color/offline_mode_warning"
         android:drawablePadding="@dimen/margin_extra_small"
+        android:textColor="@color/offline_mode_warning"
         app:drawableStartCompat="@drawable/ic_warning_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_reader"
-        tools:text="Offline mode (0)"/>
+        tools:text="Offline mode (0)" />
+
+    <TextView
+        android:id="@+id/no_eligible_terminal"
+        style="@style/TextWarningSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="@string/no_eligible_terminal_warning"
+        android:drawablePadding="@dimen/padding_xxsmall"
+        app:drawableStartCompat="@drawable/ic_error"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/current_reader" />
 
     <TextView
         android:id="@+id/charge_amount_text"
@@ -74,34 +87,34 @@
         android:layout_marginTop="@dimen/margin_large"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offline_mode_enabled"
+        app:layout_constraintTop_toBottomOf="@id/no_eligible_terminal"
         tools:text="$20.00" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/payment_method_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_marginTop="@dimen/margin_small"
         android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_medium"
+        android:weightSum="1"
         app:layout_constraintTop_toBottomOf="@id/charge_amount_text">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/card_reader_button"
-            android:layout_weight="0.5"
             style="@style/PaymentMethodButtonLeft"
-            android:text="@string/payment_method_reader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/payment_method_reader" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/manual_entry_button"
             style="@style/PaymentMethodButtonRight"
-            android:text="@string/payment_method_manual"
-            android:layout_weight="0.5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/payment_method_manual" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include
@@ -132,4 +145,3 @@
         tools:text="Charge $20.00" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
