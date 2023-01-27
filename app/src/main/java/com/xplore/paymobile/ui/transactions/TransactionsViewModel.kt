@@ -5,6 +5,7 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.util.Constants
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val sharedPrefs: SharedPreferencesDataSource
 ) : ViewModel() {
 
     companion object {
@@ -22,6 +24,8 @@ class TransactionsViewModel @Inject constructor(
     }
 
     private lateinit var xplorWebView: XplorWebView
+
+    fun terminalAvailable() = sharedPrefs.getTerminal() != null
 
     suspend fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
         val openBatch = remoteDataSource.getOpenBatch()
