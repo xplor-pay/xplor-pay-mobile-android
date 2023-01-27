@@ -157,9 +157,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
         navView.setOnItemSelectedListener(object : OnItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                if (viewModel.wasMerchantChanged) {
+                if (webViewModel.wasMerchantChanged) {
                     bottomNavItemIdSelected = item.itemId
-                    viewModel.wasMerchantChanged = false
+                    webViewModel.wasMerchantChanged = false
                     showMerchantChangedDialog()
                     return false
                 } else {
