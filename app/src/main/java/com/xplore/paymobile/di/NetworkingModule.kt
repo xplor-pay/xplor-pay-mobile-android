@@ -3,10 +3,12 @@ package com.xplore.paymobile.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.JSBridge
+import com.xplore.paymobile.data.web.VTRefreshManager
 import com.xplore.paymobile.data.web.WebJsonConverter
 import com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantPaginationHelper
 import dagger.Module
@@ -115,4 +117,11 @@ object NetworkingModule {
     @Provides
     fun providePaginationHelper(remoteDataSource: RemoteDataSource): MerchantPaginationHelper =
         MerchantPaginationHelper(remoteDataSource)
+
+    @Provides
+    @Singleton
+    fun provideVTTimerManager(
+        remoteDataSource: RemoteDataSource,
+        sharedPreferencesDataSource: SharedPreferencesDataSource
+    ): VTRefreshManager = VTRefreshManager(remoteDataSource, sharedPreferencesDataSource)
 }

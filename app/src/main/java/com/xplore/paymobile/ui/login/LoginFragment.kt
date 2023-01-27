@@ -73,6 +73,7 @@ class LoginFragment : Fragment() {
     private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
             is LoginEvents.LoginSuccessful -> {
+                viewModel.startVTRefreshTimer()
                 sharedViewModel.allowLogout = true
                 when (GroupedUserRoles.fromString(loginEvent.userRoles.roles)) {
                     GroupedUserRoles.VirtualTerminalRoles -> viewModel.onLoginSuccessful()

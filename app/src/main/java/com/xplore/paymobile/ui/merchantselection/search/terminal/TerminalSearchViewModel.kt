@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
+import com.xplore.paymobile.data.web.VTRefreshManager
 import com.xplore.paymobile.ui.merchantselection.search.list.MerchantsListAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TerminalSearchViewModel @Inject constructor(
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
+    private val vtRefreshManager: VTRefreshManager
 ) : ViewModel() {
 
     private val clearentWrapper = ClearentWrapper.getInstance()
@@ -53,6 +55,7 @@ class TerminalSearchViewModel @Inject constructor(
                     merchantId = merchantItem.id,
                     vtToken = terminal.questJwt.token
                 )
+            vtRefreshManager.startTimer(false)
         }
     }
 }
