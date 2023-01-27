@@ -5,7 +5,7 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
-import com.xplore.paymobile.data.web.setupWebView
+import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,10 +19,12 @@ class BatchesViewModel @Inject constructor(
         private val batchesPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/openbatches"
     }
 
+    private lateinit var xplorWebView: XplorWebView
+
     fun terminalAvailable() = sharedPrefs.getTerminal() != null
 
     fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
-        setupWebView(webView, context, jsBridge) {
+        xplorWebView = XplorWebView(webView, jsBridge, context) {
             webView.loadUrl(batchesPageUrl)
         }
     }

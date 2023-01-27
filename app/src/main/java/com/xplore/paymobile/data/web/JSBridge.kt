@@ -1,86 +1,14 @@
 package com.xplore.paymobile.data.web
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.webkit.*
-import androidx.core.content.ContextCompat.startActivity
+import android.webkit.JavascriptInterface
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
-import com.xplore.paymobile.util.Constants
-import com.xplore.paymobile.util.Constants.HOST_NAMES
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.net.HttpURLConnection.HTTP_FORBIDDEN
-import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 import javax.inject.Inject
-
-@SuppressLint("SetJavaScriptEnabled")
-fun setupWebView(
-    webView: WebView,
-    context: Context,
-    jsBridge: JSBridge,
-    onDone: () -> Unit
-) {
-    webView.run {
-        webViewClient = object : WebViewClient() {
-
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                // if we are detecting a logout event
-                if (request?.url.toString().contains(Constants.SIGNOUT_WEB_PAGE_URL)
-                ) {
-                    jsBridge.logout()
-                    return false
-                }
-
-                // if we are in our domain continue inside the app
-                if (request?.url?.host in HOST_NAMES) {
-                    return false
-                }
-
-                // if the user gesture is absent ignore the url
-                if (request?.hasGesture() != true) return true
-
-                // otherwise open a browser
-                Intent(Intent.ACTION_VIEW, request.url).run {
-                    startActivity(context, this, null)
-                }
-
-                return true
-            }
-
-            override fun onReceivedHttpError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                errorResponse: WebResourceResponse?
-            ) {
-                super.onReceivedHttpError(view, request, errorResponse)
-
-                val statusCode = errorResponse?.statusCode
-                if (statusCode == HTTP_UNAUTHORIZED || statusCode == HTTP_FORBIDDEN) {
-                    jsBridge.logout()
-                }
-            }
-
-
-        }
-
-        settings.apply {
-            userAgentString = "xplor_mobile"
-            domStorageEnabled = true
-            javaScriptEnabled = true
-
-            allowFileAccess = false
-            setGeolocationEnabled(false)
-            allowContentAccess = false
-        }
-        addJavascriptInterface(jsBridge, "Android")
-    }
-    onDone()
-}
 
 class JSBridge @Inject constructor(
     val jsBridgeFlows: JSBridgeFlows,
