@@ -22,9 +22,11 @@ open class WebEventsSharedViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             jsBridge.jsBridgeFlows.loggedOutFlow.collectLatest { loggedOut ->
+                if (loggedOut == null) return@collectLatest
+
                 if (allowLogout) {
                     allowLogout = false
-                    loggedOut?.also {
+                    loggedOut.also {
                         _loginEventsFlow.emit(LoginEvents.Logout)
                     }
                 }

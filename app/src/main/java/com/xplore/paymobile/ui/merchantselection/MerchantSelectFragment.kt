@@ -140,8 +140,6 @@ class MerchantSelectFragment : Fragment() {
                         Timber.d("Received terminals $terminals")
                         if (terminals.isEmpty()) {
                             binding.noTerminals.isVisible = true
-
-                            return@collect
                         }
                         sharedViewModel.terminals = terminals
                     }
