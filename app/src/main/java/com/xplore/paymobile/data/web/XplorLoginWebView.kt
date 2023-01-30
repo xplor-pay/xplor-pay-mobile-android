@@ -32,7 +32,7 @@ class XplorLoginWebView(
                 Timber.d("changeMerchantJsCommand callback value: $it")
             }
             is XplorJsCommand.ChangeTerminal -> webView.evaluateJavascript(
-                changeTerminalJsCommand.format(command.terminal.questJwt.terminalId)
+                changeTerminalJsCommand.format(command.terminal.terminalPKId)
             ) {
                 Timber.d("changeTerminalJsCommand callback value: $it")
             }
