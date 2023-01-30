@@ -179,8 +179,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
             getString(R.string.merchant_changed_dialog_title),
             getString(R.string.merchant_changed_dialog_description)
         ) {
-            navController.navigate(R.id.post_login_fragment)
-            navController.popBackStack(R.id.navigation_payment, true)
+            navController.navigate(R.id.action_to_post_login)
         }.show(supportFragmentManager, BasicDialog::class.java.simpleName)
     }
 
