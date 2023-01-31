@@ -12,8 +12,6 @@ import com.xplore.paymobile.data.web.XplorLoginWebView
 import com.xplore.paymobile.data.web.XplorLoginWebView.XplorJsCommand
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,22 +53,14 @@ class LoginViewModel @Inject constructor(
 
     private fun listenToCredentialsChanges() {
         viewModelScope.launch {
-            sharedPrefs.merchantFlow.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000L),
-                null
-            ).collect {
+            sharedPrefs.merchantFlow.collect {
                 if (it == null) return@collect
 
                 xplorWebView.runJsCommand(XplorJsCommand.ChangeMerchant(it))
             }
         }
         viewModelScope.launch {
-            sharedPrefs.terminalFlow.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000L),
-                null
-            ).collect {
+            sharedPrefs.terminalFlow.collect {
                 if (it == null) return@collect
 
                 xplorWebView.runJsCommand(XplorJsCommand.ChangeTerminal(it))
