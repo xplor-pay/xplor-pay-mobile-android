@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,8 +43,17 @@ class TransactionsFragment : BaseFragment() {
 
     private fun setupViews() {
         binding.apply {
-            lifecycleScope.launch {
-                viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+            if (viewModel.terminalAvailable()) {
+                webView.isVisible = true
+                noEligibleTerminalWarning.isVisible = false
+
+                lifecycleScope.launch {
+                    viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+                    webView.reload()
+                }
+            } else {
+                webView.isVisible = false
+                noEligibleTerminalWarning.isVisible = true
             }
         }
     }

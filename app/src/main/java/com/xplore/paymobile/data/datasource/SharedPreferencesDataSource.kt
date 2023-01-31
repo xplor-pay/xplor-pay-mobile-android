@@ -7,6 +7,12 @@ import com.xplore.paymobile.data.web.AuthToken
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.data.web.UserRoles
 import com.xplore.paymobile.data.web.WebJsonConverter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SharedPreferencesDataSource @Inject constructor(
@@ -26,6 +32,20 @@ class SharedPreferencesDataSource @Inject constructor(
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
 
+    private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    private val _merchantFlow = MutableSharedFlow<Merchant?>()
+    val merchantFlow: SharedFlow<Merchant?> = _merchantFlow
+    private val _terminalFlow = MutableSharedFlow<Terminal?>()
+    val terminalFlow: SharedFlow<Terminal?> = _terminalFlow
+
+    init {
+        backgroundScope.launch {
+            _merchantFlow.emit(getMerchant())
+            _terminalFlow.emit(getTerminal())
+        }
+    }
+
     fun setFirstPair(firstPair: FirstPair) =
         sharedPrefs.edit { putInt(FIRST_PAIR, firstPair.ordinal) }
 
@@ -40,20 +60,35 @@ class SharedPreferencesDataSource @Inject constructor(
     fun getAuthToken(): AuthToken? =
         sharedPrefs.getString(AUTH_TOKEN, null)?.let { webJsonConverter.jsonToAuthToken(it) }
 
-    fun setMerchant(merchant: String) = sharedPrefs.edit { putString(MERCHANT, merchant) }
+    fun setMerchant(merchant: String) = backgroundScope.launch {
+        sharedPrefs.edit { putString(MERCHANT, merchant) }
+        _merchantFlow.emit(webJsonConverter.jsonToMerchant(merchant))
+        clearTerminal()
+    }
 
-    fun setMerchant(merchant: Merchant) =
+    fun setMerchant(merchant: Merchant) = backgroundScope.launch {
         sharedPrefs.edit { putString(MERCHANT, webJsonConverter.toJson(merchant)) }
+        _merchantFlow.emit(merchant)
+        clearTerminal()
+    }
 
     fun getMerchant(): Merchant? =
         sharedPrefs.getString(MERCHANT, null)?.let { webJsonConverter.jsonToMerchant(it) }
 
-    fun clearMerchant() = sharedPrefs.edit { remove(MERCHANT) }
+    fun clearMerchant() = backgroundScope.launch {
+        sharedPrefs.edit { remove(MERCHANT) }
+        _merchantFlow.emit(null)
+    }
 
-    fun setTerminal(terminal: Terminal) =
+    fun setTerminal(terminal: Terminal) = backgroundScope.launch {
         sharedPrefs.edit { putString(TERMINAL, webJsonConverter.toJson(terminal)) }
+        _terminalFlow.emit(terminal)
+    }
 
-    fun clearTerminal() = sharedPrefs.edit { remove(TERMINAL) }
+    fun clearTerminal() = backgroundScope.launch {
+        sharedPrefs.edit { remove(TERMINAL) }
+        _terminalFlow.emit(null)
+    }
 
     fun getTerminal(): Terminal? =
         sharedPrefs.getString(TERMINAL, null)?.let { webJsonConverter.jsonToTerminal(it) }

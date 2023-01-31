@@ -3,23 +3,29 @@ package com.xplore.paymobile.ui.transactions
 import android.content.Context
 import android.webkit.WebView
 import androidx.lifecycle.ViewModel
-import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.NetworkResource
+import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
-import com.xplore.paymobile.data.web.setupWebView
+import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val sharedPrefs: SharedPreferencesDataSource
 ) : ViewModel() {
 
     companion object {
         private val transactionsPageBaseUrl =
             "${Constants.BASE_URL_WEB_PAGE}/ui/openbatchestransaction?BatchNumber=%s&StoreNumber=%s&StoreTerminalNumber=%s"
     }
+
+    private lateinit var xplorWebView: XplorWebView
+
+    fun terminalAvailable() = sharedPrefs.getTerminal() != null
 
     suspend fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
         val openBatch = remoteDataSource.getOpenBatch()
@@ -31,7 +37,7 @@ class TransactionsViewModel @Inject constructor(
         val storeNumber = terminalId.take(4)
         val storeTerminalNumber = terminalId.drop(4)
 
-        setupWebView(webView, context, jsBridge) {
+        xplorWebView = XplorWebView(webView, jsBridge, context) {
             webView.loadUrl(
                 transactionsPageBaseUrl.format(
                     batchNumber,
