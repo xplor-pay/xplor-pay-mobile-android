@@ -40,16 +40,6 @@ class App : Application() {
         val apiKey = encryptedPrefs.getApiKey()
         val publicKey = resources.getString(R.string.public_key)
 
-        sharedPreferencesDataSource.getMerchant()?.also { merchant ->
-            sharedPreferencesDataSource.getTerminal()?.also { terminal ->
-                clearentWrapper.merchantHomeApiCredentials =
-                    ClearentWrapper.MerchantHomeApiCredentials(
-                        merchantId = merchant.merchantNumber,
-                        vtToken = terminal.questJwt.token
-                    )
-            }
-        }
-
         clearentWrapper.initializeSDK(
             applicationContext,
             Constants.BASE_URL_SANDBOX,

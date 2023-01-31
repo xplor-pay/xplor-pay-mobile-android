@@ -86,6 +86,9 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
 
+    // Jwt decoder
+    implementation 'com.auth0.android:jwtdecode:2.0.2'
+
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_version"

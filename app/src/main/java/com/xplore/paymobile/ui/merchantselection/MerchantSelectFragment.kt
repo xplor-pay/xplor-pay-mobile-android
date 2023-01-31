@@ -186,11 +186,6 @@ class MerchantSelectFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.fetchMerchantAndTerminal()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
