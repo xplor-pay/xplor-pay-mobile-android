@@ -32,10 +32,6 @@ open class XplorWebView(
                         jsBridge.logout()
                         return false
                     }
-                    if (request?.url.toString().contains("https://my-qa.clearent.net/ui/home")) {
-                        webView.evaluateJavascript("window.triggerExternalEvent('merchantSelected', { merchantName: \\\"DAILY DONUTS ICE CREAM & DELI\\\", merchantNumber:'6588000000610659' });", null)
-                        return true
-                    }
 
                     // if we are in our domain continue inside the app
                     if (request?.url?.host in Constants.HOST_NAMES) {

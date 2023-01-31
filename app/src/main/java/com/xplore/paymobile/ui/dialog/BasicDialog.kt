@@ -11,7 +11,6 @@ class BasicDialog(
     private val title: String,
     private val message: String,
     private val onPositiveButtonClick: () -> Unit = {},
-    private val onCancel: (() -> Unit)? = null,
     private val onDismiss: (() -> Unit)? = null
 ) : DialogFragment() {
 
@@ -24,25 +23,12 @@ class BasicDialog(
                 dismiss()
                 onPositiveButtonClick()
             }
-            onDismiss(object : DialogInterface {
-                override fun cancel() {
-                    onCancel?.invoke() ?: onPositiveButtonClick()
-                }
-
-                override fun dismiss() {
-                    onDismiss?.invoke() ?: onPositiveButtonClick()
-                }
-            })
-            onCancel(object : DialogInterface {
-                override fun cancel() {
-                    onCancel?.invoke() ?: onPositiveButtonClick()
-                }
-
-                override fun dismiss() {
-                    onDismiss?.invoke() ?: onPositiveButtonClick()
-                }
-            })
         }
         return builder.create()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismiss?.invoke()
     }
 }
