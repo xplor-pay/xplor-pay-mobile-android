@@ -65,10 +65,8 @@
     <string name="info_screen_update_button_text">Update</string>
     <string name="info_screen_log_out_button_text">Log Out</string>
 
-    <!-- Post login -->
-    <string name="take_payment">Take a payment</string>
-
     <!-- Merchant/Terminal selection -->
+    <string name="merchant_and_terminal_selection_title">Merchant &amp; Terminal selection</string>
     <string name="merchant">Merchant</string>
     <string name="merchants">Merchants</string>
     <string name="terminal">Terminal</string>
