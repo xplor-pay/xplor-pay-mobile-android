@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clearent.idtech.android.wrapper.ui.util.MarginItemDecoration
+import com.clearent.idtech.android.wrapper.ui.util.hideSoftKeyboard
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSearchBinding
@@ -32,7 +33,10 @@ class MerchantSearchFragment : BaseFragment() {
     private val viewModel by viewModels<MerchantSearchViewModel>()
 
     private val itemsAdapter = MerchantsListAdapter(onItemClicked = { item, _ ->
-        binding.okButton.isEnabled = item.isSelected
+        viewModel.saveMerchant(item)
+        viewModel.removeTerminal()
+        hideSoftKeyboard(requireContext(), binding.searchEditText)
+        findNavController().popBackStack()
     })
 
     private val seeMoreAdapter = SeeMoreListAdapter(onItemClicked = {
@@ -118,14 +122,6 @@ class MerchantSearchFragment : BaseFragment() {
             itemsList.addItemDecoration(MarginItemDecoration(8, 0))
             showLoading()
             viewModel.searchForQuery("")
-            okButton.setOnClickListener {
-                val selectedMerchant = itemsAdapter.currentList.find { it.isSelected }
-                selectedMerchant?.let {
-                    viewModel.saveMerchant(it)
-                }
-                viewModel.removeTerminal()
-                findNavController().popBackStack()
-            }
         }
     }
 
@@ -136,11 +132,6 @@ class MerchantSearchFragment : BaseFragment() {
 
     private fun hideSeeMore() {
         seeMoreAdapter.submitList(emptyList())
-    }
-
-    private fun showSeeMore() {
-        val seeMoreButton = SeeMoreListAdapter.SeeMoreItem(getString(R.string.see_more), false)
-        seeMoreAdapter.submitList(listOf(seeMoreButton))
     }
 
     override fun onDestroyView() {

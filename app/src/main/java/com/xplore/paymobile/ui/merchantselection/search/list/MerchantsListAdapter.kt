@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.ItemMerchantListBinding
 
 class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
@@ -33,7 +32,6 @@ class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
                     val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         val item = getItem(position)
-                        handleSelection(item, position)
                         onItemClicked.invoke(item, position)
                     }
                 }
@@ -41,37 +39,7 @@ class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
         }
 
         fun bind(item: MerchantItem) {
-            binding.apply {
-                merchantTextView.text = item.name
-                when (item.isSelected) {
-                    true -> {
-                        root.setBackgroundColor(root.context.getColor(R.color.gray))
-                    }
-                    false -> {
-                        root.setBackgroundColor(root.context.getColor(R.color.white))
-                    }
-                }
-            }
-        }
-
-        private fun handleSelection(
-            item: MerchantItem,
-            position: Int
-        ) {
-            if (item.isSelected) {
-                item.isSelected = false
-                notifyItemChanged(position)
-                return
-            }
-            currentList.mapIndexed { index, listItem ->
-                if (item == listItem) {
-                    listItem.isSelected = item == listItem
-                    notifyItemChanged(index)
-                } else if (listItem.isSelected) {
-                    listItem.isSelected = false
-                    notifyItemChanged(index)
-                }
-            }
+            binding.merchantTextView.text = item.name
         }
     }
 
@@ -87,7 +55,6 @@ class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
 
     data class MerchantItem(
         val name: String,
-        val id: String,
-        var isSelected: Boolean = false
+        val id: String
     )
 }
