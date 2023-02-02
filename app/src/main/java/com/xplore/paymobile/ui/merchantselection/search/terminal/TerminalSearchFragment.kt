@@ -31,7 +31,8 @@ class TerminalSearchFragment : BaseFragment() {
     private val sharedViewModel by activityViewModels<MerchantSelectSharedViewModel>()
 
     private var adapter = MerchantsListAdapter(onItemClicked = { item, _ ->
-        binding.okButton.isEnabled = item.isSelected
+        viewModel.saveTerminal(item)
+        findNavController().popBackStack()
     })
 
     override fun onCreateView(
@@ -86,13 +87,6 @@ class TerminalSearchFragment : BaseFragment() {
             itemsList.adapter = adapter
             itemsList.layoutManager = LinearLayoutManager(requireContext())
             itemsList.addItemDecoration(MarginItemDecoration(8, 0))
-            okButton.setOnClickListener {
-                val selectedMerchant = adapter.currentList.find { it.isSelected }
-                selectedMerchant?.let {
-                    viewModel.saveTerminal(it)
-                }
-                findNavController().popBackStack()
-            }
         }
     }
 
