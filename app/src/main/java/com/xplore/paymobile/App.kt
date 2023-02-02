@@ -5,6 +5,7 @@ import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.interactiondetection.AppLifecycleCallbacks
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -21,6 +22,9 @@ class App : Application() {
     @Inject
     lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
 
+    @Inject
+    lateinit var appLifecycleCallbacks: AppLifecycleCallbacks
+
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
@@ -29,6 +33,7 @@ class App : Application() {
         logoutWebView()
 
         encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
+        registerActivityLifecycleCallbacks(appLifecycleCallbacks)
         initSdkWrapper()
     }
 

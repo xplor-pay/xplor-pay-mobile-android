@@ -16,6 +16,7 @@ import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.data.web.LoginEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentLoginBinding
+import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -68,17 +69,27 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.interactionDetector.userInteractionFlow.collect { event ->
+                    if (event is UserInteractionEvent.ExtendSession) {
+                        viewModel.extendSession()
+                    }
+                }
+            }
+        }
     }
 
     private fun handleLoginEvents(loginEvent: LoginEvents) {
         when (loginEvent) {
             is LoginEvents.LoginSuccessful -> {
                 viewModel.startVTRefreshTimer()
+                viewModel.startInactivityTimer()
                 sharedViewModel.allowLogout = true
                 when (GroupedUserRoles.fromString(loginEvent.userRoles.roles)) {
                     GroupedUserRoles.VirtualTerminalRoles -> viewModel.onLoginSuccessful()
                     GroupedUserRoles.NoAccess -> BasicDialog(
-                        "",
+                        getString(R.string.no_access_dialog_title),
                         getString(R.string.no_access_dialog_description)
                     ) { (requireActivity() as? MainActivity)?.logout() }.show(
                         parentFragmentManager,

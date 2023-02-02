@@ -18,6 +18,8 @@ class XplorLoginWebView(
             "window.triggerExternalEvent('merchantSelected', { merchantName: \"%s\", merchantNumber:\"%s\" });"
         private const val changeTerminalJsCommand =
             "window.triggerExternalEvent('terminalSelected', %s);"
+        private const val extendSessionCommand =
+            "window.triggerExternalEvent('sessionExtended', true);"
     }
 
     fun runJsCommand(command: XplorJsCommand) {
@@ -36,6 +38,11 @@ class XplorLoginWebView(
             ) {
                 Timber.d("changeTerminalJsCommand callback value: $it")
             }
+            is XplorJsCommand.ExtendSession -> webView.evaluateJavascript(
+                extendSessionCommand
+            ){
+                Timber.d("extendSessionJsCommand callback value: $it")
+            }
         }
     }
 
@@ -43,5 +50,6 @@ class XplorLoginWebView(
 
         data class ChangeMerchant(val merchant: Merchant) : XplorJsCommand()
         data class ChangeTerminal(val terminal: Terminal) : XplorJsCommand()
+        object ExtendSession : XplorJsCommand()
     }
 }

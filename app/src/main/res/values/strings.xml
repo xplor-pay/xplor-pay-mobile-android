@@ -7,10 +7,11 @@
     <string name="title_info">Info</string>
     <string name="next">Next</string>
     <string name="cancel">Cancel</string>
+    <string name="no_access_dialog_title">Info</string>
     <string name="no_access_dialog_description">Your user does not have permission to this application. With your business owner, please contact support at 866–435–0666 for help.</string>
 
-    <string name="logout_dialog_title">You are logged out</string>
-    <string name="logout_dialog_description">Please log back in.</string>
+    <string name="logout_dialog_title">Info</string>
+    <string name="logout_dialog_description">You\'ve been logged out due to inactivity</string>
 
     <string name="merchant_changed_dialog_title">No terminal selected</string>
     <string name="merchant_changed_dialog_description">You recently changed the merchant, please select also a terminal.</string>
