@@ -15,9 +15,13 @@ open class WebEventsSharedViewModel @Inject constructor(
 ) : ViewModel() {
 
     var allowLogout = true
+    var wasMerchantChanged = false
 
     private val _loginEventsFlow = MutableSharedFlow<LoginEvents>()
     val loginEventsFlow: SharedFlow<LoginEvents> = _loginEventsFlow
+
+    private val _merchantChangesEventsFlow = MutableSharedFlow<MerchantChangesEvents>()
+    val merchantChangesEventsFlow: SharedFlow<MerchantChangesEvents> = _merchantChangesEventsFlow
 
     init {
         viewModelScope.launch {
@@ -40,10 +44,22 @@ open class WebEventsSharedViewModel @Inject constructor(
                 }
             }
         }
+
+        viewModelScope.launch {
+            jsBridge.jsBridgeFlows.merchantFlow.collectLatest { merchant ->
+                merchant?.also {
+                    _merchantChangesEventsFlow.emit(MerchantChangesEvents.MerchantChanged)
+                }
+            }
+        }
     }
 }
 
 sealed class LoginEvents {
     data class LoginSuccessful(var userRoles: UserRoles) : LoginEvents()
     object Logout : LoginEvents()
+}
+
+sealed class MerchantChangesEvents {
+    object MerchantChanged : MerchantChangesEvents()
 }

@@ -1,6 +1,7 @@
 package com.xplore.paymobile
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -19,6 +20,7 @@ import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     private var hintsShowed = false
     private var showBottomNav = true
+    private var bottomNavItemIdSelected = R.id.navigation_payment
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -82,6 +85,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         showLogin(viewModel.loginVisible)
         setupViews()
         setupLoginEventsFlow()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                updateApp()
+            }
+        }
     }
 
     private fun setupViews() {
@@ -142,19 +155,36 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        navView.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                if (webViewModel.wasMerchantChanged) {
+                    bottomNavItemIdSelected = item.itemId
+                    webViewModel.wasMerchantChanged = false
+                    showMerchantChangedDialog()
+                    return false
+                } else {
+                    navController.navigate(item.itemId)
+                    return true
+                }
+            }
+        })
+
         supportActionBar?.hide()
 
         askPermissions()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun showMerchantChangedDialog() {
+        BasicDialog(
+            getString(R.string.merchant_changed_dialog_title),
+            getString(R.string.merchant_changed_dialog_description)
+        ) {
+            navController.navigate(R.id.action_to_post_login)
+        }.show(supportFragmentManager, BasicDialog::class.java.simpleName)
+    }
 
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                updateApp()
-            }
-        }
+    fun navigateToBottomNavItemSelected() {
+        navController.navigate(bottomNavItemIdSelected)
     }
 
     fun checkForAppUpdate(enableUpdateButton: () -> Unit) {

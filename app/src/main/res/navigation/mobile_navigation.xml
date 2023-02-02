@@ -71,4 +71,10 @@
         android:name="com.xplore.paymobile.ui.settings.old.LogsFragment"
         android:label="fragment_logs"
         tools:layout="@layout/fragment_logs" />
+
+    <action
+        android:id="@+id/action_to_post_login"
+        app:destination="@id/post_login_fragment"
+        app:popUpTo="@+id/post_login_fragment"
+        app:popUpToInclusive="true" />
 </navigation>

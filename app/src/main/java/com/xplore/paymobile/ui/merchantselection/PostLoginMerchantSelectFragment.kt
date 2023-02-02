@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.xplore.paymobile.R
+import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.databinding.FragmentPostLoginMerchantSelectBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,11 +34,13 @@ class PostLoginMerchantSelectFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.nextButton.setOnClickListener {
-            findNavController().navigate(R.id.action_post_login_to_payment)
+            (activity as? MainActivity)?.navigateToBottomNavItemSelected()
         }
         lifecycleScope.launch {
-            sharedViewModel.allowNext.collect {
-                binding.nextButton.isEnabled = it
+            sharedViewModel.allowNext.collect { allow ->
+                _binding?.also {
+                    binding.nextButton.isEnabled = allow
+                }
             }
         }
     }

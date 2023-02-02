@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.xplore.paymobile.data.web.MerchantChangesEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentBatchesBinding
 import com.xplore.paymobile.ui.base.BaseFragment
@@ -37,12 +40,25 @@ class BatchesFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViews()
+        setupMerchantChangesEventsFlow()
     }
 
     private fun setupViews() {
         binding.apply {
             lifecycleScope.launch {
                 viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+            }
+        }
+    }
+
+    private fun setupMerchantChangesEventsFlow() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.merchantChangesEventsFlow.collect { merchantChangesEvent ->
+                    when (merchantChangesEvent) {
+                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged = true
+                    }
+                }
             }
         }
     }

@@ -12,6 +12,9 @@
     <string name="logout_dialog_title">You are logged out</string>
     <string name="logout_dialog_description">Please log back in.</string>
 
+    <string name="merchant_changed_dialog_title">No terminal selected</string>
+    <string name="merchant_changed_dialog_description">You recently changed the merchant, please select also a terminal.</string>
+
     <!-- Home screen -->
     <string name="battery_life">%1$d%%</string>
     <string name="charge_amount">Charge %1$s</string>
