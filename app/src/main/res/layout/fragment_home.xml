@@ -92,12 +92,14 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/payment_method_layout"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/numpad_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_medium"
         android:weightSum="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/charge_amount_text">
 
         <com.google.android.material.button.MaterialButton
@@ -120,7 +122,7 @@
     <include
         android:id="@+id/numpad"
         layout="@layout/numeric_key_pad"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/numpad_width"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium_small"
@@ -134,7 +136,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/charge_button"
         style="@style/ChargeButton"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/numpad_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium_big"
         android:layout_marginEnd="@dimen/margin_medium_big"

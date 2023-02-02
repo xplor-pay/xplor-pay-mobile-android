@@ -31,4 +31,11 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium_small">10dp</dimen>
     <dimen name="padding_medium">12dp</dimen>
+
+    <dimen name="numpad_width">0dp</dimen>
+    <dimen name="hints_first_reader_button_width">0dp</dimen>
+    <dimen name="hints_skip_pairing_button_width">@dimen/wrap_content</dimen>
+    <dimen name="hints_pairing_tip_width">0dp</dimen>
+    
+    <item name="wrap_content" format="integer" type="dimen">-2</item>
 </resources>
