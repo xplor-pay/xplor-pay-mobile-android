@@ -37,9 +37,9 @@ class SharedPreferencesDataSource @Inject constructor(
 
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val _merchantFlow = MutableSharedFlow<Merchant?>()
+    private val _merchantFlow = MutableSharedFlow<Merchant?>(replay = 1)
     val merchantFlow: SharedFlow<Merchant?> = _merchantFlow
-    private val _terminalFlow = MutableSharedFlow<Terminal?>()
+    private val _terminalFlow = MutableSharedFlow<Terminal?>(replay = 1)
     val terminalFlow: SharedFlow<Terminal?> = _terminalFlow
 
     init {
