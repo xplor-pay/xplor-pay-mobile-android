@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="numpad_width">400dp</dimen>
+    <dimen name="hints_first_reader_button_width">500dp</dimen>
+    <dimen name="hints_skip_pairing_button_width">430dp</dimen>
+    <dimen name="hints_pairing_tip_width">470dp</dimen>
+</resources>

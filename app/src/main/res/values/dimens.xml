@@ -22,7 +22,14 @@
     <dimen name="charge_button_corner_size">39dp</dimen>
     <dimen name="numeric_key_pad_outline">2dp</dimen>
     <dimen name="numeric_key_pad_corner_size">8dp</dimen>
-<!--    Should be 1 dp higher than the numpad's corner size -->
+    <!--    Should be 1 dp higher than the numpad's corner size -->
     <dimen name="numeric_key_pad_background_corner_size">9dp</dimen>
     <dimen name="devices_dropdown_max_width">230dp</dimen>
+
+    <dimen name="numpad_width">0dp</dimen>
+    <dimen name="hints_first_reader_button_width">0dp</dimen>
+    <dimen name="hints_skip_pairing_button_width">@dimen/wrap_content</dimen>
+    <dimen name="hints_pairing_tip_width">0dp</dimen>
+
+    <item name="wrap_content" format="integer" type="dimen">-2</item>
 </resources>
