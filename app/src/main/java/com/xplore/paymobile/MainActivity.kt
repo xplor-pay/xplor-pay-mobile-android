@@ -18,7 +18,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
-import com.google.android.gms.common.util.DeviceProperties
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.ui.FirstPairListener
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         registerForActivityResult(multiplePermissionsContract) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (DeviceProperties.isTablet(resources))
+        requestedOrientation = if (resources.getBoolean(R.bool.isTablet))
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         installSplashScreen()
