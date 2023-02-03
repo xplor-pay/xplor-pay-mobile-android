@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.ItemMerchantListBinding
 
 class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
@@ -32,6 +33,7 @@ class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
                     val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         val item = getItem(position)
+                        root.setBackgroundColor(root.context.getColor(R.color.gray))
                         onItemClicked.invoke(item, position)
                     }
                 }
