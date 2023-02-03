@@ -24,8 +24,6 @@ class MerchantSelectViewModel @Inject constructor(
     private val _merchantFlow = MutableStateFlow<Merchant?>(null)
     val merchantFlow: StateFlow<Merchant?> = _merchantFlow
 
-    private val _selectedTerminalFlow =
-        MutableStateFlow<TerminalSelection>(TerminalSelection.NoTerminal)
     val selectedTerminalFlow: StateFlow<TerminalSelection> = sharedPrefs.terminalFlow.map {
         it?.let { terminal ->
             TerminalSelection.TerminalAvailable(terminal)
@@ -51,12 +49,6 @@ class MerchantSelectViewModel @Inject constructor(
                 } ?: run {
                     _loadingFlow.emit(false)
                 }
-
-                _selectedTerminalFlow.emit(
-                    sharedPrefs.getTerminal()?.let { terminal ->
-                        TerminalSelection.TerminalAvailable(terminal)
-                    } ?: TerminalSelection.NoTerminal
-                )
             }
         }
     }
