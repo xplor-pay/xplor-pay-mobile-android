@@ -31,6 +31,8 @@ import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.LoginEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.ActivityMainBinding
+import com.xplore.paymobile.interactiondetection.UserInteractionDetector
+import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.LoginFragment
@@ -47,6 +49,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     @Inject
     lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
+
+    @Inject
+    lateinit var interactionDetector: UserInteractionDetector
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
@@ -85,11 +90,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         showLogin(viewModel.loginVisible)
         setupViews()
         setupLoginEventsFlow()
+        setupInactivityLogoutFlow()
     }
 
     override fun onResume() {
         super.onResume()
-
+        if (sharedPreferencesDataSource.getAuthToken() == null && !binding.loginFragment.isVisible
+            && !interactionDetector.shouldExtend
+        ) {
+            showLogoutDialog()
+        }
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 updateApp()
@@ -102,25 +112,46 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         setupAppView()
     }
 
+    override fun onUserInteraction() {
+        window.decorView.performClick()
+        return super.onUserInteraction()
+    }
+
+    private fun setupInactivityLogoutFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                interactionDetector.userInteractionFlow.collect { event ->
+                    if (event is UserInteractionEvent.Logout) {
+                        showLogoutDialog()
+                    }
+                }
+            }
+        }
+    }
+
     private fun setupLoginEventsFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 webViewModel.loginEventsFlow.collect { loginEvent ->
                     when (loginEvent) {
                         LoginEvents.Logout -> {
-                            BasicDialog(
-                                getString(R.string.logout_dialog_title),
-                                getString(R.string.logout_dialog_description)
-                            ) { logout() }.show(
-                                supportFragmentManager,
-                                BasicDialog::class.java.simpleName
-                            )
+                            showLogoutDialog()
                         }
                         else -> {}
                     }
                 }
             }
         }
+    }
+
+    private fun showLogoutDialog() {
+        BasicDialog(
+            getString(R.string.logout_dialog_title),
+            getString(R.string.logout_dialog_description)
+        ) { logout() }.show(
+            supportFragmentManager,
+            BasicDialog::class.java.simpleName
+        )
     }
 
     private fun setupWebViewLogin() {
@@ -200,10 +231,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     }
 
     fun logout() {
+        interactionDetector.stopInactivityChecks()
         sharedPreferencesDataSource.setAuthToken(null)
         showLogin(true)
         setupWebViewLogin()
-        navController.navigate(R.id.navigation_payment)
+        navController.navigate(R.id.post_login_fragment)
     }
 
     private fun showLogin(show: Boolean) {

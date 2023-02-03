@@ -2,6 +2,7 @@ package com.xplore.paymobile.data.web
 
 import android.webkit.JavascriptInterface
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class JSBridge @Inject constructor(
     val jsBridgeFlows: JSBridgeFlows,
     private val webJsonConverter: WebJsonConverter,
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
+    private val interactionDetector: UserInteractionDetector
 ) {
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -83,6 +85,11 @@ class JSBridge @Inject constructor(
             sharedPrefs.setUserRoles(message)
             jsBridgeFlows.userRolesFlow.emit(userRoles)
         }
+    }
+
+    @JavascriptInterface
+    fun sessionExpiration(message: String) {
+        interactionDetector.onSessionExpirationEvent()
     }
 
     fun logout() = backgroundScope.launch { jsBridgeFlows.loggedOutFlow.emit(LoggedOut(true)) }

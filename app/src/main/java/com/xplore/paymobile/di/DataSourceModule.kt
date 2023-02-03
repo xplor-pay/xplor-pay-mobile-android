@@ -40,5 +40,10 @@ object DataSourceModule {
         clearentGatewayApi: ClearentGatewayApi,
         sharedPreferencesDataSource: SharedPreferencesDataSource
     ): RemoteDataSource =
-        RemoteDataSource(xplorApi, xplorBoardingApi, clearentGatewayApi, sharedPreferencesDataSource)
+        RemoteDataSource(
+            xplorApi,
+            xplorBoardingApi,
+            clearentGatewayApi,
+            sharedPreferencesDataSource
+        )
 }
