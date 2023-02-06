@@ -10,8 +10,7 @@ import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.data.web.Merchant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,34 +22,33 @@ class MerchantSelectViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _merchantFlow = MutableStateFlow<Merchant?>(null)
-    val merchantFlow: Flow<Merchant?> = _merchantFlow
+    val merchantFlow: StateFlow<Merchant?> = _merchantFlow
 
-    private val _selectedTerminalFlow =
-        MutableStateFlow<TerminalSelection>(TerminalSelection.NoTerminal)
-    val selectedTerminalFlow: Flow<TerminalSelection> = _selectedTerminalFlow
+    val selectedTerminalFlow: StateFlow<TerminalSelection> = sharedPrefs.terminalFlow.map {
+        it?.let { terminal ->
+            TerminalSelection.TerminalAvailable(terminal)
+        } ?: TerminalSelection.NoTerminal
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, TerminalSelection.NoTerminal)
 
     private val _terminalsFlow = MutableStateFlow<List<Terminal>>(emptyList())
-    val terminalsFlow: Flow<List<Terminal>> = _terminalsFlow
+    val terminalsFlow: StateFlow<List<Terminal>> = _terminalsFlow
 
-    private val _loadingFlow = MutableStateFlow(true)
-    val loadingFlow: Flow<Boolean> = _loadingFlow
+    private val _loadingFlow = MutableStateFlow(false)
+    val loadingFlow: StateFlow<Boolean> = _loadingFlow
 
-    fun fetchMerchantAndTerminal() {
+    init {
         viewModelScope.launch {
-            _loadingFlow.emit(true)
-            sharedPrefs.getMerchant()?.also { merchant ->
-                _merchantFlow.emit(merchant)
-                sharedPrefs.getTerminal()?.also { terminal ->
-                    _selectedTerminalFlow.emit(TerminalSelection.TerminalAvailable(terminal))
+            sharedPrefs.merchantFlow.collectLatest { merchant ->
+                _loadingFlow.emit(true)
+                merchant?.also {
+                    _merchantFlow.emit(it)
+                    withContext(Dispatchers.IO) {
+                        fetchTerminals(it.merchantNumber)
+                        _loadingFlow.emit(false)
+                    }
                 } ?: run {
-                    _selectedTerminalFlow.emit(TerminalSelection.NoTerminal)
-                }
-                withContext(Dispatchers.IO) {
-                    fetchTerminals(merchant.merchantNumber)
                     _loadingFlow.emit(false)
                 }
-            } ?: run {
-                _loadingFlow.emit(false)
             }
         }
     }

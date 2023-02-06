@@ -17,6 +17,7 @@ import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.data.web.Merchant
 import com.xplore.paymobile.databinding.FragmentMerchantSelectBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -122,7 +123,7 @@ class MerchantSelectFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.selectedTerminalFlow.collect { terminalSelection ->
+                    viewModel.selectedTerminalFlow.collectLatest { terminalSelection ->
                         when (terminalSelection) {
                             is TerminalSelection.TerminalAvailable -> {
                                 Timber.d("Selected terminal is ${terminalSelection.terminal.terminalName}")
@@ -184,11 +185,6 @@ class MerchantSelectFragment : Fragment() {
                 findNavController().navigate(R.id.terminal_search_fragment)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.fetchMerchantAndTerminal()
     }
 
     override fun onDestroyView() {

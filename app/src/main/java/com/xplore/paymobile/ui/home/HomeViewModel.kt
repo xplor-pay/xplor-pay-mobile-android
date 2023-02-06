@@ -15,8 +15,7 @@ class HomeViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     var isCardReaderSelected = true
-    val terminal: Terminal?
-        get() = sharedPrefs.getTerminal()
+    val terminalFlow = sharedPrefs.terminalFlow
 
     fun firstPairDone() = sharedPrefs.setFirstPair(FirstPair.DONE)
     fun firstPairSkipped() = sharedPrefs.setFirstPair(FirstPair.SKIPPED)

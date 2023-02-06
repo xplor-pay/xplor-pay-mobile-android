@@ -13,7 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.OfflineModeEnabledListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
@@ -31,6 +33,7 @@ import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.base.BaseFragment
 import com.xplore.paymobile.util.insert
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -401,7 +404,13 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
     }
 
     private fun setTerminalState() {
-        binding.noEligibleTerminal.isVisible = viewModel.terminal == null
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.terminalFlow.collectLatest { terminal ->
+                    binding.noEligibleTerminal.isVisible = terminal == null
+                }
+            }
+        }
     }
 
     private fun renderDeviceBatteryLevel(batteryLifeState: BatteryLifeState) {
