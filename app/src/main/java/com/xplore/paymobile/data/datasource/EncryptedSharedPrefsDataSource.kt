@@ -11,6 +11,7 @@ class EncryptedSharedPrefsDataSource(context: Context) {
         private const val KEY_PREFERENCES = "ENCRYPTED_SHARED_PREFS"
         private const val API_KEY = "API_KEY"
         private const val PUBLIC_KEY = "PUBLIC_KEY"
+        private const val PASSPHRASE_KEY = "PASSPHRASE_KEY"
     }
 
     private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -22,6 +23,11 @@ class EncryptedSharedPrefsDataSource(context: Context) {
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
+
+    fun setDbPassphrase(passphrase: String) =
+        sharedPrefs.edit { putString(PASSPHRASE_KEY, passphrase) }
+
+    fun getDbPassphrase(): String = sharedPrefs.getString(PASSPHRASE_KEY, "") ?: ""
 
     fun setApiKey(apiKey: String) =
         sharedPrefs.edit { putString(API_KEY, apiKey) }

@@ -9,6 +9,7 @@ import com.xplore.paymobile.interactiondetection.AppLifecycleCallbacks
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -34,6 +35,7 @@ class App : Application() {
 
         encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
         registerActivityLifecycleCallbacks(appLifecycleCallbacks)
+        generatePassphrase()
         initSdkWrapper()
     }
 
@@ -50,8 +52,7 @@ class App : Application() {
             Constants.BASE_URL_SANDBOX,
             publicKey,
             apiKey,
-            //TODO proper key management
-            OfflineModeConfig("PassPhrase")
+            OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 
         // set up the sdk store and forward mode once so we don't override user preferences
@@ -59,5 +60,11 @@ class App : Application() {
             return
 
         sharedPreferencesDataSource.sdkSetupComplete()
+    }
+
+    private fun generatePassphrase() {
+        if (encryptedPrefs.getDbPassphrase().isEmpty()) {
+            encryptedPrefs.setDbPassphrase(UUID.randomUUID().toString())
+        }
     }
 }

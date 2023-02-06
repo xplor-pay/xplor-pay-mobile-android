@@ -20,4 +20,5 @@ class OldSettingsViewModel @Inject constructor(
 
     fun getPublicKey() = encryptedPrefs.getPublicKey()
 
+    fun getPassPhrase() = encryptedPrefs.getDbPassphrase()
 }
