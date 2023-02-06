@@ -87,7 +87,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         if (viewModel.shouldShowHints())
             showHints()
 
-        setupOfflineProcessingMockButtons()
         setNumericKeyPadBackground()
         handlePaymentMethodButtonState()
         setupPaymentMethodClickListeners()
@@ -96,20 +95,6 @@ class HomeFragment : Fragment(), ReaderStatusListener, OfflineModeEnabledListene
         setListeners()
         clearentWrapper.addReaderStatusListener(this)
         clearentWrapper.addOfflineModeEnabledListener(this)
-    }
-
-    private fun setupOfflineProcessingMockButtons() {
-        binding.apply {
-            addProcessedOfflineTransactionWithoutErrors.setOnClickListener {
-                clearentWrapper.mockOfflineTransactions(true, false)
-            }
-            addProcessedOfflineTransactionWithErrors.setOnClickListener {
-                clearentWrapper.mockOfflineTransactions(true, true)
-            }
-            addOfflineTransactions.setOnClickListener {
-                clearentWrapper.mockOfflineTransactions(false, false)
-            }
-        }
     }
 
     private fun setupPaymentMethodClickListeners() {

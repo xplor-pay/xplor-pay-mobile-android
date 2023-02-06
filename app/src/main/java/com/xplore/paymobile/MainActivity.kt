@@ -1,5 +1,6 @@
 package com.xplore.paymobile
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,6 +42,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         registerForActivityResult(multiplePermissionsContract) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (resources.getBoolean(R.bool.isTablet))
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         installSplashScreen()
 
         super.onCreate(savedInstanceState)

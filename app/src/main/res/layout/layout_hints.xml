@@ -9,7 +9,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hints_first_reader_button"
         style="@style/ShapeAppearanceOverlay.Button.RoundedWhite"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/hints_first_reader_button_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
@@ -22,7 +22,7 @@
     <include
         android:id="@+id/hints_pairing_tip"
         layout="@layout/layout_hints_tip_bellow"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/hints_pairing_tip_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginEnd="@dimen/margin_large"
@@ -33,7 +33,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hints_skip_pairing"
         style="@style/RoundedRedTextButton"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/hints_skip_pairing_button_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
