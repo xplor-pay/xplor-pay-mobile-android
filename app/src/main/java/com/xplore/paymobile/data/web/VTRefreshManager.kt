@@ -1,5 +1,6 @@
 package com.xplore.paymobile.data.web
 
+import com.clearent.idtech.android.wrapper.ClearentCredentials
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
@@ -55,8 +56,8 @@ class VTRefreshManager @Inject constructor(
             }
             newTerminal?.let {
                 Timber.d("Token refresh successful")
-                ClearentWrapper.getInstance().merchantHomeApiCredentials =
-                    ClearentWrapper.MerchantHomeApiCredentials(
+                ClearentWrapper.getInstance().sdkCredentials.clearentCredentials  =
+                    ClearentCredentials.MerchantHomeApiCredentials(
                         merchantId = merchant.merchantNumber,
                         vtToken = newTerminal.questJwt.token
                     )

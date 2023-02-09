@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.merchantselection.search.terminal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentCredentials
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Terminal
@@ -50,8 +51,8 @@ class TerminalSearchViewModel @Inject constructor(
         }
         selectedTerminal?.also { terminal ->
             sharedPrefs.setTerminal(terminal)
-            clearentWrapper.merchantHomeApiCredentials =
-                ClearentWrapper.MerchantHomeApiCredentials(
+            clearentWrapper.sdkCredentials.clearentCredentials =
+                ClearentCredentials.MerchantHomeApiCredentials(
                     merchantId = merchantItem.id,
                     vtToken = terminal.questJwt.token
                 )
