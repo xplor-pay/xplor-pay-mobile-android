@@ -74,8 +74,7 @@ class OldSettingsFragment : BaseFragment() {
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
                     publicKey,
                     apiKey,
-                    //TODO proper key management
-                    OfflineModeConfig("PassPhrase")
+                    OfflineModeConfig(viewModel.getPassPhrase())
                 )
                 clearentWrapper.setListener(ClearentDataSource)
                 BasicDialog(
