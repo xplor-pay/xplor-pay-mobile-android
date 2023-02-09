@@ -44,13 +44,9 @@ class App : Application() {
     }
 
     private fun initSdkWrapper() {
-        val apiKey = encryptedPrefs.getApiKey()
-        val publicKey = resources.getString(R.string.public_key)
-
         clearentWrapper.initializeSDK(
             context = applicationContext,
             baseUrl = Constants.BASE_URL_SANDBOX,
-            apiKey = apiKey,
             //TODO proper key management
             offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
