@@ -13,6 +13,7 @@ import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.FragmentInfoBinding
 import com.xplore.paymobile.ui.PhoneUtils
 import com.xplore.paymobile.ui.base.BaseFragment
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,7 +43,9 @@ class InfoFragment : BaseFragment() {
 
         setupTextViews()
         setupClickListeners()
-        (requireActivity() as? MainActivity)?.checkForAppUpdate { binding.updateButton.isEnabled = true }
+        (requireActivity() as? MainActivity)?.checkForAppUpdate {
+            binding.updateButton.isEnabled = true
+        }
     }
 
     private fun setupTextViews() {
@@ -65,8 +68,19 @@ class InfoFragment : BaseFragment() {
                 (requireActivity() as? MainActivity)?.updateApp()
             }
             logOutButton.setOnClickListener {
-                sharedPrefs.setAuthToken(null)
-                (requireActivity() as? MainActivity)?.logout()
+                BasicDialog(
+                    getString(R.string.logout_confirm_title),
+                    null,
+                    positiveButton = BasicDialog.DialogButton(
+                        getString(R.string.yes)
+                    ) { (requireActivity() as? MainActivity)?.logout() },
+                    negativeButton = BasicDialog.DialogButton(
+                        getString(R.string.cancel)
+                    ) {}
+                ).show(
+                    parentFragmentManager,
+                    BasicDialog::class.java.simpleName
+                )
             }
         }
     }

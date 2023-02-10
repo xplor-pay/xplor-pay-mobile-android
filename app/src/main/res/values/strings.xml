@@ -54,6 +54,8 @@
     <string name="hints_skip_pairing_button_text">Skip pairing for now</string>
     <string name="first_pairing_tip_text">Lets start by pairing your reader with your mobile app. Click on the button above.</string>
     <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="logout_confirm_title">Are you sure you want to log out?</string>
     <string name="keys_alert_title">Info</string>
     <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
     <string name="keys_update_message">New values were saved.</string>
