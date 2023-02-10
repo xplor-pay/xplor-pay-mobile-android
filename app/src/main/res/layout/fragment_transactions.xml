@@ -11,6 +11,14 @@
         android:layout_gravity="center"
         android:text="@string/no_eligible_terminal_warning" />
 
+    <TextView
+        android:id="@+id/no_internet_warning"
+        style="@style/TextViewSecondaryBold20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_internet" />
+
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"

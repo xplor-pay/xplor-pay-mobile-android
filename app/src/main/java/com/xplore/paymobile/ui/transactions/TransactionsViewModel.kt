@@ -3,6 +3,7 @@ package com.xplore.paymobile.ui.transactions
 import android.content.Context
 import android.webkit.WebView
 import androidx.lifecycle.ViewModel
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
@@ -23,7 +24,12 @@ class TransactionsViewModel @Inject constructor(
             "${Constants.BASE_URL_WEB_PAGE}/ui/openbatchestransaction?BatchNumber=%s&StoreNumber=%s&StoreTerminalNumber=%s"
     }
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private lateinit var xplorWebView: XplorWebView
+
+    val hasInternet
+        get() = clearentWrapper.isInternetOn
 
     fun terminalAvailable() = sharedPrefs.getTerminal() != null
 

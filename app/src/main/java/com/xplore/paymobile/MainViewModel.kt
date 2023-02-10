@@ -9,4 +9,5 @@ import javax.inject.Inject
 open class MainViewModel @Inject constructor() : ViewModel() {
 
     var loginVisible: Boolean = true
+    var shouldShowForceLoginDialog = false
 }

@@ -19,6 +19,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.clearent.idtech.android.wrapper.ClearentDataSource
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.listener.MerchantAndTerminalRequestedListener
+import com.clearent.idtech.android.wrapper.model.NetworkStatus
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
@@ -43,7 +45,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), FirstPairListener {
+class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminalRequestedListener {
 
     private val webViewModel by viewModels<WebEventsSharedViewModel>()
     private val viewModel by viewModels<MainViewModel>()
@@ -56,6 +58,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
 
     companion object {
         private const val HINTS_DISPLAY_DELAY = 3000L
+        private const val FORCE_LOGIN_DIALOG_TAG = "InternetDialog"
     }
 
     private val clearentWrapper = ClearentWrapper.getInstance()
@@ -63,6 +66,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private var hintsShowed = false
     private var showBottomNav = true
     private var bottomNavItemIdSelected = R.id.navigation_payment
+    private var isResumed: Boolean = false
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -95,10 +99,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         setupViews()
         setupLoginEventsFlow()
         setupInactivityLogoutFlow()
+        setupNetworkFlow()
+        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
 
     override fun onResume() {
         super.onResume()
+        isResumed = true
+        if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
+            showForceLoginDialog()
+        }
         if (sharedPreferencesDataSource.getAuthToken() == null && !binding.loginFragment.isVisible
             && !interactionDetector.shouldExtend
         ) {
@@ -263,9 +273,58 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
         clearentWrapper.setListener(ClearentDataSource)
     }
 
+
+    private fun setupNetworkFlow() {
+        lifecycleScope.launch {
+            ClearentDataSource.networkStatusFlow.collect { networkStatus ->
+                val isInOfflineMode = clearentWrapper.storeAndForwardEnabled
+                if (networkStatus is NetworkStatus.CapabilitiesChanged) return@collect
+                if (!isResumed && isInOfflineMode) {
+                    when (networkStatus) {
+                        is NetworkStatus.Available -> viewModel.shouldShowForceLoginDialog = true
+                        is NetworkStatus.Lost -> viewModel.shouldShowForceLoginDialog = false
+                        else -> {}
+                    }
+                    return@collect
+                }
+                if (networkStatus is NetworkStatus.Available && isInOfflineMode && !binding.loginFragment.isVisible) {
+                    showForceLoginDialog()
+                }
+            }
+        }
+    }
+
+    override fun onMerchantAndTerminalRequested() {
+        val merchant = sharedPreferencesDataSource.getMerchant()?.merchantName
+        val terminal = sharedPreferencesDataSource.getTerminal()?.terminalName
+        clearentWrapper.provideMerchantAndTerminalName(merchant, terminal)
+    }
+
+    private fun showForceLoginDialog() {
+        val isShown =
+            supportFragmentManager.findFragmentByTag(FORCE_LOGIN_DIALOG_TAG)?.isAdded ?: false
+        if (isShown) return
+        BasicDialog(
+            getString(R.string.logout_dialog_title),
+            getString(R.string.internet_restored)
+        ) {
+            logout()
+            clearentWrapper.storeAndForwardEnabled = false
+        }.show(
+            supportFragmentManager,
+            FORCE_LOGIN_DIALOG_TAG
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isResumed = false
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         clearentWrapper.removeListener()
+        clearentWrapper.removeMerchantAndTerminalRequestedListener(this)
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {

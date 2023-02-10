@@ -5,6 +5,7 @@ import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.VTRefreshManager
@@ -28,9 +29,14 @@ class LoginViewModel @Inject constructor(
         private val loginPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/home"
     }
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private lateinit var xplorWebView: XplorLoginWebView
 
     var onLoginSuccessful: () -> Unit = {}
+
+    val hasInternet
+        get() = clearentWrapper.isInternetOn
 
     fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
         sharedPrefs.getAuthToken() ?: run {
@@ -82,4 +88,6 @@ class LoginViewModel @Inject constructor(
     fun extendSession() {
         xplorWebView.runJsCommand(XplorJsCommand.ExtendSession)
     }
+
+    fun hasTerminalSettings(): Boolean = clearentWrapper.getCurrentTerminalSettings() != null
 }

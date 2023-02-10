@@ -47,9 +47,14 @@ class TransactionsFragment : BaseFragment() {
 
     private fun setupViews() {
         binding.apply {
-            if (viewModel.terminalAvailable()) {
+            if (!viewModel.hasInternet) {
+                webView.isVisible = false
+                noInternetWarning.isVisible = true
+                noEligibleTerminalWarning.isVisible = false
+            } else if (viewModel.terminalAvailable()) {
                 webView.isVisible = true
                 noEligibleTerminalWarning.isVisible = false
+                noInternetWarning.isVisible = false
 
                 lifecycleScope.launch {
                     viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
@@ -58,6 +63,7 @@ class TransactionsFragment : BaseFragment() {
             } else {
                 webView.isVisible = false
                 noEligibleTerminalWarning.isVisible = true
+                noInternetWarning.isVisible = false
             }
         }
     }
@@ -67,7 +73,8 @@ class TransactionsFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 sharedViewModel.merchantChangesEventsFlow.collect { merchantChangesEvent ->
                     when (merchantChangesEvent) {
-                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged = true
+                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged =
+                            true
                     }
                 }
             }
