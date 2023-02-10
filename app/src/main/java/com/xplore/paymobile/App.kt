@@ -44,15 +44,10 @@ class App : Application() {
     }
 
     private fun initSdkWrapper() {
-        val apiKey = encryptedPrefs.getApiKey()
-        val publicKey = resources.getString(R.string.public_key)
-
         clearentWrapper.initializeSDK(
-            applicationContext,
-            Constants.BASE_URL_SANDBOX,
-            publicKey,
-            apiKey,
-            OfflineModeConfig(encryptedPrefs.getDbPassphrase())
+            context = applicationContext,
+            baseUrl = Constants.BASE_URL_SANDBOX,
+            offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 
         // set up the sdk store and forward mode once so we don't override user preferences

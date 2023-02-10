@@ -72,8 +72,6 @@ class OldSettingsFragment : BaseFragment() {
                 clearentWrapper.initializeSDK(
                     requireContext(),
                     if (switchButton.isChecked) Constants.BASE_URL_PROD else Constants.BASE_URL_SANDBOX,
-                    publicKey,
-                    apiKey,
                     OfflineModeConfig(viewModel.getPassPhrase())
                 )
                 clearentWrapper.setListener(ClearentDataSource)

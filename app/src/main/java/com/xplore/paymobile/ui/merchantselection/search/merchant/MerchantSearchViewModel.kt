@@ -56,7 +56,7 @@ class MerchantSearchViewModel @Inject constructor(
             sharedPrefs.setMerchant(merchant)
             sharedPrefs.clearTerminal()
 
-            clearentWrapper.merchantHomeApiCredentials = null
+            clearentWrapper.sdkCredentials.clearentCredentials = null
         }
     }
 
