@@ -3,6 +3,7 @@ package com.xplore.paymobile.ui.login
 import android.content.Context
 import android.webkit.CookieManager
 import android.webkit.WebView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
@@ -46,10 +47,14 @@ class LoginViewModel @Inject constructor(
         xplorWebView = XplorLoginWebView(
             webView = webView,
             jsBridge = jsBridge,
-            context = context
-        ) {
-            webView.loadUrl(loginPageUrl)
-        }
+            context = context,
+            onWebViewSetupDone =
+            {
+                webView.loadUrl(loginPageUrl)
+            },
+            onPageLoaded = {
+                webView.isVisible = true
+            })
 
         listenToCredentialsChanges()
     }

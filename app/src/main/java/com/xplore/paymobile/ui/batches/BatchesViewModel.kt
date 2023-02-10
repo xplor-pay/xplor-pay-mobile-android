@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.batches
 
 import android.content.Context
 import android.webkit.WebView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.XplorWebView
@@ -19,8 +20,12 @@ class BatchesViewModel @Inject constructor() : ViewModel() {
     private lateinit var xplorWebView: XplorWebView
 
     fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
-        xplorWebView = XplorWebView(webView, jsBridge, context) {
-            webView.loadUrl(batchesPageUrl)
-        }
+        xplorWebView = XplorWebView(webView, jsBridge, context,
+            onWebViewSetupDone = {
+                webView.loadUrl(batchesPageUrl)
+            },
+            onPageLoaded = {
+                webView.isVisible = true
+            })
     }
 }

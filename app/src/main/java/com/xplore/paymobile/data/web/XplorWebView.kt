@@ -3,10 +3,7 @@ package com.xplore.paymobile.data.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.core.content.ContextCompat
 import com.xplore.paymobile.util.Constants
 import java.net.HttpURLConnection
@@ -16,7 +13,8 @@ open class XplorWebView(
     webView: WebView,
     jsBridge: JSBridge,
     context: Context,
-    onWebViewSetupDone: (() -> Unit)? = null
+    onWebViewSetupDone: (() -> Unit)? = null,
+    onPageLoaded: (() -> Unit)? = null
 ) {
 
     init {
@@ -59,6 +57,15 @@ open class XplorWebView(
                     val statusCode = errorResponse?.statusCode
                     if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED || statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         jsBridge.logout()
+                    }
+                }
+            }
+
+            webChromeClient = object : WebChromeClient() {
+
+                override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                    if (progress == 100) {
+                        onPageLoaded?.invoke()
                     }
                 }
             }

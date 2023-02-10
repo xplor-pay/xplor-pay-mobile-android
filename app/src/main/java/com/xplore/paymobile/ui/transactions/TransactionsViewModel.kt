@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.transactions
 
 import android.content.Context
 import android.webkit.WebView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
@@ -37,14 +38,18 @@ class TransactionsViewModel @Inject constructor(
         val storeNumber = terminalId.take(4)
         val storeTerminalNumber = terminalId.drop(4)
 
-        xplorWebView = XplorWebView(webView, jsBridge, context) {
-            webView.loadUrl(
-                transactionsPageBaseUrl.format(
-                    batchNumber,
-                    storeNumber,
-                    storeTerminalNumber
+        xplorWebView = XplorWebView(webView, jsBridge, context,
+            onWebViewSetupDone = {
+                webView.loadUrl(
+                    transactionsPageBaseUrl.format(
+                        batchNumber,
+                        storeNumber,
+                        storeTerminalNumber
+                    )
                 )
-            )
-        }
+            },
+            onPageLoaded = {
+                webView.isVisible = true
+            })
     }
 }
