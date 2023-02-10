@@ -47,7 +47,6 @@ class App : Application() {
         clearentWrapper.initializeSDK(
             context = applicationContext,
             baseUrl = Constants.BASE_URL_SANDBOX,
-            //TODO proper key management
             offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 
