@@ -271,7 +271,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
                 return
             }
 
-            chargeButton.isEnabled = sharedPrefs.getTerminal() != null
+            chargeButton.isEnabled = sharedPrefs.getTerminal() != null || viewModel.isInOfflineMode()
             chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
         }
     }
@@ -359,7 +359,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.terminalFlow.collectLatest { terminal ->
-                    binding.noEligibleTerminal.isVisible = terminal == null
+                    binding.noEligibleTerminal.isVisible = terminal == null && !viewModel.isInOfflineMode()
                 }
             }
         }

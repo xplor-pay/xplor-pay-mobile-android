@@ -1,15 +1,22 @@
 package com.xplore.paymobile.ui.login
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
+import com.clearent.idtech.android.wrapper.ui.SdkUiResultCode
 import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.web.GroupedUserRoles
@@ -20,6 +27,7 @@ import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -41,6 +49,30 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode != Activity.RESULT_OK)
+            return@registerForActivityResult
+
+        Timber.d(
+            "Enable offline mode result ${
+                result.data?.getIntExtra(
+                    ClearentSDKActivity.CLEARENT_RESULT_CODE,
+                    0
+                )
+            }"
+        )
+
+        val binaryAnd = result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0)
+            ?.and(SdkUiResultCode.EnableOfflineSuccess.value)
+
+        if (binaryAnd != 0) {
+            findNavController().navigate(R.id.navigation_payment)
+            viewModel.onLoginSuccessful()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelBundle?.let { it() }
@@ -59,6 +91,8 @@ class LoginFragment : Fragment() {
 
         setupViewModel()
         setupViews()
+        setupBypassLoginButton()
+        checkInternetConnection()
     }
 
     private fun setupViewModel() {
@@ -108,6 +142,26 @@ class LoginFragment : Fragment() {
     private fun setupViews() {
         binding.apply {
             viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+        }
+    }
+
+    private fun setupBypassLoginButton() {
+        binding.proceedButton.setOnClickListener {
+            val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
+            intent.putExtra(
+                ClearentSDKActivity.CLEARENT_ACTION_KEY,
+                ClearentSDKActivity.CLEARENT_ACTION_ENABLE_OFFLINE_MODE
+            )
+            activityLauncher.launch(intent)
+        }
+    }
+
+    private fun checkInternetConnection() {
+        if (!viewModel.hasInternet && viewModel.hasTerminalSettings()) {
+            with(binding) {
+                webView.isVisible = false
+                bypassLoginGroup.isVisible = true
+            }
         }
     }
 

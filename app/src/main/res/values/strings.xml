@@ -82,4 +82,10 @@
     <string name="no_eligible_terminal_available">Looks like you don\'t have a terminal setup. Please contact your sales agent now to get one set up. If you don\'t have a sales agent, call %1$s for help.</string>
     <string name="no_eligible_terminal_available_contact_number">866–512–0666</string>
     <string name="no_eligible_terminal_warning">No terminal available</string>
+
+    <!-- Offline mode -->
+    <string name="bypass_login_description">You can run transactions without internet in offline mode. Click below to proceed and begin taking transactions in offline mode.</string>
+    <string name="proceed">Proceed</string>
+    <string name="internet_restored">Internet has been restored, please log in.</string>
+    <string name="no_internet">No internet connection.</string>
 </resources>
