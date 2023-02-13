@@ -24,10 +24,10 @@ android {
 
     buildTypes {
         debug {
-            resValue("string", "public_key", localProperties['publicKey'])
+            debuggable true
         }
         release {
-            resValue("string", "public_key", localProperties['publicKey'])
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
