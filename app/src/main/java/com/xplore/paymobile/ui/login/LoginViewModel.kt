@@ -3,7 +3,6 @@ package com.xplore.paymobile.ui.login
 import android.content.Context
 import android.webkit.CookieManager
 import android.webkit.WebView
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clearent.idtech.android.wrapper.ClearentWrapper
@@ -39,7 +38,12 @@ class LoginViewModel @Inject constructor(
     val hasInternet
         get() = clearentWrapper.isInternetOn
 
-    fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
+    fun prepareWebView(
+        webView: WebView,
+        context: Context,
+        jsBridge: JSBridge,
+        onPageLoaded: () -> Unit
+    ) {
         sharedPrefs.getAuthToken() ?: run {
             // Clear all the cookies
             CookieManager.getInstance().removeAllCookies(null)
@@ -58,9 +62,8 @@ class LoginViewModel @Inject constructor(
             {
                 webView.loadUrl(loginPageUrl)
             },
-            onPageLoaded = {
-                webView.isVisible = true
-            })
+            onPageLoaded = onPageLoaded
+        )
 
         listenToCredentialsChanges()
     }

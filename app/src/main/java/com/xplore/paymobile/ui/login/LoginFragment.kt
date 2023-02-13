@@ -90,7 +90,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViewModel()
-        setupViews()
+        prepareWeb()
         setupBypassLoginButton()
         checkInternetConnection()
     }
@@ -139,9 +139,19 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun setupViews() {
-        binding.apply {
-            viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+    private fun prepareWeb() {
+        with(binding) {
+            if (!viewModel.hasInternet && viewModel.hasTerminalSettings()) {
+                webView.isVisible = false
+                bypassLoginGroup.isVisible = true
+            } else {
+                progressBar.isVisible = true
+                bypassLoginGroup.isVisible = false
+                viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge) {
+                    webView.isVisible = true
+                    progressBar.isVisible = false
+                }
+            }
         }
     }
 
@@ -157,12 +167,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun checkInternetConnection() {
-        if (!viewModel.hasInternet && viewModel.hasTerminalSettings()) {
-            with(binding) {
-                webView.isVisible = false
-                bypassLoginGroup.isVisible = true
-            }
-        }
     }
 
     override fun onDestroyView() {

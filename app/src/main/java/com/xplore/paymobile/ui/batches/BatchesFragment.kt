@@ -48,6 +48,7 @@ class BatchesFragment : BaseFragment() {
         with(binding) {
             if (!viewModel.hasInternet) {
                 webView.isVisible = false
+                progressBar.isVisible = false
                 noInternetWarning.isVisible = true
             } else {
                 webView.isVisible = true

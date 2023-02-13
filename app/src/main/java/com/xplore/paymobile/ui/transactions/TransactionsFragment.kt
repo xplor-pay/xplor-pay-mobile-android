@@ -49,6 +49,7 @@ class TransactionsFragment : BaseFragment() {
         binding.apply {
             if (!viewModel.hasInternet) {
                 webView.isVisible = false
+                progressBar.isVisible = false
                 noInternetWarning.isVisible = true
                 noEligibleTerminalWarning.isVisible = false
             } else if (viewModel.terminalAvailable()) {
