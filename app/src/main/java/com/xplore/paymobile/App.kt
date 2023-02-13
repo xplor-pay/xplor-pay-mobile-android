@@ -6,7 +6,8 @@ import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
 import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.interactiondetection.AppLifecycleCallbacks
-import com.xplore.paymobile.util.Constants
+import com.xplore.paymobile.util.Constants.BASE_URL_PROD
+import com.xplore.paymobile.util.Constants.BASE_URL_SANDBOX
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import java.util.*
@@ -45,14 +46,15 @@ class App : Application() {
 
     private fun initSdkWrapper() {
         clearentWrapper.initializeSDK(
-            context = applicationContext,
-            baseUrl = Constants.BASE_URL_SANDBOX,
-            offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
+            context = applicationContext, baseUrl = if (BuildConfig.DEBUG) {
+                BASE_URL_SANDBOX
+            } else {
+                BASE_URL_PROD
+            }, offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 
         // set up the sdk store and forward mode once so we don't override user preferences
-        if (sharedPreferencesDataSource.isSdkSetUp())
-            return
+        if (sharedPreferencesDataSource.isSdkSetUp()) return
 
         sharedPreferencesDataSource.sdkSetupComplete()
     }
