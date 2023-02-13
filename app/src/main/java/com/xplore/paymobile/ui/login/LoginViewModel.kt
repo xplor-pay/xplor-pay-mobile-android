@@ -3,9 +3,9 @@ package com.xplore.paymobile.ui.login
 import android.content.Context
 import android.webkit.CookieManager
 import android.webkit.WebView
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.VTRefreshManager
@@ -29,11 +29,21 @@ class LoginViewModel @Inject constructor(
         private val loginPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/home"
     }
 
+    private val clearentWrapper = ClearentWrapper.getInstance()
+
     private lateinit var xplorWebView: XplorLoginWebView
 
     var onLoginSuccessful: () -> Unit = {}
 
-    fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
+    val hasInternet
+        get() = clearentWrapper.isInternetOn
+
+    fun prepareWebView(
+        webView: WebView,
+        context: Context,
+        jsBridge: JSBridge,
+        onPageLoaded: () -> Unit
+    ) {
         sharedPrefs.getAuthToken() ?: run {
             // Clear all the cookies
             CookieManager.getInstance().removeAllCookies(null)
@@ -52,9 +62,8 @@ class LoginViewModel @Inject constructor(
             {
                 webView.loadUrl(loginPageUrl)
             },
-            onPageLoaded = {
-                webView.isVisible = true
-            })
+            onPageLoaded = onPageLoaded
+        )
 
         listenToCredentialsChanges()
     }
@@ -87,4 +96,6 @@ class LoginViewModel @Inject constructor(
     fun extendSession() {
         xplorWebView.runJsCommand(XplorJsCommand.ExtendSession)
     }
+
+    fun hasTerminalSettings(): Boolean = clearentWrapper.getCurrentTerminalSettings() != null
 }

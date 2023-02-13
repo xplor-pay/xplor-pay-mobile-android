@@ -21,7 +21,7 @@ class UserInteractionDetector @Inject constructor() {
     private val _userInteractionFlow = MutableSharedFlow<UserInteractionEvent?>()
     val userInteractionFlow: SharedFlow<UserInteractionEvent?> = _userInteractionFlow
 
-    var shouldExtend = false
+    var shouldExtend = true
 
     fun onUserInteraction() {
         lastInteraction = System.currentTimeMillis()

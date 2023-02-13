@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.xplore.paymobile.data.web.MerchantChangesEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
@@ -44,9 +45,17 @@ class BatchesFragment : BaseFragment() {
     }
 
     private fun setupViews() {
-        binding.apply {
-            lifecycleScope.launch {
-                viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+        with(binding) {
+            if (!viewModel.hasInternet) {
+                webView.isVisible = false
+                progressBar.isVisible = false
+                noInternetWarning.isVisible = true
+            } else {
+                webView.isVisible = true
+                noInternetWarning.isVisible = false
+                lifecycleScope.launch {
+                    viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)
+                }
             }
         }
     }
@@ -56,7 +65,8 @@ class BatchesFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 sharedViewModel.merchantChangesEventsFlow.collect { merchantChangesEvent ->
                     when (merchantChangesEvent) {
-                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged = true
+                        is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged =
+                            true
                     }
                 }
             }
