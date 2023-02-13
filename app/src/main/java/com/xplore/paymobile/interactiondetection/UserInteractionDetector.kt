@@ -60,11 +60,8 @@ class UserInteractionDetector @Inject constructor() {
 
     fun onSessionExpirationEvent() {
         bgScope.launch {
-            if (shouldExtend) {
-                Timber.d("Extend webview session")
-                _userInteractionFlow.emit(UserInteractionEvent.ExtendSession)
-                shouldExtend = false
-            }
+            Timber.d("Extend webview session")
+            _userInteractionFlow.emit(UserInteractionEvent.ExtendSession)
         }
     }
 }
