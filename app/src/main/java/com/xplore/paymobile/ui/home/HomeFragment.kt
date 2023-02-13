@@ -271,7 +271,8 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
                 return
             }
 
-            chargeButton.isEnabled = sharedPrefs.getTerminal() != null || viewModel.isInOfflineMode()
+            chargeButton.isEnabled =
+                sharedPrefs.getTerminal() != null || viewModel.isInOfflineMode()
             chargeButton.text = getString(R.string.charge_amount, formatChargeAmount())
         }
     }
@@ -359,7 +360,8 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.terminalFlow.collectLatest { terminal ->
-                    binding.noEligibleTerminal.isVisible = terminal == null && !viewModel.isInOfflineMode()
+                    binding.noEligibleTerminal.isVisible =
+                        terminal == null && !viewModel.isInOfflineMode()
                 }
             }
         }
@@ -427,20 +429,20 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
 
     override fun onOfflineStatusChanged(offlineStatus: OfflineStatusListener.OfflineStatus) {
         lifecycleScope.launch {
-            binding.apply {
-                when (offlineStatus) {
-                    OfflineStatusListener.OfflineStatus.Disabled -> {
-                        offlineModeEnabled.isVisible = false
-                    }
-                    is OfflineStatusListener.OfflineStatus.Enabled -> {
-                        offlineModeEnabled.isVisible = true
-                        offlineModeEnabled.text = getString(
-                            R.string.offline_mode_enabled_text,
-                            offlineStatus.unprocessedTransactionsSize.toString()
-                        )
+                _binding?.apply {
+                    when (offlineStatus) {
+                        OfflineStatusListener.OfflineStatus.Disabled -> {
+                            offlineModeEnabled.isVisible = false
+                        }
+                        is OfflineStatusListener.OfflineStatus.Enabled -> {
+                            offlineModeEnabled.isVisible = true
+                            offlineModeEnabled.text = getString(
+                                R.string.offline_mode_enabled_text,
+                                offlineStatus.unprocessedTransactionsSize.toString()
+                            )
+                        }
                     }
                 }
-            }
         }
     }
 }

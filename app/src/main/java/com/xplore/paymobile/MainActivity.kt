@@ -79,8 +79,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         registerForActivityResult(multiplePermissionsContract) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (resources.getBoolean(R.bool.isTablet))
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation =
+            if (resources.getBoolean(R.bool.isTablet)) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         installSplashScreen()
 
@@ -109,9 +109,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
         }
-        if (sharedPreferencesDataSource.getAuthToken() == null && !binding.loginFragment.isVisible
-            && !interactionDetector.shouldExtend
-        ) {
+        if (sharedPreferencesDataSource.getAuthToken() == null && !binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
             showLogoutDialog()
         }
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
@@ -159,27 +157,22 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     private fun showLogoutDialog() {
-        BasicDialog(
-            getString(R.string.logout_dialog_title),
-            getString(R.string.logout_dialog_description),
-            BasicDialog.DialogButton(getString(R.string.ok)) {
+        BasicDialog(title = getString(R.string.logout_dialog_title),
+            message = getString(R.string.logout_dialog_description),
+            positiveButton = BasicDialog.DialogButton(getString(R.string.ok)) {},
+            onDismiss = {
                 logout()
-            }
-        ).show(
-            supportFragmentManager,
-            BasicDialog::class.java.simpleName
+            }).show(
+            supportFragmentManager, BasicDialog::class.java.simpleName
         )
     }
 
     private fun setupWebViewLogin() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(
-                R.id.login_fragment,
-                LoginFragment.newInstance {
-                    showLogin(false)
-                }
-            )
+            replace(R.id.login_fragment, LoginFragment.newInstance {
+                showLogin(false)
+            })
         }
     }
 
@@ -223,13 +216,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     private fun showMerchantChangedDialog() {
-        BasicDialog(
-            getString(R.string.merchant_changed_dialog_title),
+        BasicDialog(getString(R.string.merchant_changed_dialog_title),
             getString(R.string.merchant_changed_dialog_description),
             BasicDialog.DialogButton(getString(R.string.ok)) {
                 navController.navigate(R.id.action_to_post_login)
-            }
-        ).show(supportFragmentManager, BasicDialog::class.java.simpleName)
+            }).show(supportFragmentManager, BasicDialog::class.java.simpleName)
     }
 
     fun navigateToBottomNavItemSelected() {
@@ -308,15 +299,13 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         val isShown =
             supportFragmentManager.findFragmentByTag(FORCE_LOGIN_DIALOG_TAG)?.isAdded ?: false
         if (isShown) return
-        BasicDialog(
-            getString(R.string.logout_dialog_title),
-            getString(R.string.internet_restored)
-        ) {
-            logout()
-            clearentWrapper.storeAndForwardEnabled = false
-        }.show(
-            supportFragmentManager,
-            FORCE_LOGIN_DIALOG_TAG
+        BasicDialog(getString(R.string.logout_dialog_title),
+            getString(R.string.internet_restored),
+            BasicDialog.DialogButton(getString(R.string.ok)) {
+                logout()
+                clearentWrapper.storeAndForwardEnabled = false
+            }).show(
+            supportFragmentManager, FORCE_LOGIN_DIALOG_TAG
         )
     }
 
@@ -332,37 +321,34 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     override fun showFirstPair(onClick: () -> Unit, onDismiss: () -> Unit) {
-        if (hintsShowed)
-            return
+        if (hintsShowed) return
 
         hintsShowed = true
-        lifecycle.addObserver(
-            ListenerCallbackObserver(lifecycle) {
-                lifecycleScope.launch {
-                    binding.apply {
-                        hintsContainer.visibility = View.VISIBLE
-                        hintsContainer.bringToFront()
+        lifecycle.addObserver(ListenerCallbackObserver(lifecycle) {
+            lifecycleScope.launch {
+                binding.apply {
+                    hintsContainer.visibility = View.VISIBLE
+                    hintsContainer.bringToFront()
 
-                        hints.apply {
-                            root.visibility = View.GONE
+                    hints.apply {
+                        root.visibility = View.GONE
 
-                            hintsPairingTip.hintsTipText.text =
-                                getString(R.string.first_pairing_tip_text)
-                            hintsFirstReaderButton.setOnClickListener {
-                                hintsContainer.visibility = View.GONE
-                                onClick()
-                            }
-                            hintsSkipPairing.setOnClickListener {
-                                hintsContainer.visibility = View.GONE
-                                onDismiss()
-                            }
-
-                            renderHints()
+                        hintsPairingTip.hintsTipText.text =
+                            getString(R.string.first_pairing_tip_text)
+                        hintsFirstReaderButton.setOnClickListener {
+                            hintsContainer.visibility = View.GONE
+                            onClick()
                         }
+                        hintsSkipPairing.setOnClickListener {
+                            hintsContainer.visibility = View.GONE
+                            onDismiss()
+                        }
+
+                        renderHints()
                     }
                 }
             }
-        )
+        })
     }
 
     private fun renderHints() = lifecycleScope.launch {
@@ -376,8 +362,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     class ListenerCallbackObserver(
-        private val lifecycle: Lifecycle,
-        private val callback: () -> Unit
+        private val lifecycle: Lifecycle, private val callback: () -> Unit
     ) : DefaultLifecycleObserver {
 
         override fun onStart(owner: LifecycleOwner) {
