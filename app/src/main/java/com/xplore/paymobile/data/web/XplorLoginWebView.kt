@@ -10,8 +10,9 @@ class XplorLoginWebView(
     private val webView: WebView,
     jsBridge: JSBridge,
     context: Context,
-    onWebViewSetupDone: (() -> Unit)? = null
-) : XplorWebView(webView, jsBridge, context, onWebViewSetupDone) {
+    onWebViewSetupDone: (() -> Unit)? = null,
+    onPageLoaded: (() -> Unit)? = null
+) : XplorWebView(webView, jsBridge, context, onWebViewSetupDone, onPageLoaded) {
 
     companion object {
         private const val changeMerchantJsCommand =

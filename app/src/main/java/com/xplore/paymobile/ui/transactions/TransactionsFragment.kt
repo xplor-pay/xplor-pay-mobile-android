@@ -48,7 +48,7 @@ class TransactionsFragment : BaseFragment() {
     private fun setupViews() {
         binding.apply {
             if (viewModel.terminalAvailable()) {
-                webView.isVisible = true
+                progressBar.isVisible = true
                 noEligibleTerminalWarning.isVisible = false
 
                 lifecycleScope.launch {
@@ -57,6 +57,7 @@ class TransactionsFragment : BaseFragment() {
                 }
             } else {
                 webView.isVisible = false
+                progressBar.isVisible = false
                 noEligibleTerminalWarning.isVisible = true
             }
         }
