@@ -151,8 +151,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun showLogoutDialog() {
         BasicDialog(
             getString(R.string.logout_dialog_title),
-            getString(R.string.logout_dialog_description)
-        ) { logout() }.show(
+            getString(R.string.logout_dialog_description),
+            BasicDialog.DialogButton(getString(R.string.ok)) {
+                logout()
+            }
+        ).show(
             supportFragmentManager,
             BasicDialog::class.java.simpleName
         )
@@ -212,10 +215,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener {
     private fun showMerchantChangedDialog() {
         BasicDialog(
             getString(R.string.merchant_changed_dialog_title),
-            getString(R.string.merchant_changed_dialog_description)
-        ) {
-            navController.navigate(R.id.action_to_post_login)
-        }.show(supportFragmentManager, BasicDialog::class.java.simpleName)
+            getString(R.string.merchant_changed_dialog_description),
+            BasicDialog.DialogButton(getString(R.string.ok)) {
+                navController.navigate(R.id.action_to_post_login)
+            }
+        ).show(supportFragmentManager, BasicDialog::class.java.simpleName)
     }
 
     fun navigateToBottomNavItemSelected() {

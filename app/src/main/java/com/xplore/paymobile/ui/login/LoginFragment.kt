@@ -90,8 +90,11 @@ class LoginFragment : Fragment() {
                     GroupedUserRoles.VirtualTerminalRoles -> viewModel.onLoginSuccessful()
                     GroupedUserRoles.NoAccess -> BasicDialog(
                         getString(R.string.no_access_dialog_title),
-                        getString(R.string.no_access_dialog_description)
-                    ) { (requireActivity() as? MainActivity)?.logout() }.show(
+                        getString(R.string.no_access_dialog_description),
+                        BasicDialog.DialogButton(getString(R.string.ok)) {
+                            (requireActivity() as? MainActivity)?.logout()
+                        }
+                    ).show(
                         parentFragmentManager,
                         BasicDialog::class.java.simpleName
                     )
