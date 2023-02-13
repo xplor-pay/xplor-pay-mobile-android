@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clearent.idtech.android.wrapper.ClearentWrapper
-import com.clearent.idtech.android.wrapper.listener.OfflineModeEnabledListener
+import com.clearent.idtech.android.wrapper.listener.OfflineStatusListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
 import com.clearent.idtech.android.wrapper.model.*
 import com.clearent.idtech.android.wrapper.ui.ClearentAction
@@ -39,7 +38,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledListener {
+class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener {
 
     companion object {
         private const val DEFAULT_CHARGE_AMOUNT = "$0.00"
@@ -104,7 +103,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         setUpNumpad()
         setListeners()
         clearentWrapper.addReaderStatusListener(this)
-        clearentWrapper.addOfflineModeEnabledListener(this)
+        clearentWrapper.addOfflineStatusListener(this)
     }
 
     private fun setupPaymentMethodClickListeners() {
@@ -250,50 +249,8 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         transactionOngoing = true
 
         val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
-        when (clearentAction) {
-            is ClearentAction.Pairing -> {
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
-                    ClearentSDKActivity.CLEARENT_ACTION_PAIR
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_SHOW_HINTS,
-                    clearentAction.showHints
-                )
-            }
-            is ClearentAction.DevicesList ->
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
-                    ClearentSDKActivity.CLEARENT_ACTION_DEVICES
-                )
-            is ClearentAction.Settings ->
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
-                    ClearentSDKActivity.CLEARENT_ACTION_SETTINGS
-                )
-            is ClearentAction.Transaction -> {
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_ACTION_KEY,
-                    ClearentSDKActivity.CLEARENT_ACTION_TRANSACTION
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_PAYMENT_INFO_KEY,
-                    clearentAction.paymentInfo
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_SHOW_HINTS,
-                    clearentAction.showHints
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_SHOW_SIGNATURE,
-                    clearentAction.showSignature
-                )
-                intent.putExtra(
-                    ClearentSDKActivity.CLEARENT_PAYMENT_METHOD,
-                    clearentAction.paymentMethod as Parcelable
-                )
-            }
-        }
+        clearentAction.prepareIntent(intent)
+
         activityLauncher.launch(intent)
     }
 
@@ -301,7 +258,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         super.onDestroyView()
         _binding = null
         clearentWrapper.removeReaderStatusListener(this)
-        clearentWrapper.removeOfflineModeEnabledListener(this)
+        clearentWrapper.removeOfflineStatusListener(this)
     }
 
     private fun renderChargeAmount() {
@@ -398,11 +355,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        setOfflineModeEnabledText()
-    }
-
     private fun setTerminalState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -467,28 +419,27 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineModeEnabledLis
         }
     }
 
-    private fun setOfflineModeEnabledText() {
-        binding.apply {
-            clearentWrapper.retrieveUnprocessedOfflineTransactions(onRetrieved = {
-                offlineModeEnabled.text =
-                    getString(R.string.offline_mode_enabled_text, it.size.toString())
-            }, onError = {
-                offlineModeEnabled.text = getString(R.string.offline_mode_enabled_text, " ")
-            })
-        }
-    }
-
     override fun onReaderStatusUpdate(readerStatus: ReaderStatus?) {
         lifecycleScope.launch {
             renderCurrentReader(readerStatus)
         }
     }
 
-    override fun onOfflineModeChanged(enabled: Boolean) {
+    override fun onOfflineStatusChanged(offlineStatus: OfflineStatusListener.OfflineStatus) {
         lifecycleScope.launch {
             binding.apply {
-                offlineModeEnabled.visibility = if (enabled) View.VISIBLE else View.GONE
-                setOfflineModeEnabledText()
+                when (offlineStatus) {
+                    OfflineStatusListener.OfflineStatus.Disabled -> {
+                        offlineModeEnabled.isVisible = false
+                    }
+                    is OfflineStatusListener.OfflineStatus.Enabled -> {
+                        offlineModeEnabled.isVisible = true
+                        offlineModeEnabled.text = getString(
+                            R.string.offline_mode_enabled_text,
+                            offlineStatus.unprocessedTransactionsSize.toString()
+                        )
+                    }
+                }
             }
         }
     }

@@ -25,32 +25,50 @@ class XplorLoginWebView(
 
     fun runJsCommand(command: XplorJsCommand) {
         Timber.d("Sending command to web view: $command")
-        when (command) {
-            is XplorJsCommand.ChangeMerchant -> webView.evaluateJavascript(
-                changeMerchantJsCommand.format(
-                    command.merchant.merchantName,
-                    command.merchant.merchantNumber
-                )
-            ) {
-                Timber.d("changeMerchantJsCommand callback value: $it")
-            }
-            is XplorJsCommand.ChangeTerminal -> webView.evaluateJavascript(
-                changeTerminalJsCommand.format(command.terminal.terminalPKId)
-            ) {
-                Timber.d("changeTerminalJsCommand callback value: $it")
-            }
-            is XplorJsCommand.ExtendSession -> webView.evaluateJavascript(
-                extendSessionCommand
-            ){
-                Timber.d("extendSessionJsCommand callback value: $it")
-            }
-        }
+        command.evaluateJs(webView)
     }
 
-    sealed class XplorJsCommand {
+    sealed class XplorJsCommand(val js: String) {
 
-        data class ChangeMerchant(val merchant: Merchant) : XplorJsCommand()
-        data class ChangeTerminal(val terminal: Terminal) : XplorJsCommand()
-        object ExtendSession : XplorJsCommand()
+        abstract fun evaluateJs(webView: WebView)
+
+        data class ChangeMerchant(
+            val merchant: Merchant
+        ) : XplorJsCommand(changeMerchantJsCommand) {
+
+            override fun evaluateJs(webView: WebView) {
+                webView.evaluateJavascript(
+                    js.format(
+                        merchant.merchantName,
+                        merchant.merchantNumber
+                    )
+                ) {
+                    Timber.d("changeMerchantJsCommand callback value: $it")
+                }
+            }
+        }
+
+        data class ChangeTerminal(
+            val terminal: Terminal
+        ) : XplorJsCommand(changeTerminalJsCommand) {
+
+            override fun evaluateJs(webView: WebView) {
+                webView.evaluateJavascript(
+                    js.format(terminal.terminalPKId)
+                ) {
+                    Timber.d("changeTerminalJsCommand callback value: $it")
+                }
+            }
+        }
+
+        object ExtendSession : XplorJsCommand(extendSessionCommand) {
+            override fun evaluateJs(webView: WebView) {
+                webView.evaluateJavascript(
+                    extendSessionCommand
+                ) {
+                    Timber.d("extendSessionJsCommand callback value: $it")
+                }
+            }
+        }
     }
 }
