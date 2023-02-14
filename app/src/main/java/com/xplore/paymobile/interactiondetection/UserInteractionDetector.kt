@@ -32,6 +32,7 @@ class UserInteractionDetector @Inject constructor() {
             if (timerJob?.isActive == true) {
                 Timber.d("Cancel inactivity timer")
                 timerJob?.cancelAndJoin()
+                shouldExtend = true
             }
         }
     }

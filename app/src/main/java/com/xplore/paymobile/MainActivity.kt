@@ -157,6 +157,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     private fun showLogoutDialog() {
+        interactionDetector.stopInactivityChecks()
         BasicDialog(title = getString(R.string.logout_dialog_title),
             message = getString(R.string.logout_dialog_description),
             positiveButton = BasicDialog.DialogButton(getString(R.string.ok)) {},
