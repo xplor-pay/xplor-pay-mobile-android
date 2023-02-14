@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
         }
-        if (sharedPreferencesDataSource.getAuthToken() == null && !binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
+        if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
             showLogoutDialog()
         }
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
