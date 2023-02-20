@@ -23,11 +23,6 @@ class XplorLoginWebView(
             "window.triggerExternalEvent('sessionExtended', true);"
     }
 
-    fun runJsCommand(command: XplorJsCommand) {
-        Timber.d("Sending command to web view: $command")
-        command.evaluateJs(webView)
-    }
-
     sealed class XplorJsCommand(val js: String) {
 
         abstract fun evaluateJs(webView: WebView)

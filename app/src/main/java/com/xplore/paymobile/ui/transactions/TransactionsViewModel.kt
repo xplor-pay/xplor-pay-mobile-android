@@ -9,6 +9,7 @@ import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
+import com.xplore.paymobile.data.web.XplorLoginWebView
 import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +57,12 @@ class TransactionsViewModel @Inject constructor(
             },
             onPageLoaded = {
                 webView.isVisible = true
+                sharedPrefs.getMerchant()?.let {
+                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeMerchant(it))
+                }
+                sharedPrefs.getTerminal()?.let {
+                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeTerminal(it))
+                }
             })
     }
 }

@@ -5,14 +5,17 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
+import com.xplore.paymobile.data.web.XplorLoginWebView
 import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class BatchesViewModel @Inject constructor() : ViewModel() {
+class BatchesViewModel @Inject constructor(private val sharedPrefs: SharedPreferencesDataSource) :
+    ViewModel() {
 
     companion object {
         private val batchesPageUrl = "${Constants.BASE_URL_WEB_PAGE}/ui/openbatches"
@@ -32,6 +35,12 @@ class BatchesViewModel @Inject constructor() : ViewModel() {
             },
             onPageLoaded = {
                 webView.isVisible = true
+                sharedPrefs.getMerchant()?.let {
+                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeMerchant(it))
+                }
+                sharedPrefs.getTerminal()?.let {
+                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeTerminal(it))
+                }
             })
     }
 }

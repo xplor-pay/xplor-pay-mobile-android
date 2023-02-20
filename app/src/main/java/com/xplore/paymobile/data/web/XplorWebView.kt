@@ -6,11 +6,12 @@ import android.content.Intent
 import android.webkit.*
 import androidx.core.content.ContextCompat
 import com.xplore.paymobile.util.Constants
+import timber.log.Timber
 import java.net.HttpURLConnection
 
 @SuppressLint("SetJavaScriptEnabled")
 open class XplorWebView(
-    webView: WebView,
+    private val webView: WebView,
     jsBridge: JSBridge,
     context: Context,
     onWebViewSetupDone: (() -> Unit)? = null,
@@ -82,5 +83,10 @@ open class XplorWebView(
             addJavascriptInterface(jsBridge, "Android")
         }
         onWebViewSetupDone?.invoke()
+    }
+
+    fun runJsCommand(command: XplorLoginWebView.XplorJsCommand) {
+        Timber.d("Sending command to web view: $command")
+        command.evaluateJs(webView)
     }
 }
