@@ -51,7 +51,7 @@ class BatchesFragment : BaseFragment() {
                 progressBar.isVisible = false
                 noInternetWarning.isVisible = true
             } else {
-                webView.isVisible = true
+                progressBar.isVisible = true
                 noInternetWarning.isVisible = false
                 lifecycleScope.launch {
                     viewModel.prepareWebView(webView, requireContext(), sharedViewModel.jsBridge)

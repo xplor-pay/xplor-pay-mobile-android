@@ -92,7 +92,6 @@ class LoginFragment : Fragment() {
         setupViewModel()
         prepareWeb()
         setupBypassLoginButton()
-        checkInternetConnection()
     }
 
     private fun setupViewModel() {
@@ -164,9 +163,6 @@ class LoginFragment : Fragment() {
             )
             activityLauncher.launch(intent)
         }
-    }
-
-    private fun checkInternetConnection() {
     }
 
     override fun onDestroyView() {
