@@ -29,24 +29,31 @@ class UserInteractionDetector @Inject constructor() {
 
     fun stopInactivityChecks() {
         bgScope.launch {
-            if (timerJob?.isActive == true) {
-                Timber.d("Cancel inactivity timer")
-                timerJob?.cancelAndJoin()
-                shouldExtend = true
-            }
+            cancelJob()
+            shouldExtend = true
+        }
+    }
+
+    private suspend fun cancelJob() {
+        if (timerJob?.isActive == true) {
+            Timber.d("Cancel inactivity timer")
+            timerJob?.cancelAndJoin()
         }
     }
 
     fun launchInactivityChecks() {
-        timerJob = bgScope.launch {
-            while (true) {
-                delay(CHECK_INTERVAL)
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - lastInteraction > INACTIVITY_TIME) {
-                    shouldExtend = false
-                    logout()
-                } else {
-                    shouldExtend = true
+        bgScope.launch {
+            cancelJob()
+            timerJob = bgScope.launch {
+                while (true) {
+                    delay(CHECK_INTERVAL)
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastInteraction > INACTIVITY_TIME) {
+                        shouldExtend = false
+                        logout()
+                    } else {
+                        shouldExtend = true
+                    }
                 }
             }
         }
