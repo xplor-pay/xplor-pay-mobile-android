@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.OfflineStatusListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
@@ -233,6 +234,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
             settingsButton.setOnClickListener {
                 openSettings()
             }
+            noEligibleTerminal.setOnClickListener {
+                openAppSettings()
+            }
         }
     }
 
@@ -241,6 +245,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
 
     private fun openSettings() =
         startSdkActivityForResult(ClearentAction.Settings)
+
+    private fun openAppSettings() =
+        findNavController().navigate(R.id.navigation_settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
         if (transactionOngoing)
