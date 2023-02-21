@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.xplore.paymobile.data.web.MerchantChangesEvents
 import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.FragmentBatchesBinding
+import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,6 +43,7 @@ class BatchesFragment : BaseFragment() {
 
         setupViews()
         setupMerchantChangesEventsFlow()
+        setupSessionFlow()
     }
 
     private fun setupViews() {
@@ -67,6 +69,18 @@ class BatchesFragment : BaseFragment() {
                     when (merchantChangesEvent) {
                         is MerchantChangesEvents.MerchantChanged -> sharedViewModel.wasMerchantChanged =
                             true
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupSessionFlow() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.interactionDetector.userInteractionFlow.collect { event ->
+                    if (event is UserInteractionEvent.ExtendSession) {
+                        viewModel.extendSession()
                     }
                 }
             }
