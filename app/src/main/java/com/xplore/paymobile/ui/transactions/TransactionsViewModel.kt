@@ -11,6 +11,7 @@ import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.XplorLoginWebView
 import com.xplore.paymobile.data.web.XplorWebView
+import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
+    val interactionDetector: UserInteractionDetector
 ) : ViewModel() {
 
     companion object {
@@ -64,5 +66,9 @@ class TransactionsViewModel @Inject constructor(
                     xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeTerminal(it))
                 }
             })
+    }
+
+    fun extendSession() {
+        xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ExtendSession)
     }
 }
