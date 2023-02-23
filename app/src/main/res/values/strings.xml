@@ -60,6 +60,7 @@
     <string name="keys_alert_message">Please make sure the API Key and Public Key are properly set in the More section</string>
     <string name="keys_update_message">New values were saved.</string>
     <string name="offline_mode_enabled_text">Offline mode (%1$s)</string>
+    <string name="sdk_settings">SDK Settings</string>
 
     <!-- Info screen -->
     <string name="info_screen_description">We are here to help</string>

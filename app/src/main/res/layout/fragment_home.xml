@@ -40,18 +40,6 @@
 
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/settings_button"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@null"
-        android:paddingStart="@dimen/padding_small"
-        android:paddingEnd="@dimen/padding_small"
-        android:src="@drawable/ic_settings_reader"
-        app:layout_constraintBottom_toBottomOf="@+id/current_reader"
-        app:layout_constraintStart_toEndOf="@+id/current_reader"
-        app:layout_constraintTop_toTopOf="@+id/current_reader" />
-
     <TextView
         android:id="@+id/offline_mode_enabled"
         style="@style/TextSmall"
@@ -72,8 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
-        android:text="@string/no_eligible_terminal_warning"
         android:drawablePadding="@dimen/padding_xxsmall"
+        android:text="@string/no_eligible_terminal_warning"
         app:drawableStartCompat="@drawable/ic_error"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,8 +86,8 @@
         android:layout_marginTop="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_medium"
         android:weightSum="1"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/charge_amount_text">
 
         <com.google.android.material.button.MaterialButton
