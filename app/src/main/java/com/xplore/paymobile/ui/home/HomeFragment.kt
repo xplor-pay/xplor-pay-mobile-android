@@ -212,9 +212,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
 
     private fun setListeners() {
         binding.apply {
-            readerInfo.root.setOnClickListener {
-                openSettings()
-            }
             firstReader.setOnClickListener {
                 startPairingProcess()
             }
@@ -231,9 +228,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
                     )
                 )
             }
-            settingsButton.setOnClickListener {
-                openSettings()
-            }
             noEligibleTerminal.setOnClickListener {
                 openAppSettings()
             }
@@ -242,9 +236,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
 
     private fun startPairingProcess() =
         startSdkActivityForResult(ClearentAction.Pairing(viewModel.shouldShowHints()))
-
-    private fun openSettings() =
-        startSdkActivityForResult(ClearentAction.Settings)
 
     private fun openAppSettings() =
         findNavController().navigate(R.id.navigation_settings)

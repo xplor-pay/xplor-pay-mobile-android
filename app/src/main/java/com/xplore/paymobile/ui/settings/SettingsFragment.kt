@@ -1,15 +1,20 @@
 package com.xplore.paymobile.ui.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.clearent.idtech.android.wrapper.ui.ClearentAction
+import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.FragmentSettingsBinding
 import com.xplore.paymobile.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class SettingsFragment : BaseFragment() {
@@ -20,6 +25,16 @@ class SettingsFragment : BaseFragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        Timber.d(
+            "SDK UI result code: ${
+                result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0).toString()
+            }"
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,6 +47,15 @@ class SettingsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
         setupViews()
+        setupClickListeners()
+    }
+
+    private fun setupClickListeners() {
+        binding.sdkSettingsButton.setOnClickListener {
+            val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
+            ClearentAction.Settings.prepareIntent(intent)
+            activityLauncher.launch(intent)
+        }
     }
 
     private fun setupViews() {
