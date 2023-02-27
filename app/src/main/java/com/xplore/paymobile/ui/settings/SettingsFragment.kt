@@ -21,8 +21,6 @@ class SettingsFragment : BaseFragment() {
 
     override val hasBottomNavigation: Boolean = true
 
-    private val viewModel by viewModels<SettingsViewModel>()
-
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
