@@ -46,7 +46,6 @@ class SettingsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
-        setupViews()
         setupClickListeners()
     }
 
@@ -55,18 +54,6 @@ class SettingsFragment : BaseFragment() {
             val intent = Intent(requireContext(), ClearentSDKActivity::class.java)
             ClearentAction.Settings.prepareIntent(intent)
             activityLauncher.launch(intent)
-        }
-    }
-
-    private fun setupViews() {
-        with(binding) {
-            if (!viewModel.hasInternet) {
-                merchantSelectFragment.isVisible = false
-                noInternetWarning.isVisible = true
-            } else {
-                merchantSelectFragment.isVisible = true
-                noInternetWarning.isVisible = false
-            }
         }
     }
 

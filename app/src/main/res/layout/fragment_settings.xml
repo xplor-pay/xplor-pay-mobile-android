@@ -12,16 +12,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/no_internet_warning"
-        style="@style/TextViewSecondaryBold20"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:text="@string/no_internet"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/merchant_select_fragment"
         android:name="com.xplore.paymobile.ui.merchantselection.MerchantSelectFragment"
