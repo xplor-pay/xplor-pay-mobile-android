@@ -206,7 +206,6 @@
     </style>
 
     <style name="MerchantSelectTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="boxBackgroundColor">@color/warning_red</item>
         <item name="android:textColorHint">@color/color_secondary</item>
         <item name="hintTextColor">@color/color_secondary</item>
     </style>
