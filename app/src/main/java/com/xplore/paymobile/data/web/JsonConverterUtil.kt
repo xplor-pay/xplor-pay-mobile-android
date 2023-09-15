@@ -12,4 +12,6 @@ class WebJsonConverter @Inject constructor(private val gson: Gson) {
     fun jsonToTerminal(json: String): Terminal = gson.fromJson(json, Terminal::class.java)
     fun jsonToLoggedOut(json: String): LoggedOut = gson.fromJson(json, LoggedOut::class.java)
     fun jsonToUserRoles(json: String): UserRoles = gson.fromJson(json, UserRoles::class.java)
+
+    fun jsonToClientCredentials(json: String): UserInfo = gson.fromJson(json, UserInfo::class.java)
 }
