@@ -3,12 +3,19 @@ package com.xplore.paymobile
 import android.app.Application
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
+import com.okta.authfoundation.AuthFoundationDefaults
+import com.okta.authfoundation.client.OidcClient
+import com.okta.authfoundation.client.OidcConfiguration
+import com.okta.authfoundation.client.SharedPreferencesCache
+import com.okta.authfoundation.credential.CredentialDataSource.Companion.createCredentialDataSource
+import com.okta.authfoundationbootstrap.CredentialBootstrap
 import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.interactiondetection.AppLifecycleCallbacks
+import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.Constants.BASE_URL_PROD
-import com.xplore.paymobile.util.Constants.BASE_URL_SANDBOX
 import dagger.hilt.android.HiltAndroidApp
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -32,7 +39,18 @@ class App : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        logoutWebView()
+        AuthFoundationDefaults.cache = SharedPreferencesCache.create(this)
+        val oidcConfiguration = OidcConfiguration(
+            clientId = Constants.CLIENT_ID,
+            defaultScope = Constants.DEFAULT_SCOPE,
+        )
+        val client = OidcClient.createFromDiscoveryUrl(
+            oidcConfiguration,
+            Constants.DISCOVERY_URL.toHttpUrl(),
+        )
+        CredentialBootstrap.initialize(client.createCredentialDataSource(this))
+
+//        logoutWebView()
 
         encryptedPrefs = EncryptedSharedPrefsDataSource(applicationContext)
         registerActivityLifecycleCallbacks(appLifecycleCallbacks)
@@ -40,17 +58,23 @@ class App : Application() {
         initSdkWrapper()
     }
 
-    private fun logoutWebView() {
-        sharedPreferencesDataSource.setAuthToken(null)
-    }
+    //todo change the logout web view method name
+//    private fun logoutWebView() {
+//        sharedPreferencesDataSource.setAuthToken(null)
+//    }
 
     private fun initSdkWrapper() {
         clearentWrapper.initializeSDK(
-            context = applicationContext, baseUrl = if (BuildConfig.DEBUG) {
-                BASE_URL_SANDBOX
-            } else {
+            context = applicationContext
+            , baseUrl =
+//            if (BuildConfig.DEBUG) {
+//                BASE_URL_SANDBOX
+//            } else {
                 BASE_URL_PROD
-            }, offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
+//            client
+//            }
+            ,
+            offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 
         // set up the sdk store and forward mode once so we don't override user preferences

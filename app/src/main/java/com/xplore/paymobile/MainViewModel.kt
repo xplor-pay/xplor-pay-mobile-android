@@ -8,6 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 open class MainViewModel @Inject constructor() : ViewModel() {
 
-    var loginVisible: Boolean = true
+    var loginVisible: Boolean = false
     var shouldShowForceLoginDialog = false
 }

@@ -4,14 +4,14 @@ sealed class GroupedUserRoles(val roles: Set<String>) {
     object VirtualTerminalRoles : GroupedUserRoles(
         setOf(
             "VirtualTerminalUser",
-            "VTAccountAnalysts",
-            "VTAccountOwners",
-            "VTAccountAdministrators",
-            "VTClearentSupport",
-            "VTClearentAdministrators"
+            "VTAccountAnalysts", //void/refund
+            "VTAccountOwners", //void/refund
+            "VTAccountAdministrators", //void/refund
+            "VTClearentSupport", //do not think we need for validation
+            "VTClearentAdministrators" //void/refund
         )
     )
-
+//todo remove MH roles unless review of app reveals a need for the MH roles
     object MerchantHomeRoles : GroupedUserRoles(
         setOf(
             "MerchantHomeUser",

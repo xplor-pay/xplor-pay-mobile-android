@@ -95,7 +95,7 @@ class MerchantSearchFragment : BaseFragment() {
             titleTextView.text = getString(R.string.merchants)
             toolbarLayout.toolbarTitle.text = getString(R.string.merchants)
             toolbarLayout.backButton.setOnClickListener {
-                requireActivity().onBackPressed()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
     }

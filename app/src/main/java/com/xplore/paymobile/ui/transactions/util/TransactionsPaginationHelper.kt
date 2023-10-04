@@ -1,9 +1,9 @@
-package com.xplore.paymobile.ui.transactions.list
+package com.xplore.paymobile.ui.transactions.util
 
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.remote.model.Transaction
-import com.xplore.paymobile.data.remote.model.TransactionItem
+import com.xplore.paymobile.ui.transactions.model.TransactionItem
 import com.xplore.paymobile.data.remote.model.TransactionResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,8 +27,10 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
 
 
     fun nextPage() {
-        requestTransactions()
-        currentPage++
+        bgScope.launch {
+            requestTransactions()
+            currentPage++
+        }
     }
 
     private fun requestTransactions() {

@@ -2,12 +2,8 @@ package com.xplore.paymobile.data.datasource
 
 import android.content.Context
 import androidx.core.content.edit
-import com.auth0.android.jwt.JWT
 import com.xplore.paymobile.data.remote.model.Terminal
-import com.xplore.paymobile.data.web.AuthToken
-import com.xplore.paymobile.data.web.Merchant
-import com.xplore.paymobile.data.web.UserRoles
-import com.xplore.paymobile.data.web.WebJsonConverter
+import com.xplore.paymobile.data.web.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,7 +14,7 @@ import javax.inject.Inject
 
 class SharedPreferencesDataSource @Inject constructor(
     context: Context,
-    private val webJsonConverter: WebJsonConverter
+    private val jsonConverterUtil: JsonConverterUtil
 ) {
 
     companion object {
@@ -65,20 +61,20 @@ class SharedPreferencesDataSource @Inject constructor(
         _terminalFlow.emit(getTerminal())
     }
 
-    fun getAuthToken(): AuthToken? =
-        sharedPrefs.getString(AUTH_TOKEN, null)?.let { webJsonConverter.jsonToAuthToken(it) }
+    fun getAuthToken(): String? =
+        sharedPrefs.getString(AUTH_TOKEN, null)
 
     fun setMerchant(merchant: String) = backgroundScope.launch {
         sharedPrefs.edit { putString(MERCHANT_BASE + getClientIdFromAuthToken(), merchant) }
         clearTerminal()
-        _merchantFlow.emit(webJsonConverter.jsonToMerchant(merchant))
+        _merchantFlow.emit(jsonConverterUtil.jsonToMerchant(merchant))
     }
 
     fun setMerchant(merchant: Merchant) = backgroundScope.launch {
         sharedPrefs.edit {
             putString(
                 MERCHANT_BASE + getClientIdFromAuthToken(),
-                webJsonConverter.toJson(merchant)
+                jsonConverterUtil.toJson(merchant)
             )
         }
         clearTerminal()
@@ -87,7 +83,7 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun getMerchant(): Merchant? =
         sharedPrefs.getString(MERCHANT_BASE + getClientIdFromAuthToken(), null)
-            ?.let { webJsonConverter.jsonToMerchant(it) }
+            ?.let { jsonConverterUtil.jsonToMerchant(it) }
 
     fun clearMerchant() = backgroundScope.launch {
         sharedPrefs.edit { remove(MERCHANT_BASE + getClientIdFromAuthToken()) }
@@ -98,7 +94,7 @@ class SharedPreferencesDataSource @Inject constructor(
         sharedPrefs.edit {
             putString(
                 TERMINAL_BASE + getClientIdFromAuthToken(),
-                webJsonConverter.toJson(terminal)
+                jsonConverterUtil.toJson(terminal)
             )
         }
         _terminalFlow.emit(terminal)
@@ -111,22 +107,36 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun getTerminal(): Terminal? =
         sharedPrefs.getString(TERMINAL_BASE + getClientIdFromAuthToken(), null)
-            ?.let { webJsonConverter.jsonToTerminal(it) }
+            ?.let { jsonConverterUtil.jsonToTerminal(it) }
+
+    fun getUserName(): String? =
+        getTerminal()?.questJwt?.subject
 
     fun setUserRoles(userRoles: String) = sharedPrefs.edit { putString(USER_ROLES, userRoles) }
 
     fun getUserRoles(): UserRoles? =
-        sharedPrefs.getString(USER_ROLES, null)?.let { webJsonConverter.jsonToUserRoles(it) }
+        sharedPrefs.getString(USER_ROLES, null)?.let { jsonConverterUtil.jsonToUserRoles(it) }
 
     private fun getClientIdFromAuthToken(): String? =
-        getAuthToken()?.bearerToken?.let {
-            JWT(formatBearerToken(it)).getClaim(CLIENT_ID_CLAIM).asString()
-        }
+        sharedPrefs.getString(CLIENT_ID_CLAIM, null)
+
 
     private fun formatBearerToken(bearerToken: String) = bearerToken.drop(7)
 
     private fun retrieveFirstPair(): Int =
         sharedPrefs.getInt(FIRST_PAIR, FirstPair.NOT_DONE.ordinal)
+
+    fun setUserInfo(decodedString: String) {
+        val userInfo: UserInfo = jsonConverterUtil.jsonToUserInfo(decodedString)
+
+        setUserRoles(userInfo.userRoles.toString())
+        sharedPrefs.edit {
+            putString(
+                CLIENT_ID_CLAIM,
+                userInfo.clientId
+            )
+        }
+    }
 
     enum class FirstPair {
         NOT_DONE, SKIPPED, DONE;

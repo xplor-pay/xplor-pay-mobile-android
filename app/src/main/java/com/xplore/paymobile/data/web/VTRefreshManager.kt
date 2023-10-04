@@ -34,6 +34,7 @@ class VTRefreshManager @Inject constructor(
         }
     }
 
+    //TODO could we check the auth token in the same fashion?
     private fun launchTimer() {
         Timber.d("Launch VT refresh timer")
         timerJob = timerScope.launch {
@@ -45,6 +46,7 @@ class VTRefreshManager @Inject constructor(
     }
 
     private suspend fun refreshToken() {
+        //TODO issue with refresh token using the defaulted terminal...jwt expired?  not 100% this is an issue...will we even need this class?
         Timber.d("Start token refresh")
         val merchant = sharedPrefs.getMerchant() ?: return
         val terminal = sharedPrefs.getTerminal() ?: return

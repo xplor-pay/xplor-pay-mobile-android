@@ -9,7 +9,7 @@ import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.JSBridge
 import com.xplore.paymobile.data.web.VTRefreshManager
-import com.xplore.paymobile.data.web.WebJsonConverter
+import com.xplore.paymobile.data.web.JsonConverterUtil
 import com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantPaginationHelper
 import dagger.Module
 import dagger.Provides
@@ -21,6 +21,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -42,7 +43,7 @@ object NetworkingModule {
 
     @Singleton
     @Provides
-    fun provideWebJsonConverter(gson: Gson): WebJsonConverter = WebJsonConverter(gson)
+    fun provideWebJsonConverter(gson: Gson): JsonConverterUtil = JsonConverterUtil(gson)
 
     @Provides
     fun provideJsBridgeFlows(): JSBridge.JSBridgeFlows = JSBridge.JSBridgeFlows()
@@ -59,6 +60,7 @@ object NetworkingModule {
     @Provides
     fun provideHttpClient(interceptor: Interceptor): OkHttpClient =
         OkHttpClient.Builder()
+//            .connectTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
             .build()
 

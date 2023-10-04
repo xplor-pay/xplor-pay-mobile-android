@@ -1,31 +1,38 @@
 package com.xplore.paymobile
 
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.okta.authfoundation.claims.name
 import com.okta.authfoundation.client.OidcClientResult
 import com.okta.authfoundationbootstrap.CredentialBootstrap
 import com.okta.webauthenticationui.WebAuthenticationClient.Companion.createWebAuthenticationClient
-import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.VTRefreshManager
 import com.xplore.paymobile.util.Constants
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import org.apache.commons.codec.binary.Base64
 
-class OktaViewModel
-//@Inject constructor(
-//    private val remoteDataSource: RemoteDataSource)
-    : ViewModel() {
 
-    @Inject
-    lateinit var remoteDataSource: RemoteDataSource
+@HiltViewModel
+class OktaLoginViewModel @Inject constructor(
+    private val vtRefreshManager: VTRefreshManager,
+    private val sharedPrefs: SharedPreferencesDataSource
+) : ViewModel() {
+
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     var isLoggedIn: Boolean = false
     private val _state = MutableLiveData<BrowserState>(BrowserState.Loading)
     val state: LiveData<BrowserState> = _state
+
+    private val base64: Base64 = Base64()
 
     init {
         viewModelScope.launch {
@@ -33,15 +40,18 @@ class OktaViewModel
         }
     }
 
-//todo
-    fun login(context: Context): String {
-        var accessToken = ""
-        viewModelScope.launch {
-            _state.value = BrowserState.Loading
-            withContext(Dispatchers.IO) {
-                Thread.sleep(1000)
-            }
+    private suspend fun isTokenExpired(): Boolean {
+        return CredentialBootstrap.defaultCredential().getAccessTokenIfValid() == null
+    }
 
+//    TODO: the jsbridge is not required anymore as it was used for merchant home.  remove the web views once the app is stable
+
+    fun login(context: Context) {
+        viewModelScope.launch {
+            if (!isTokenExpired())
+                return@launch
+
+            _state.value = BrowserState.Loading
             val result = CredentialBootstrap.oidcClient.createWebAuthenticationClient().login(
                 context = context,
                 redirectUrl = Constants.SIGN_IN_REDIRECT
@@ -52,29 +62,27 @@ class OktaViewModel
                     _state.value = BrowserState.currentCredentialState("Failed to login.")
                 }
                 is OidcClientResult.Success -> {
+                    result.result.refreshToken
+                    startVTRefreshTimer()
                     val credential = CredentialBootstrap.defaultCredential()
-                    credential.storeToken(token = result.result)
+                    credential.storeToken(token = result.result) //use to track expired token?  maybe??
+                    //TODO the getValidAccessToken will also refresh the token if it is expired
+                    val accessToken: String? = credential.getValidAccessToken()
+                    sharedPrefs.setAuthToken(accessToken)
+                    val base64Url: String? = accessToken?.split(".")?.get(1)
+                    val decodedBytes = base64.decode(base64Url)
+                    val decodedString = String(decodedBytes)
+
+                    sharedPrefs.setUserInfo(decodedString)
+
                     _state.value = BrowserState.LoggedIn.create()
                     isLoggedIn = true
-//                    val jwt: Jwt = JwtParser.parse(result.result.accessToken)
-                    accessToken = "Bearer " + result.result.accessToken
-//                    println("*****************************")
-                    getAuthTokenFromAccessToken(accessToken)
-//                    println(result.result.accessToken)
-//                    println(result.result.idToken)
-//                    println(result.result.expiresIn)
                 }
             }
         }
-        return accessToken
     }
 
-    private suspend fun getAuthTokenFromAccessToken(accessToken: String) {
-        var authToken: Unit = remoteDataSource.getEdgeToken(accessToken)
-        println(authToken)
-    }
-
-    fun logoutOfBrowser(context: Context) {
+    fun logout(context: Context) {
         viewModelScope.launch {
             _state.value = BrowserState.Loading
 
@@ -97,6 +105,14 @@ class OktaViewModel
             }
         }
     }
+
+    private fun startVTRefreshTimer() {
+        vtRefreshManager.startTimer(true)
+    }
+
+
+    //TODO double check how we want to handle this
+    fun hasTerminalSettings(): Boolean = clearentWrapper.getCurrentTerminalSettings() != null
 }
 
 sealed class BrowserState {

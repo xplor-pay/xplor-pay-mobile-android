@@ -10,8 +10,8 @@ import com.xplore.paymobile.databinding.TransactionCardBinding
 import com.xplore.paymobile.ui.transactions.model.TransactionItem
 import com.xplore.paymobile.ui.transactions.util.DateFormatUtil
 
-class TransactionItemAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) :
-    ListAdapter<TransactionItem, TransactionItemAdapter.TransactionViewHolder>(
+class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) :
+    ListAdapter<TransactionItem, TransactionListAdapter.TransactionViewHolder>(
         TRANSACTION_Item_COMPARATOR
     ) {
 

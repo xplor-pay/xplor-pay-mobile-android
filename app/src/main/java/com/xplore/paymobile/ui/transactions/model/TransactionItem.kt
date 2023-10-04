@@ -1,6 +1,6 @@
 package com.xplore.paymobile.ui.transactions.model
 
-data class Transaction(
+data class TransactionItem(
     val id: String,
     val amount: String,
     val created: String,

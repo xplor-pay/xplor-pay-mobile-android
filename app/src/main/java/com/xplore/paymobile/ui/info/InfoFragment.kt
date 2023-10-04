@@ -53,6 +53,7 @@ class InfoFragment : BaseFragment() {
             callMessage.text =
                 getString(R.string.info_screen_call_message, Constants.CLIENT_SUPPORT_PHONE_NUMBER)
             appVersion.text = getString(R.string.info_screen_app_version, BuildConfig.VERSION_NAME)
+            appUser.text = sharedPrefs.getUserName()
         }
     }
 

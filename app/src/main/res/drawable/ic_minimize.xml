@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0"?>
 
-</selector>
+    <vector android:tint="?attr/colorControlNormal" android:viewportHeight="960" android:viewportWidth="960" android:height="24dp" android:width="180dp" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <path android:pathData="M240,840L240,760L720,760L720,840L240,840Z" android:fillColor="@android:color/darker_gray"/>
+</vector>

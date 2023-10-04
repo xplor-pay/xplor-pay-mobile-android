@@ -1,4 +1,4 @@
-package com.xplore.paymobile.ui.transactions.dialog
+package com.xplore.paymobile.ui.transactions.features
 
 class ProcessTransactionDialog {
 }

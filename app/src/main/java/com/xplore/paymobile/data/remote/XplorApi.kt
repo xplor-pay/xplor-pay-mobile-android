@@ -9,7 +9,8 @@ interface XplorApi {
 
     companion object {
         val BASE_URL =
-            if (BuildConfig.DEBUG) "https://api-qa.clearent.net" else "https://api.clearent.net"
+//            if (BuildConfig.DEBUG) "https://api-qa.clearent.net" else
+                "https://api.clearent.net"
     }
 
     @GET("/api/merchantfrontendplatform/v1.0/features/web/{merchantId}")

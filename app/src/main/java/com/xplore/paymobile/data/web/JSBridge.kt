@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class JSBridge @Inject constructor(
     val jsBridgeFlows: JSBridgeFlows,
-    private val webJsonConverter: WebJsonConverter,
+    private val jsonConverterUtil: JsonConverterUtil,
     private val sharedPrefs: SharedPreferencesDataSource,
     private val interactionDetector: UserInteractionDetector
 ) {
@@ -40,20 +40,21 @@ class JSBridge @Inject constructor(
                 lastAuthTokenUsed = message
             }
 
-            val authToken = webJsonConverter.jsonToAuthToken(message)
+            val authToken = jsonConverterUtil.jsonToAuthToken(message)
 
-            if (authToken == sharedPrefs.getAuthToken()) return@launch
+//            if (authToken.bearerToken == sharedPrefs.getAuthToken()) return@launch
 
-            sharedPrefs.setAuthToken(message)
+//            sharedPrefs.setAuthToken(message)
         }
     }
 
+    //todo this seems to be the issue
     @JavascriptInterface
     fun merchantChanged(message: String) {
         backgroundScope.launch {
             Timber.d("received merchantChanged: $message")
 
-            val merchant = webJsonConverter.jsonToMerchant(message)
+            val merchant = jsonConverterUtil.jsonToMerchant(message)
 
             if (merchant == sharedPrefs.getMerchant()) return@launch
 
@@ -68,7 +69,7 @@ class JSBridge @Inject constructor(
         backgroundScope.launch {
             Timber.d("received userLoggedOut: $message")
 
-            jsBridgeFlows.loggedOutFlow.emit(webJsonConverter.jsonToLoggedOut(message))
+            jsBridgeFlows.loggedOutFlow.emit(jsonConverterUtil.jsonToLoggedOut(message))
         }
     }
 
@@ -77,7 +78,7 @@ class JSBridge @Inject constructor(
         backgroundScope.launch {
             Timber.d("received userRolesLoaded: $message")
 
-            val userRoles = webJsonConverter.jsonToUserRoles(message)
+            val userRoles = jsonConverterUtil.jsonToUserRoles(message)
 
             if (!shouldRefreshUserRoles) return@launch
 
@@ -95,7 +96,7 @@ class JSBridge @Inject constructor(
     fun logout() = backgroundScope.launch { jsBridgeFlows.loggedOutFlow.emit(LoggedOut(true)) }
 
     data class JSBridgeFlows(
-        val authTokenFlow: MutableSharedFlow<AuthToken?> = MutableSharedFlow(),
+        val authTokenFlow: MutableSharedFlow<String?> = MutableSharedFlow(),
         val merchantFlow: MutableSharedFlow<Merchant?> = MutableSharedFlow(),
         val loggedOutFlow: MutableSharedFlow<LoggedOut?> = MutableSharedFlow(),
         val userRolesFlow: MutableSharedFlow<UserRoles?> = MutableSharedFlow()

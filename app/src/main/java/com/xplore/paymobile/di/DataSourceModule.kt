@@ -7,7 +7,7 @@ import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
-import com.xplore.paymobile.data.web.WebJsonConverter
+import com.xplore.paymobile.data.web.JsonConverterUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,9 +23,9 @@ object DataSourceModule {
     @Provides
     fun provideSharedPrefs(
         @ApplicationContext context: Context,
-        webJsonConverter: WebJsonConverter
+        jsonConverterUtil: JsonConverterUtil
     ): SharedPreferencesDataSource =
-        SharedPreferencesDataSource(context, webJsonConverter)
+        SharedPreferencesDataSource(context, jsonConverterUtil)
 
     @Singleton
     @Provides

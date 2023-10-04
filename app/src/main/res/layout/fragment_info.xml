@@ -139,6 +139,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/update_button" />
 
+    <TextView
+        android:id="@+id/app_user"
+        style="@style/TextViewColorPrimarySize14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/third_separator" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/log_out_button"
         style="@style/ShapeAppearanceOverlay.Button.RoundedWhite"
@@ -150,6 +160,6 @@
         android:text="@string/info_screen_log_out_button_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/third_separator" />
+        app:layout_constraintTop_toBottomOf="@id/app_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

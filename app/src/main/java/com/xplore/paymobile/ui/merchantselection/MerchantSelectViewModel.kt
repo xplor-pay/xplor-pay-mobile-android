@@ -2,9 +2,12 @@ package com.xplore.paymobile.ui.merchantselection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clearent.idtech.android.wrapper.ClearentCredentials
+import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.remote.model.MerchantTerminal
 import com.xplore.paymobile.data.remote.model.Terminal
 import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.data.web.Merchant
@@ -13,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +27,8 @@ class MerchantSelectViewModel @Inject constructor(
 
     private val _merchantFlow = MutableStateFlow<Merchant?>(null)
     val merchantFlow: StateFlow<Merchant?> = _merchantFlow
+
+    private val clearentWrapper = ClearentWrapper.getInstance()
 
     val selectedTerminalFlow: StateFlow<TerminalSelection> = sharedPrefs.terminalFlow.map {
         it?.let { terminal ->
@@ -54,12 +60,61 @@ class MerchantSelectViewModel @Inject constructor(
     }
 
     private suspend fun fetchTerminals(merchantId: String) {
+        //TODO look into this later.  could be a time saver if we are caching terminals.
+//             multiple terminals could be an issue...
+//        if (sharedPrefs.getTerminal() != null) {
+//            setClearentCredentials(merchantId, sharedPrefs.getTerminal()!!)
+//            return
+//        }
         val networkResponse = remoteDataSource.fetchTerminals(merchantId)
         if (networkResponse is NetworkResource.Success) {
-            val terminals = networkResponse.data as TerminalsResponse
+            val terminals = filterMobileTerminals(networkResponse.data as TerminalsResponse, merchantId)
+            if (terminals.isNotEmpty() && terminals.size == 1) {
+                val selectedTerminal: Terminal = terminals[0]
+                sharedPrefs.setTerminal(selectedTerminal)
+                setClearentCredentials(merchantId, selectedTerminal)
+
+            }
             _terminalsFlow.emit(terminals)
         } else {
             _terminalsFlow.emit(emptyList())
+        }
+
+    }
+
+    private fun setClearentCredentials(merchantId: String, selectedTerminal: Terminal) {
+        clearentWrapper.sdkCredentials.clearentCredentials =
+            ClearentCredentials.MerchantHomeApiCredentials(
+                merchantId = merchantId,
+                vtToken = selectedTerminal.questJwt.token
+            )
+    }
+
+    private suspend fun filterMobileTerminals(terminals: TerminalsResponse, merchantId: String): List<Terminal> {
+        val mobileTerminals = getMobileTerminals(merchantId)
+        if (mobileTerminals.isEmpty()) {
+            Timber.d("No mobile terminals returned from the response for merchant $merchantId")
+            return emptyList()
+        }
+
+        val filteredTerminals = terminals.filter { terminal ->
+            mobileTerminals.any { mobileTerminal ->
+                terminal.terminalPKId == mobileTerminal.merchantTerminalId
+            }
+        }
+
+        return filteredTerminals
+    }
+
+
+    private suspend fun getMobileTerminals(merchantId: String): List<MerchantTerminal> {
+        return when (val networkResponse = remoteDataSource.getMobileTerminals(merchantId)) {
+            is NetworkResource.Success -> {
+                val mobileTerminals = networkResponse.data?.merchantTerminalsPayload?.merchantTerminals.orEmpty()
+                Timber.d("Found ${mobileTerminals.size} mobile terminals for merchant $merchantId")
+                mobileTerminals
+            }
+            else -> emptyList()
         }
     }
 

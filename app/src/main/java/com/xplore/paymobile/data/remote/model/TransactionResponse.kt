@@ -1,7 +1,11 @@
-package com.clearent.idtech.android.wrapper.http.model
+package com.xplore.paymobile.data.remote.model
 
+import com.clearent.idtech.android.wrapper.http.model.Links
 import com.google.gson.annotations.SerializedName
 
+// NOTE: use @Expose for any response classes using gson to json as the firstname/lastname/email.
+//       use the password type (*********) in place of these fields. Expose annotation
+//       will override this behavior
 data class TransactionResponse(
     @SerializedName("code") var code: String,
     @SerializedName("status") var status: String,
@@ -10,16 +14,13 @@ data class TransactionResponse(
     var payload: TransactionPayload
 )
 
-data class Links(
-    @SerializedName("rel") var rel: String,
-    @SerializedName("href") var href: String,
-    @SerializedName("id") var id: String
-)
-
 data class TransactionPayload(
     var error: ResponseError,
-    var transaction: Transaction?,
-    @SerializedName("payloadType") var payloadType: String
+    var transactions: Transactions?,
+)
+
+data class Transactions(
+    @SerializedName("transaction") var transaction: ArrayList<Transaction>
 )
 
 data class ResponseError(
@@ -29,18 +30,22 @@ data class ResponseError(
 )
 
 data class Transaction(
-    @SerializedName("id") var id: String,
-    @SerializedName("created") var created: String,
-    @SerializedName("result") var result: String,
-    @SerializedName("card") var card: String,
-    @SerializedName("display-message") var displayMessage: String,
-    @SerializedName("service-fee") var serviceFee: String?,
-    @SerializedName("surcharge-applied") var surchargeApplied: Boolean?,
-    @SerializedName("amount") var amount: String,
-    @SerializedName("tip-amount") var tipAmount: String?,
-    @SerializedName("result-code") var resultCode: String,
-    @SerializedName("exp-date") var expDate: String,
-    @SerializedName("last-four") var lastFour: String,
-    @SerializedName("merchant-id") var merchantId: String,
-    @SerializedName("terminal-id") var terminalId: String
+    var id: String,
+    var created: String,
+    var status: String,
+    var card: String,
+    var amount: String,
+    var type: String,
+    var settled: Boolean,
+    var date: String,
+    var pending: String
+//    @SerializedName("display-message") var displayMessage: String,
+//    @SerializedName("service-fee") var serviceFee: String?,
+//    @SerializedName("surcharge-applied") var surchargeApplied: Boolean?,
+//    @SerializedName("tip-amount") var tipAmount: String?,
+//    @SerializedName("result-code") var resultCode: String,
+//    @SerializedName("exp-date") var expDate: String,
+//    @SerializedName("last-four") var lastFour: String,
+//    @SerializedName("merchant-id") var merchantId: String,
+//    @SerializedName("terminal-id") var terminalId: String,
 )

@@ -9,6 +9,9 @@ plugins {
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
+def oktaProperties = new Properties()
+rootProject.file("okta.properties").withInputStream { oktaProperties.load(it) }
+
 android {
     compileSdk 33
 
@@ -16,11 +19,20 @@ android {
         applicationId "com.xplore.paymobile"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "0.96.6"
+        versionCode 16
+        versionName "0.96.8"
+
+        buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
+        buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
+        buildConfigField "String", 'SIGN_IN_REDIRECT_URI', "\"${oktaProperties.getProperty('signInRedirectUri')}\""
+        buildConfigField "String", 'SIGN_OUT_REDIRECT_URI', "\"${oktaProperties.getProperty('signOutRedirectUri')}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    defaultConfig.manifestPlaceholders = [
+            "webAuthenticationRedirectScheme": parseScheme(oktaProperties.getProperty('signInRedirectUri'))
+    ]
 
     buildTypes {
         debug {
@@ -107,4 +119,19 @@ dependencies {
 
     //Splash screen
     implementation 'androidx.core:core-splashscreen:1.0.0'
+
+    implementation(platform('com.okta.kotlin:bom:1.0.0'))
+    implementation('com.okta.kotlin:auth-foundation-bootstrap')
+    implementation('com.okta.kotlin:web-authentication-ui')
+
+    implementation 'commons-codec:commons-codec:1.15'
+
+}
+
+static def parseScheme(String uri) {
+    def index = uri.indexOf(':/')
+    if (index == -1) {
+        throw new IllegalStateException("Scheme is not in a valid format.")
+    }
+    return uri.substring(0, index)
 }

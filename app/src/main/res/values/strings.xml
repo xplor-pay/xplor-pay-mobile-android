@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Xplor Pay SDK</string>
+    <string name="app_name">Xplor Pay</string>
     <string name="title_payment">Payment</string>
     <string name="title_transactions">Transactions</string>
     <string name="title_batches">Batches</string>
@@ -89,4 +89,14 @@
     <string name="proceed">Proceed</string>
     <string name="internet_restored">Internet has been restored, please log in.</string>
     <string name="no_internet">No internet connection.</string>
+
+    <!-- Transactions page  -->
+    <string name="transactions_title">Transactions</string>
+
+    <!--  Okta login  -->
+    <string name="login_button">Login</string>
+    <string name="logout_of_browser_button">Logout of Browser</string>
+    <string name="minimize_view">Minimize view icon</string>
+    <string name="right_icon">Right icon</string>
+
 </resources>

@@ -9,7 +9,8 @@ interface XplorBoardingApi {
 
     companion object {
         val BASE_URL =
-            if (BuildConfig.DEBUG) "https://boarding-qa.clearent.net" else "https://boarding.clearent.net"
+//            if (BuildConfig.DEBUG) "https://boarding-qa.clearent.net" else
+                "https://boarding.clearent.net"
     }
 
     @POST("/api/merchant-management/v1.0/search/Merchants")

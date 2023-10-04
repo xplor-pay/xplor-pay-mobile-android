@@ -31,14 +31,11 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
-import com.xplore.paymobile.data.web.LoginEvents
-import com.xplore.paymobile.data.web.WebEventsSharedViewModel
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
-import com.xplore.paymobile.ui.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,8 +44,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminalRequestedListener {
 
-    private val webViewModel by viewModels<WebEventsSharedViewModel>()
     private val viewModel by viewModels<MainViewModel>()
+    private val oktaLoginViewModel by viewModels<OktaLoginViewModel>()
 
     @Inject
     lateinit var sharedPreferencesDataSource: SharedPreferencesDataSource
@@ -97,30 +94,51 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
         showLogin(viewModel.loginVisible)
         setupViews()
-        setupLoginEventsFlow()
+        startOktaLoginIfLoggedOut()
         setupInactivityLogoutFlow()
         setupNetworkFlow()
         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
 
+    private fun startOktaLoginIfLoggedOut() {
+        oktaLoginViewModel.state.observe(this) { state ->
+            when (state) {
+                is BrowserState.LoggedIn -> {
+                    oktaLoginViewModel.login(this)
+                }
+                is BrowserState.LoggedOut -> {
+                    oktaLoginViewModel.login(this)
+                }
+//                is BrowserState.Loading -> {
+//
+//                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         isResumed = true
-        if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
-            showForceLoginDialog()
-        }
-        if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
-            showLogoutDialog()
-        }
+        //todo check if access token is null or expired
+
+//            if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
+//                showForceLoginDialog()
+//            }
+//            if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
+//                showLogoutDialog()
+//            }
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 updateApp()
             }
         }
+//        }
     }
 
     private fun setupViews() {
-        setupWebViewLogin()
         setupAppView()
     }
 
@@ -141,20 +159,20 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         }
     }
 
-    private fun setupLoginEventsFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                webViewModel.loginEventsFlow.collect { loginEvent ->
-                    when (loginEvent) {
-                        LoginEvents.Logout -> {
-                            showLogoutDialog()
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-    }
+//    private fun setupLoginEventsFlow() {
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                webViewModel.loginEventsFlow.collect { loginEvent ->
+//                    when (loginEvent) {
+//                        LoginEvents.Logout -> {
+//                            showLogoutDialog()
+//                        }
+//                        else -> {}
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun showLogoutDialog() {
         interactionDetector.stopInactivityChecks()
@@ -168,14 +186,14 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         )
     }
 
-    private fun setupWebViewLogin() {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.login_fragment, LoginFragment.newInstance {
-                showLogin(false)
-            })
-        }
-    }
+//    private fun setupWebViewLogin() {
+//        supportFragmentManager.commit {
+//            setReorderingAllowed(true)
+//            replace(R.id.login_fragment, LoginFragment.newInstance {
+//                showLogin(false)
+//            })
+//        }
+//    }
 
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
@@ -199,15 +217,15 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
         navView.setOnItemSelectedListener(object : OnItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                if (webViewModel.wasMerchantChanged) {
-                    bottomNavItemIdSelected = item.itemId
-                    webViewModel.wasMerchantChanged = false
-                    showMerchantChangedDialog()
-                    return false
-                } else {
+//                if (webViewModel.wasMerchantChanged) {
+//                    bottomNavItemIdSelected = item.itemId
+//                    webViewModel.wasMerchantChanged = false
+//                    showMerchantChangedDialog()
+//                    return false
+//                } else {
                     navController.navigate(item.itemId)
                     return true
-                }
+//                }
             }
         })
 
@@ -216,13 +234,17 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         askPermissions()
     }
 
-    private fun showMerchantChangedDialog() {
-        BasicDialog(getString(R.string.merchant_changed_dialog_title),
-            getString(R.string.merchant_changed_dialog_description),
-            BasicDialog.DialogButton(getString(R.string.ok)) {
-                navController.navigate(R.id.action_to_post_login)
-            }).show(supportFragmentManager, BasicDialog::class.java.simpleName)
-    }
+//    private fun showMerchantChangedDialog() {
+//        BasicDialog(getString(R.string.merchant_changed_dialog_title),
+//            getString(R.string.merchant_changed_dialog_description),
+//            BasicDialog.DialogButton(getString(R.string.ok)) {
+//                if (isOktaEnabled) {
+//                navController.navigate(R.id.merchant_select_fragment)
+//                } else {
+//                    navController.navigate(R.id.action_to_post_login)
+//                }
+//            }).show(supportFragmentManager, BasicDialog::class.java.simpleName)
+//    }
 
     fun navigateToBottomNavItemSelected() {
         navController.navigate(bottomNavItemIdSelected)
@@ -243,15 +265,18 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     fun logout() {
         interactionDetector.stopInactivityChecks()
         sharedPreferencesDataSource.setAuthToken(null)
-        showLogin(true)
-        setupWebViewLogin()
+//        if (isOktaEnabled) {
+        oktaLoginViewModel.logout(this)
+//        } else {
+//            showLogin(true)
+//            setupWebViewLogin()
+//        }
         navController.navigate(R.id.post_login_fragment)
     }
 
     private fun showLogin(show: Boolean) {
         if (viewModel.loginVisible != show) viewModel.loginVisible = show
         binding.container.isVisible = !show
-        binding.loginFragment.isVisible = show
     }
 
     fun updateApp() {
