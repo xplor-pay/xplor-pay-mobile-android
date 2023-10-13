@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         showLogin(viewModel.loginVisible)
         setupViews()
         startOktaLoginIfLoggedOut()
-        setupInactivityLogoutFlow()
+//        setupInactivityLogoutFlow()
         setupNetworkFlow()
         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
@@ -105,13 +105,15 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
             when (state) {
                 is BrowserState.LoggedIn -> {
                     oktaLoginViewModel.login(this)
+                    viewModel.loginVisible = false
                 }
                 is BrowserState.LoggedOut -> {
                     oktaLoginViewModel.login(this)
+                    viewModel.loginVisible = true
                 }
-//                is BrowserState.Loading -> {
-//
-//                }
+                is BrowserState.Loading -> {
+//                    oktaLoginViewModel.login(this)
+                }
                 else -> {
 
                 }
@@ -124,9 +126,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         isResumed = true
         //todo check if access token is null or expired
 
-//            if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
-//                showForceLoginDialog()
-//            }
+        if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
+            showForceLoginDialog()
+        }
 //            if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
 //                showLogoutDialog()
 //            }
@@ -271,7 +273,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //            showLogin(true)
 //            setupWebViewLogin()
 //        }
-        navController.navigate(R.id.post_login_fragment)
+//        if (oktaLoginViewModel.isLoggedIn)
+//            navController.navigate(R.id.post_login_fragment)
     }
 
     private fun showLogin(show: Boolean) {

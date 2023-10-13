@@ -47,9 +47,12 @@ class OktaLoginViewModel @Inject constructor(
 //    TODO: the jsbridge is not required anymore as it was used for merchant home.  remove the web views once the app is stable
 
     fun login(context: Context) {
+        sharedPrefs.setIsLoggedIn(false)
         viewModelScope.launch {
-            if (!isTokenExpired())
+            if (!isTokenExpired()) {
+                sharedPrefs.setIsLoggedIn(true)
                 return@launch
+            }
 
             _state.value = BrowserState.Loading
             val result = CredentialBootstrap.oidcClient.createWebAuthenticationClient().login(
@@ -74,6 +77,7 @@ class OktaLoginViewModel @Inject constructor(
                     val decodedString = String(decodedBytes)
 
                     sharedPrefs.setUserInfo(decodedString)
+                    sharedPrefs.setIsLoggedIn(true)
 
                     _state.value = BrowserState.LoggedIn.create()
                     isLoggedIn = true
@@ -85,6 +89,7 @@ class OktaLoginViewModel @Inject constructor(
     fun logout(context: Context) {
         viewModelScope.launch {
             _state.value = BrowserState.Loading
+            sharedPrefs.setIsLoggedIn(false)
 
             val result =
                 CredentialBootstrap.oidcClient.createWebAuthenticationClient().logoutOfBrowser(

@@ -33,8 +33,11 @@ class SharedPreferencesDataSource @Inject constructor(
 
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+    private var isLoggedIn = false
+
     private val _merchantFlow = MutableSharedFlow<Merchant?>(replay = 1)
     val merchantFlow: SharedFlow<Merchant?> = _merchantFlow
+
     private val _terminalFlow = MutableSharedFlow<Terminal?>(replay = 1)
     val terminalFlow: SharedFlow<Terminal?> = _terminalFlow
 
@@ -136,6 +139,14 @@ class SharedPreferencesDataSource @Inject constructor(
                 userInfo.clientId
             )
         }
+    }
+
+    fun setIsLoggedIn(isLoggedIn: Boolean) {
+        this.isLoggedIn = isLoggedIn
+    }
+
+    fun getIsLoggedIn() : Boolean {
+        return this.isLoggedIn
     }
 
     enum class FirstPair {

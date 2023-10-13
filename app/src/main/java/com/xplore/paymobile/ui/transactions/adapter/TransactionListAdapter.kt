@@ -1,4 +1,4 @@
-package com.xplore.paymobile.ui.transactions
+package com.xplore.paymobile.ui.transactions.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,12 +7,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.TransactionCardBinding
-import com.xplore.paymobile.ui.transactions.model.TransactionItem
 import com.xplore.paymobile.ui.transactions.util.DateFormatUtil
 
 class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) :
-    ListAdapter<TransactionItem, TransactionListAdapter.TransactionViewHolder>(
-        TRANSACTION_Item_COMPARATOR
+    ListAdapter<TransactionListAdapter.TransactionItem, TransactionListAdapter.TransactionViewHolder>(
+        TRANSACTION_COMPARATOR
     ) {
 
     private var currentScrollPosition = 0
@@ -48,18 +47,15 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.apply {
-                val position = bindingAdapterPosition
                 root.setOnClickListener {
+                    val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         val item = getItem(position)
-                        println("clicked: ${item.amount}")
                         onItemClicked.invoke(item, position)
                     }
                 }
             }
         }
-
-
 
         fun bind(transactionItem: TransactionItem) {
             binding.created.text = DateFormatUtil.formatDateTime(transactionItem.created)
@@ -153,7 +149,7 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
     }
 
     companion object {
-        private val TRANSACTION_Item_COMPARATOR = object : DiffUtil.ItemCallback<TransactionItem>() {
+        private val TRANSACTION_COMPARATOR = object : DiffUtil.ItemCallback<TransactionItem>() {
             override fun areItemsTheSame(oldItem: TransactionItem, newItem: TransactionItem) =
                 oldItem.id == newItem.id
 
@@ -161,4 +157,15 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                 oldItem == newItem
         }
     }
+
+    data class TransactionItem(
+        val id: String,
+        val amount: String,
+        val created: String,
+        val type: String,
+        val status: String,
+        val card: String,
+        val settled: Boolean
+//        val pending: Boolean
+    )
 }

@@ -5,9 +5,9 @@ import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
-import com.xplore.paymobile.ui.transactions.model.TransactionItem
 import com.xplore.paymobile.exceptions.AuthTokenException
 import com.xplore.paymobile.exceptions.VtTokenException
+import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -137,7 +137,7 @@ class RemoteDataSource(
 //        }
 //    }
 
-    suspend fun processTransaction(transactionItem: TransactionItem): NetworkResource<Any?> = withContext(Dispatchers.IO) {
+    suspend fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem): NetworkResource<Any?> = withContext(Dispatchers.IO) {
         try {
             body["type"] = TransactionType.VOID.name
             body["id"] = transactionItem.id

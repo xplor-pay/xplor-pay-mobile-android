@@ -8,8 +8,6 @@ import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Transaction
 import com.xplore.paymobile.data.web.JSBridge
-import com.xplore.paymobile.data.web.XplorLoginWebView
-import com.xplore.paymobile.data.web.XplorWebView
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,28 +31,28 @@ class BatchesViewModel @Inject constructor(
 
     private val clearentWrapper = ClearentWrapper.getInstance()
 
-    private lateinit var xplorWebView: XplorWebView
+//    private lateinit var xplorWebView: XplorWebView
 
-    val hasInternet
-        get() = clearentWrapper.isInternetOn
-
-    fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
-        xplorWebView = XplorWebView(webView, jsBridge, context,
-            onWebViewSetupDone = {
-                webView.loadUrl(batchesPageUrl)
-            },
-            onPageLoaded = {
-                webView.isVisible = true
-                sharedPrefs.getMerchant()?.let {
-                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeMerchant(it))
-                }
-                sharedPrefs.getTerminal()?.let {
-                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeTerminal(it))
-                }
-            })
-    }
-
-    fun extendSession() {
-        xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ExtendSession)
-    }
+//    val hasInternet
+//        get() = clearentWrapper.isInternetOn
+//
+//    fun prepareWebView(webView: WebView, context: Context, jsBridge: JSBridge) {
+//        xplorWebView = XplorWebView(webView, jsBridge, context,
+//            onWebViewSetupDone = {
+//                webView.loadUrl(batchesPageUrl)
+//            },
+//            onPageLoaded = {
+//                webView.isVisible = true
+//                sharedPrefs.getMerchant()?.let {
+//                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeMerchant(it))
+//                }
+//                sharedPrefs.getTerminal()?.let {
+//                    xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ChangeTerminal(it))
+//                }
+//            })
+//    }
+//
+//    fun extendSession() {
+//        xplorWebView.runJsCommand(XplorLoginWebView.XplorJsCommand.ExtendSession)
+//    }
 }

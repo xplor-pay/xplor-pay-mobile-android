@@ -3,9 +3,11 @@ package com.xplore.paymobile.ui.transactions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xplore.paymobile.data.remote.model.Transaction
-import com.xplore.paymobile.ui.transactions.model.TransactionItem
+import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
 import com.xplore.paymobile.ui.transactions.util.TransactionsPaginationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,17 +19,13 @@ class TransactionsViewModel @Inject constructor(
     private val paginationHelper: TransactionsPaginationHelper
 ) : ViewModel() {
 
-    var listOfCollectedTransactionItems = mutableListOf<Transaction>()
-
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
     val resultsFlow: Flow<List<Transaction>> = _resultsFlow
-
-    private val _loadingFlow = MutableStateFlow(false)
-    val loadingFlow: StateFlow<Boolean> = _loadingFlow
 
     init {
         viewModelScope.launch {
             paginationHelper.resultsFlow.collect { transactions ->
+                val listOfCollectedTransactionItems = mutableListOf<Transaction>()
                 if (paginationHelper.currentPage >= 2) {
                     listOfCollectedTransactionItems.addAll(_resultsFlow.value)
                 }
@@ -37,7 +35,7 @@ class TransactionsViewModel @Inject constructor(
         }
     }
 
-    fun processTransaction(transactionItem: TransactionItem) {
+    fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem) {
         paginationHelper.processTransaction(transactionItem)
     }
 

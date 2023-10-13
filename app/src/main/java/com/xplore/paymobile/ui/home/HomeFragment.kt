@@ -85,6 +85,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        //todo exception being thrown - investigate when there is time to work on bug tickets. this issue predates the okta login work
+        //   W/ResourcesCompat: Failed to inflate ColorStateList, leaving it to the framework
+        //      java.lang.UnsupportedOperationException: Failed to resolve attribute at index 0: TypedValue{t=0x2/d=0x7f0300fc a=-1}
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         return binding.root

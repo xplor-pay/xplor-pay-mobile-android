@@ -92,12 +92,12 @@ class MerchantSelectFragment : Fragment() {
                 }
                 allTerminals.isEmpty() && selectedTerminal == null -> {
                     showNoTerminalsWarning(true)
-                    sharedViewModel.setAllowNext(true)
+                    sharedViewModel.setAllowNext(false)
                     binding.terminalClickArea.isClickable = false
                 }
                 selectedTerminal == null -> {
                     //todo change to false
-                    sharedViewModel.setAllowNext(true)
+                    sharedViewModel.setAllowNext(false)
                     binding.terminalClickArea.isClickable = true
                 }
                 else -> {
@@ -108,7 +108,6 @@ class MerchantSelectFragment : Fragment() {
             }
         } else {
             showNoTerminalsWarning(false)
-            //todo change to false
             sharedViewModel.setAllowNext(true)
             binding.terminalClickArea.isClickable = false
         }

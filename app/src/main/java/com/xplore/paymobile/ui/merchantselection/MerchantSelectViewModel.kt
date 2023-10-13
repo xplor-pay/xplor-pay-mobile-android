@@ -73,8 +73,8 @@ class MerchantSelectViewModel @Inject constructor(
                 val selectedTerminal: Terminal = terminals[0]
                 sharedPrefs.setTerminal(selectedTerminal)
                 setClearentCredentials(merchantId, selectedTerminal)
-
             }
+//            val terminalSettings =
             _terminalsFlow.emit(terminals)
         } else {
             _terminalsFlow.emit(emptyList())

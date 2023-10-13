@@ -60,7 +60,7 @@ object NetworkingModule {
     @Provides
     fun provideHttpClient(interceptor: Interceptor): OkHttpClient =
         OkHttpClient.Builder()
-//            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
             .build()
 

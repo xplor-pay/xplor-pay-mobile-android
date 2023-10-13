@@ -84,8 +84,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginBottom="@dimen/margin_small"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_lower_separator"
-            tools:listitem="@layout/transaction_card" />
+            app:layout_constraintTop_toBottomOf="@id/title_lower_separator" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

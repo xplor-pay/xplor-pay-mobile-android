@@ -1,16 +1,12 @@
 package com.xplore.paymobile.data.remote.model
 
-import com.clearent.idtech.android.wrapper.http.model.Links
 import com.google.gson.annotations.SerializedName
 
-// NOTE: use @Expose for any response classes using gson to json as the firstname/lastname/email.
-//       use the password type (*********) in place of these fields. Expose annotation
-//       will override this behavior
 data class TransactionResponse(
     @SerializedName("code") var code: String,
     @SerializedName("status") var status: String,
     @SerializedName("exchange-id") var exchangeId: String,
-    var links: List<Links>,
+    var page: PageData,
     var payload: TransactionPayload
 )
 
@@ -37,15 +33,9 @@ data class Transaction(
     var amount: String,
     var type: String,
     var settled: Boolean,
-    var date: String,
-    var pending: String
-//    @SerializedName("display-message") var displayMessage: String,
-//    @SerializedName("service-fee") var serviceFee: String?,
-//    @SerializedName("surcharge-applied") var surchargeApplied: Boolean?,
-//    @SerializedName("tip-amount") var tipAmount: String?,
-//    @SerializedName("result-code") var resultCode: String,
-//    @SerializedName("exp-date") var expDate: String,
-//    @SerializedName("last-four") var lastFour: String,
-//    @SerializedName("merchant-id") var merchantId: String,
-//    @SerializedName("terminal-id") var terminalId: String,
+    var date: String
+)
+
+data class PageData(
+    var last: Boolean
 )
