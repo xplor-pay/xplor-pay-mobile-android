@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.xplore.paymobile.R
 import com.xplore.paymobile.databinding.TransactionCardBinding
-import com.xplore.paymobile.ui.transactions.util.DateFormatUtil
 
 class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) :
     ListAdapter<TransactionListAdapter.TransactionItem, TransactionListAdapter.TransactionViewHolder>(
@@ -58,17 +57,18 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
         }
 
         fun bind(transactionItem: TransactionItem) {
-            binding.created.text = DateFormatUtil.formatDateTime(transactionItem.created)
+            binding.created.text = transactionItem.created
             binding.amount.text = buildString {
                 append("$")
                 append(transactionItem.amount)
             }
 
             bindTransactionTypeAndStatusFields(transactionItem)
-
-            binding.maskedCard.text = buildString {
-                append("**** ")
-                append(transactionItem.card)
+            if (transactionItem.card?.isNotBlank() == true) {
+                binding.maskedCard.text = buildString {
+                    append("**** ")
+                    append(transactionItem.card)
+                }
             }
         }
 
@@ -79,7 +79,7 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                 bindVoidTransactionFields()
             } else {
                 bindTransactionType(transactionItem.type)
-                bindTransactionStatus(transactionItem.status)
+                transactionItem.status?.let { bindTransactionStatus(it) }
             }
         }
 
@@ -98,7 +98,7 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
         }
 
         //todo could use one pill background and change the color per type or status
-        private fun bindTransactionType(type: String) {
+        private fun bindTransactionType(type: String?) {
             when (type) {
                 "SALE" -> {
                     binding.type.text = sale
@@ -160,12 +160,12 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
 
     data class TransactionItem(
         val id: String,
-        val amount: String,
-        val created: String,
-        val type: String,
-        val status: String,
-        val card: String,
-        val settled: Boolean
-//        val pending: Boolean
+        val amount: String?,
+        val created: String?,
+        val type: String?,
+        val status: String?,
+        val card: String?,
+        val settled: Boolean,
+        val pending: Boolean
     )
 }

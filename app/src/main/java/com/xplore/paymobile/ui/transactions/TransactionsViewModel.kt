@@ -2,6 +2,7 @@ package com.xplore.paymobile.ui.transactions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Transaction
 import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
 import com.xplore.paymobile.ui.transactions.util.TransactionsPaginationHelper
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    private val paginationHelper: TransactionsPaginationHelper
+    private val paginationHelper: TransactionsPaginationHelper,
+    private val sharedPrefs: SharedPreferencesDataSource
 ) : ViewModel() {
 
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
@@ -52,5 +54,7 @@ class TransactionsViewModel @Inject constructor(
     }
 
     fun currentPage(): Int = paginationHelper.getCurrentPage()
+
+    fun getTerminalTimezone(): String = sharedPrefs.getTerminalTimezone()
 
 }

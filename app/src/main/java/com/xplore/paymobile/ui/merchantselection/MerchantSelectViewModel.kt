@@ -9,6 +9,7 @@ import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.MerchantTerminal
 import com.xplore.paymobile.data.remote.model.Terminal
+import com.xplore.paymobile.data.remote.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.data.web.Merchant
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -74,7 +75,10 @@ class MerchantSelectViewModel @Inject constructor(
                 sharedPrefs.setTerminal(selectedTerminal)
                 setClearentCredentials(merchantId, selectedTerminal)
             }
-//            getTerminalSettings()
+            //todo test this portion
+            if (sharedPrefs.getTerminalTimezone().isBlank()) {
+                getTerminalSettings()
+            }
             _terminalsFlow.emit(terminals)
         } else {
             _terminalsFlow.emit(emptyList())
@@ -118,12 +122,17 @@ class MerchantSelectViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun getTerminalSettings() {
-//        val networkResponse = remoteDataSource.getTerminalSettings()
-//        if (networkResponse is NetworkResource.Success) {
-//            val timeZone = networkResponse.data?.
-//        }
-//    }
+    private suspend fun getTerminalSettings() {
+        val networkResponse = remoteDataSource.getTerminalSettings()
+        if (networkResponse is NetworkResource.Success) {
+            val terminalSettings = networkResponse.data as TerminalSettingsResponse
+            terminalSettings.payload.terminalSettings?.terminalSetting?.timeZone?.let {
+                sharedPrefs.setTerminalTimezone(
+                    it
+                )
+            }
+        }
+    }
 
     fun getMerchant() = sharedPrefs.getMerchant()
     fun getTerminal() = sharedPrefs.getTerminal()

@@ -33,7 +33,8 @@ data class Transaction(
     var amount: String,
     var type: String,
     var settled: Boolean,
-    var date: String
+    var date: String,
+    var pending: Boolean
 )
 
 data class PageData(

@@ -87,7 +87,6 @@ class MerchantSelectFragment : Fragment() {
                 allTerminals.size == 1 && allTerminals[0].terminalPKId == selectedTerminal?.terminalPKId -> {
                     showNoTerminalsWarning(false)
                     sharedViewModel.setAllowNext(true)
-                    //todo change back before deploying
                     binding.terminalClickArea.isClickable = true
                 }
                 allTerminals.isEmpty() && selectedTerminal == null -> {
@@ -96,7 +95,6 @@ class MerchantSelectFragment : Fragment() {
                     binding.terminalClickArea.isClickable = false
                 }
                 selectedTerminal == null -> {
-                    //todo change to false
                     sharedViewModel.setAllowNext(false)
                     binding.terminalClickArea.isClickable = true
                 }

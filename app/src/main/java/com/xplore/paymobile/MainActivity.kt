@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.fragment.app.commit
 import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -36,6 +35,8 @@ import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
+import com.xplore.paymobile.ui.login.BrowserState
+import com.xplore.paymobile.ui.login.OktaLoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -114,9 +115,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
                 is BrowserState.Loading -> {
 //                    oktaLoginViewModel.login(this)
                 }
-                else -> {
-
-                }
             }
         }
     }
@@ -149,17 +147,18 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         return super.onUserInteraction()
     }
 
-    private fun setupInactivityLogoutFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                interactionDetector.userInteractionFlow.collect { event ->
-                    if (event is UserInteractionEvent.Logout) {
-                        showLogoutDialog()
-                    }
-                }
-            }
-        }
-    }
+    //todo will we want to implement in the future?
+//    private fun setupInactivityLogoutFlow() {
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                interactionDetector.userInteractionFlow.collect { event ->
+//                    if (event is UserInteractionEvent.Logout) {
+//                        showLogoutDialog()
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 //    private fun setupLoginEventsFlow() {
 //        lifecycleScope.launch {
@@ -188,15 +187,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         )
     }
 
-//    private fun setupWebViewLogin() {
-//        supportFragmentManager.commit {
-//            setReorderingAllowed(true)
-//            replace(R.id.login_fragment, LoginFragment.newInstance {
-//                showLogin(false)
-//            })
-//        }
-//    }
-
     private fun setupAppView() {
         val navView: BottomNavigationView = binding.navView
         navView.isVisible = showBottomNav
@@ -217,19 +207,10 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        navView.setOnItemSelectedListener(object : OnItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//                if (webViewModel.wasMerchantChanged) {
-//                    bottomNavItemIdSelected = item.itemId
-//                    webViewModel.wasMerchantChanged = false
-//                    showMerchantChangedDialog()
-//                    return false
-//                } else {
-                    navController.navigate(item.itemId)
-                    return true
-//                }
-            }
-        })
+        navView.setOnItemSelectedListener { item ->
+            navController.navigate(item.itemId)
+            true
+        }
 
         supportActionBar?.hide()
 
@@ -267,14 +248,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     fun logout() {
         interactionDetector.stopInactivityChecks()
         sharedPreferencesDataSource.setAuthToken(null)
-//        if (isOktaEnabled) {
         oktaLoginViewModel.logout(this)
-//        } else {
-//            showLogin(true)
-//            setupWebViewLogin()
-//        }
-//        if (oktaLoginViewModel.isLoggedIn)
-//            navController.navigate(R.id.post_login_fragment)
     }
 
     private fun showLogin(show: Boolean) {

@@ -20,11 +20,11 @@
             android:id="@+id/created"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="11dp"
             android:fontFamily="@font/sf_pro_text_bold"
             android:text="created"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,13 +32,13 @@
             android:id="@+id/masked_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="12dp"
             android:fontFamily="@font/sf_pro_text_bold"
-            android:text="masked_card"
+            android:text=""
             android:textColor="#000000"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/created" />
+            app:layout_constraintTop_toTopOf="@id/type" />
 
         <TextView
             android:id="@+id/amount"
@@ -48,7 +48,7 @@
             android:paddingBottom="10dp"
             android:text="amount"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@id/status"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,7 +59,7 @@
             android:layout_marginEnd="10dp"
             android:fontFamily="@font/sf_pro_text_bold"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:paddingEnd="12dp"
             android:text="type"
             android:textColor="#000000"
             android:textSize="14sp"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="18dp"
             android:fontFamily="@font/sf_pro_text_bold"
-            android:paddingStart="10dp"
+            android:paddingStart="12dp"
             android:paddingEnd="10dp"
             android:text="status"
             android:textColor="#000000"

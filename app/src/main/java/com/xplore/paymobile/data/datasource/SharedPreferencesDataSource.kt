@@ -10,6 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import java.util.SimpleTimeZone
 import javax.inject.Inject
 
 class SharedPreferencesDataSource @Inject constructor(
@@ -30,10 +31,10 @@ class SharedPreferencesDataSource @Inject constructor(
     }
 
     private val sharedPrefs = context.getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
-
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private var isLoggedIn = false
+    private var terminalTimezone = ""
 
     private val _merchantFlow = MutableSharedFlow<Merchant?>(replay = 1)
     val merchantFlow: SharedFlow<Merchant?> = _merchantFlow
@@ -147,6 +148,14 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun getIsLoggedIn() : Boolean {
         return this.isLoggedIn
+    }
+
+    fun setTerminalTimezone(terminalTimeZone: String) {
+        this.terminalTimezone = terminalTimeZone
+    }
+
+    fun getTerminalTimezone(): String {
+        return this.terminalTimezone
     }
 
     enum class FirstPair {

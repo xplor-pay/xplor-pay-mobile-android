@@ -6,11 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,16 +16,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.xplore.paymobile.R
 import com.xplore.paymobile.data.remote.model.Transaction
 import com.xplore.paymobile.databinding.FragmentTransactionsBinding
-import com.xplore.paymobile.databinding.TransactionCardBinding
 import com.xplore.paymobile.ui.base.BaseFragment
-import com.xplore.paymobile.ui.merchantselection.search.list.SeeMoreListAdapter
 import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
 import com.xplore.paymobile.ui.transactions.util.DateFormatUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -43,22 +35,25 @@ class TransactionsFragment : BaseFragment() {
     private val transactionListAdapter =
         TransactionListAdapter(onItemClicked = { transactionItem, _ ->
             if (transactionItem.status != "Declined" && transactionItem.status != "Error") {
-                val processType = determineTransactionProcessType(
-                    transactionItem.type,
-                    transactionItem.settled
-                )
+                val processType = transactionItem.settled?.let {
+                    determineTransactionProcessType(
+                        transactionItem.type,
+                        it,
+                        transactionItem.pending
+                    )
+                }
 
-                if (processType.isNotBlank()) {
+                if (processType?.isNotBlank()!!) {
                     showProcessTransactionDialog(transactionItem, processType)
                 }
             }
         })
 
     private fun determineTransactionProcessType(
-        transactionType: String,
+        transactionType: String?,
         isSettled: Boolean,
         //todo fix this
-        isPending: Boolean = false
+        isPending: Boolean
     ): String {
         return if (isSettled && transactionType != "REFUND" && transactionType != "UNMATCHED REFUND" && transactionType != "AUTH") {
             "Refund"
@@ -94,19 +89,17 @@ class TransactionsFragment : BaseFragment() {
         binding.transactionItemsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-//                println("x: $dx  y: $dy")
-                //todo figure out refresh
-//                println("size of list: ${viewModel.listOfCollectedTransactionItems.size}")
-                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 5) {
+                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 10) {
                     // Scrolling down
-                    if (!viewModel.isLoading() && !viewModel.isLastTransactionPage())
-                    println("dx: $dx  dy: $dy")
-                    viewModel.nextPage()
+                    if (!viewModel.isLoading() && !viewModel.isLastTransactionPage()) {
+                        viewModel.nextPage()
+                    }
                 }
 //                println("shouldn't show dx: $dx  dy: $dy")
                 //todo handle refresh here
 //                else if (transactionListAdapter.getCurrentScrollPosition() == viewModel.listOfCollectedTransactionItems.size - 5 && !isLoading && viewModel.listOfCollectedTransactionItems.size != 25) {
                     // Scrolling up
+//                    println("dx: $dx  dy: $dy")
 //                    isLoading = true
 //                    viewModel.nextPage()
 //                    isLoading = false
@@ -142,13 +135,13 @@ class TransactionsFragment : BaseFragment() {
             processTransactionDialog.findViewById<Button>(R.id.process_transaction_button)
         processTransactionButton?.text = transactionType
 
-        processTransactionDialog.findViewById<TextView>(R.id.amount)?.text =
+        processTransactionDialog.findViewById<TextView>(R.id.process_amount)?.text =
             buildString {
                 append("$")
                 append(transactionItem.amount)
             }
-        processTransactionDialog.findViewById<TextView>(R.id.created)?.text =
-            DateFormatUtil.formatDateTime(transactionItem.created)
+        processTransactionDialog.findViewById<TextView>(R.id.process_created)?.text =
+            transactionItem.created?.let { DateFormatUtil.formatDateTime(it, viewModel.getTerminalTimezone()) }
 
         cancelButton?.setOnClickListener {
             processTransactionDialog.dismiss()
@@ -193,17 +186,22 @@ class TransactionsFragment : BaseFragment() {
             TransactionListAdapter.TransactionItem(
                 it.id,
                 it.amount,
-                it.created,
+                formatCreatedDate(it.created),
                 it.type,
                 it.status,
                 it.card,
-                it.settled
+                it.settled,
+                it.pending
             )
         }) {
             if (viewModel.currentPage() == 0 && transactionItemList.isNotEmpty()) {
                 binding.transactionItemsList.scrollToPosition(0)
             }
         }
+    }
+
+    private fun formatCreatedDate(created: String): String? {
+        return DateFormatUtil.formatDateTime(created, viewModel.getTerminalTimezone())
     }
 
     override fun onDestroyView() {
