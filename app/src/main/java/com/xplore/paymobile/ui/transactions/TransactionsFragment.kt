@@ -95,14 +95,10 @@ class TransactionsFragment : BaseFragment() {
                         viewModel.nextPage()
                     }
                 }
-//                println("shouldn't show dx: $dx  dy: $dy")
                 //todo handle refresh here
 //                else if (transactionListAdapter.getCurrentScrollPosition() == viewModel.listOfCollectedTransactionItems.size - 5 && !isLoading && viewModel.listOfCollectedTransactionItems.size != 25) {
                     // Scrolling up
 //                    println("dx: $dx  dy: $dy")
-//                    isLoading = true
-//                    viewModel.nextPage()
-//                    isLoading = false
 //                }
             }
         })
@@ -112,9 +108,6 @@ class TransactionsFragment : BaseFragment() {
         lifecycleScope.launch {
             viewModel.resultsFlow.collect { transactionList ->
                 Timber.d("Received transactions ${transactionList.size}")
-//                if (transactionListAdapter.currentList.isNotEmpty()) {
-//                    transactionListAdapter..notifyItemChanged(0)
-//                }
                 submitList(transactionList)
             }
         }
