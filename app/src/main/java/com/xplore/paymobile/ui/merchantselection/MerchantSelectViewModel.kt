@@ -74,7 +74,7 @@ class MerchantSelectViewModel @Inject constructor(
                 sharedPrefs.setTerminal(selectedTerminal)
                 setClearentCredentials(merchantId, selectedTerminal)
             }
-//            val terminalSettings =
+//            getTerminalSettings()
             _terminalsFlow.emit(terminals)
         } else {
             _terminalsFlow.emit(emptyList())
@@ -117,6 +117,13 @@ class MerchantSelectViewModel @Inject constructor(
             else -> emptyList()
         }
     }
+
+//    private suspend fun getTerminalSettings() {
+//        val networkResponse = remoteDataSource.getTerminalSettings()
+//        if (networkResponse is NetworkResource.Success) {
+//            val timeZone = networkResponse.data?.
+//        }
+//    }
 
     fun getMerchant() = sharedPrefs.getMerchant()
     fun getTerminal() = sharedPrefs.getTerminal()

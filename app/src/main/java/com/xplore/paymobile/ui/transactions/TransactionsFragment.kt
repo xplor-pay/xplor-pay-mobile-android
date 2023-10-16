@@ -40,8 +40,6 @@ class TransactionsFragment : BaseFragment() {
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
 
-    var isLoading = false
-
     private val transactionListAdapter =
         TransactionListAdapter(onItemClicked = { transactionItem, _ ->
             if (transactionItem.status != "Declined" && transactionItem.status != "Error") {
@@ -55,11 +53,6 @@ class TransactionsFragment : BaseFragment() {
                 }
             }
         })
-
-//    private val transactionScrollAdapter =
-//        TransactionScrollAdapter(viewModel.listOfCollectedTransactionItems) {
-//
-//        }
 
     private fun determineTransactionProcessType(
         transactionType: String,
@@ -90,10 +83,8 @@ class TransactionsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        transactionBinding.progressBar.isVisible = true
         loadTransactions()
         setupTitle()
-//        setupLoadingFlow()
         setOnScrollListener()
         setupTransactionList()
     }
@@ -106,16 +97,14 @@ class TransactionsFragment : BaseFragment() {
 //                println("x: $dx  y: $dy")
                 //todo figure out refresh
 //                println("size of list: ${viewModel.listOfCollectedTransactionItems.size}")
-                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 5 && !isLoading) {
+                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 5) {
                     // Scrolling down
+                    if (!viewModel.isLoading() && !viewModel.isLastTransactionPage())
                     println("dx: $dx  dy: $dy")
-                    isLoading = true
                     viewModel.nextPage()
-//                    viewModel.nextPage()
-                    isLoading = false
-                    print("last on the list")
                 }
 //                println("shouldn't show dx: $dx  dy: $dy")
+                //todo handle refresh here
 //                else if (transactionListAdapter.getCurrentScrollPosition() == viewModel.listOfCollectedTransactionItems.size - 5 && !isLoading && viewModel.listOfCollectedTransactionItems.size != 25) {
                     // Scrolling up
 //                    isLoading = true
@@ -130,9 +119,9 @@ class TransactionsFragment : BaseFragment() {
         lifecycleScope.launch {
             viewModel.resultsFlow.collect { transactionList ->
                 Timber.d("Received transactions ${transactionList.size}")
-                if (transactionListAdapter.currentList.isNotEmpty()) {
+//                if (transactionListAdapter.currentList.isNotEmpty()) {
 //                    transactionListAdapter..notifyItemChanged(0)
-                }
+//                }
                 submitList(transactionList)
             }
         }
@@ -181,11 +170,6 @@ class TransactionsFragment : BaseFragment() {
         viewModel.processTransaction(transactionItem)
     }
 
-    //todo implement the progress bar
-    private fun showLoading(loading: Boolean) {
-        binding.progressBar.isVisible = loading
-    }
-
     private fun setupTitle() {
         with(binding) {
             toolbarLayout.toolbarTitle.text = getString(R.string.transactions_title)
@@ -221,11 +205,6 @@ class TransactionsFragment : BaseFragment() {
             }
         }
     }
-
-//    private fun showLoading() {
-//        val seeMoreButton = SeeMoreListAdapter.SeeMoreItem(getString(R.string.see_more), true)
-//        seeMoreAdapter.submitList(listOf(seeMoreButton))
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

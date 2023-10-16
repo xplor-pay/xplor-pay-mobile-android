@@ -3,6 +3,7 @@ package com.xplore.paymobile.data.remote
 import com.clearent.idtech.android.BuildConfig
 import com.xplore.paymobile.data.remote.model.MerchantTerminalsResponse
 import com.xplore.paymobile.data.remote.model.OpenBatchResponse
+import com.xplore.paymobile.data.remote.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.remote.model.TransactionResponse
 import retrofit2.Response
 import retrofit2.http.*
@@ -38,4 +39,9 @@ interface ClearentGatewayApi {
         @HeaderMap header: Map<String, String>,
         @Body body: Map<String, String>
     ): Response<TransactionResponse>
+
+    @GET("rest/v2/settings/terminal")
+    suspend fun getTerminalSettings(
+        @HeaderMap header: Map<String, String>
+    ): Response<TerminalSettingsResponse>
 }

@@ -19,23 +19,26 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
     }
 
     private val bgScope = CoroutineScope(Dispatchers.IO)
+    private var currentPage = 0
+    private var isLastPage = false
+    private var isLoading = false
 
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
     val resultsFlow: Flow<List<Transaction>> = _resultsFlow
 
-    var currentPage = 0
-
 
     fun nextPage() {
         //todo implement if statement
-//        if (currentPage !isLoading) {
+        println("last: $isLastPage loading: $isLoading")
+        if (!isLastPage &&  !isLoading) {
             requestTransactions()
-//        }
+        }
         currentPage++
     }
 
     private fun requestTransactions() {
         bgScope.launch {
+            isLoading = true
             when (val transactionResource =
                 remoteDataSource.getTransactions(
                     currentPage.toString(),
@@ -44,14 +47,17 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
                 ) {
                 is NetworkResource.Success -> {
                     val transactionList = transactionResource.data as TransactionResponse
+                    isLastPage = transactionList.page.last
                     val transactions = transactionList.payload.transactions?.transaction
                     if (transactions != null) {
                         _resultsFlow.emit(transactions)
                     }
+                    isLoading = false
                 }
                 is NetworkResource.Error -> {
                     _resultsFlow.emit(emptyList())
                     Timber.d("Transactions request failed")
+                    isLoading = false
                 }
             }
         }
@@ -78,4 +84,15 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
         }
     }
 
+    fun isLoadingTransactions(): Boolean {
+        return isLoading
+    }
+
+    fun getCurrentPage(): Int {
+        return currentPage
+    }
+
+    fun isLastTransactionPage(): Boolean {
+        return isLastPage
+    }
 }

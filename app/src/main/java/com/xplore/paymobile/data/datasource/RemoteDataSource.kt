@@ -170,6 +170,23 @@ class RemoteDataSource(
             return@withContext NetworkResource.Error(exception = ex)
         }
     }
+
+    suspend fun getTerminalSettings(): NetworkResource<Any?> = withContext(Dispatchers.IO) {
+        try {
+            val response = clearentGatewayApi.getTerminalSettings(
+                getClearentGatewayApiHeader()
+            )
+
+            return@withContext if (response.isSuccessful) {
+                NetworkResource.Success(response.body())
+            } else {
+                NetworkResource.Error(errorBody = response.errorBody())
+            }
+        } catch (ex: Exception) {
+            return@withContext NetworkResource.Error(exception = ex)
+        }
+    }
+
 }
 
 sealed class NetworkResource<out T> {

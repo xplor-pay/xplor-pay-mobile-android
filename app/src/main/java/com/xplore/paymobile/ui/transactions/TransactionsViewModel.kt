@@ -26,7 +26,7 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             paginationHelper.resultsFlow.collect { transactions ->
                 val listOfCollectedTransactionItems = mutableListOf<Transaction>()
-                if (paginationHelper.currentPage >= 2) {
+                if (paginationHelper.getCurrentPage() >= 2) {
                     listOfCollectedTransactionItems.addAll(_resultsFlow.value)
                 }
                 listOfCollectedTransactionItems.addAll(transactions)
@@ -43,6 +43,14 @@ class TransactionsViewModel @Inject constructor(
         paginationHelper.nextPage()
     }
 
-    fun currentPage(): Int = paginationHelper.currentPage
+    fun isLoading(): Boolean {
+        return paginationHelper.isLoadingTransactions()
+    }
+
+    fun isLastTransactionPage(): Boolean {
+        return paginationHelper.isLastTransactionPage()
+    }
+
+    fun currentPage(): Int = paginationHelper.getCurrentPage()
 
 }
