@@ -22,13 +22,13 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
     private var currentPage = 0
     private var isLastPage = false
     private var isLoading = false
+    private var isProcessTransactionSuccessful = false
 
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
     val resultsFlow: Flow<List<Transaction>> = _resultsFlow
 
 
     fun nextPage() {
-        //todo implement if statement
         println("last: $isLastPage loading: $isLoading")
         if (!isLastPage &&  !isLoading) {
             requestTransactions()
@@ -63,21 +63,24 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
         }
     }
 
-    fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem) {
+    fun processTransaction(
+        transactionItem: TransactionListAdapter.TransactionItem,
+        transactionType: String
+    ) {
         bgScope.launch {
             when (val transactionResource =
                 remoteDataSource.processTransaction(
-                    transactionItem
+                    transactionItem.id,
+                    transactionItem.amount,
+                    transactionType
                 )
             ) {
                 is NetworkResource.Success -> {
-                    val transactionList = transactionResource.data as TransactionResponse
-                    val transactions = transactionList.payload.transactions?.transaction
-                    if (transactions != null) {
-                        _resultsFlow.emit(transactions)
-                    }
+                    isProcessTransactionSuccessful = true
+                    Timber.d("Transaction request successful")
                 }
                 is NetworkResource.Error -> {
+                    isProcessTransactionSuccessful = false
                     Timber.d("Transaction request failed")
                 }
             }
@@ -94,5 +97,14 @@ class TransactionsPaginationHelper @Inject constructor(private val remoteDataSou
 
     fun isLastTransactionPage(): Boolean {
         return isLastPage
+    }
+
+    fun getProcessTransactionSuccessful(): Boolean {
+        return isProcessTransactionSuccessful
+    }
+
+    fun refreshPage() {
+        currentPage = 0
+        nextPage()
     }
 }
