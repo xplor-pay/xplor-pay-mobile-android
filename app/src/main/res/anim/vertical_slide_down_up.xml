@@ -11,20 +11,12 @@
         android:startOffset="0"
         />
 
-<!--    <translate-->
-<!--        android:interpolator="@android:anim/linear_interpolator"-->
-<!--        android:fromYDelta="0%p"-->
-<!--        android:toYDelta="0%p"-->
-<!--        android:duration="1500"-->
-<!--        android:startOffset="0"-->
-<!--        />-->
-
     <translate
         android:interpolator="@android:anim/linear_interpolator"
         android:fromYDelta="5%p"
         android:toYDelta="-10%p"
         android:duration="300"
-        android:startOffset="2000"
+        android:startOffset="5000"
         />
 
 </set>
