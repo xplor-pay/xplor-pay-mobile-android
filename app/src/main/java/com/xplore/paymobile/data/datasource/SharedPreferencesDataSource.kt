@@ -126,8 +126,8 @@ class SharedPreferencesDataSource @Inject constructor(
 
     fun setUserRoles(userRoles: String) = sharedPrefs.edit { putString(USER_ROLES, userRoles) }
 
-    private fun getUserRoles(): String? {
-        return sharedPrefs.getString(USER_ROLES, null)
+    fun getUserRoles(): String {
+        return sharedPrefs.getString(USER_ROLES, null).toString()
     }
 
     private fun getClientIdFromAuthToken(): String? =
@@ -136,8 +136,6 @@ class SharedPreferencesDataSource @Inject constructor(
     private fun retrieveFirstPair(): Int =
         sharedPrefs.getInt(FIRST_PAIR, FirstPair.NOT_DONE.ordinal)
 
-//todo    com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.setUserInfo
-//        java.lang.NullPointerException
     fun setUserInfo(decodedString: String) {
         val userInfo: UserInfo = jsonConverterUtil.jsonToUserInfo(decodedString)
 
@@ -187,7 +185,7 @@ class SharedPreferencesDataSource @Inject constructor(
         val userRoles = getUserRoles()
 
         for (userRole in VoidAndRefundRoles.values()) {
-            if (userRoles?.contains(userRole.name) == true)
+            if (userRoles.contains(userRole.name))
                 return true
         }
         return false

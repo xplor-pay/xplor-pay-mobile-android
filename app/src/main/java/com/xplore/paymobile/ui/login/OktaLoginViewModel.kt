@@ -9,7 +9,10 @@ import com.okta.authfoundation.claims.name
 import com.okta.authfoundation.client.OidcClientResult
 import com.okta.authfoundationbootstrap.CredentialBootstrap
 import com.okta.webauthenticationui.WebAuthenticationClient.Companion.createWebAuthenticationClient
+import com.xplore.paymobile.MainActivity
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
+import com.xplore.paymobile.data.web.GroupedUserRoles
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -86,12 +89,27 @@ class OktaLoginViewModel @Inject constructor(
 
                     sharedPrefs.setUserInfo(decodedString)
                     sharedPrefs.setIsLoggedIn(true)
+                    //todo need to figure out the okta refresh timer
 //                    launchOktaRefreshTimer()
-                    _state.value = BrowserState.LoggedIn.create()
+                    if (hasUserRolePermissionsToAccessApp()) {
+                        _state.value = BrowserState.LoggedIn.create()
+                    } else {
+                        logout(context)
+                    }
                 }
             }
         }
     }
+
+    private fun hasUserRolePermissionsToAccessApp(): Boolean {
+        return when (GroupedUserRoles.fromString(sharedPrefs.getUserRoles())) {
+            GroupedUserRoles.NoAccess -> false
+            else -> {
+                true
+            }
+        }
+    }
+
 
     fun logout(context: Context) {
 
