@@ -14,8 +14,8 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
     ) {
 
     private var currentScrollPosition = 0
-    private val refund = "Refund"
-    private val void = "Void"
+    private val refund = "Refunded"
+    private val void = "Voided"
     private val sale = "Sale"
     private val forcedSale = "Forced Sale"
     private val auth = "Auth"
@@ -32,7 +32,7 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        println("position: $position")
+//        println("position: $position") // used only for debugging
         currentScrollPosition = holder.bindingAdapterPosition
         val currentItem = getItem(position)
         holder.bind(currentItem)
@@ -73,13 +73,13 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
         }
 
         private fun bindTransactionTypeAndStatusFields(transactionItem: TransactionItem) {
-            if (transactionItem.settled) {
-                bindSettledTransactionFields()
-            } else if (transactionItem.type == "VOID") {
+            if (transactionItem.voided) {
                 bindVoidTransactionFields()
+            } else if (transactionItem.settled) {
+                bindSettledTransactionFields()
             } else {
                 bindTransactionType(transactionItem.type)
-                transactionItem.status?.let { bindTransactionStatus(it) }
+                bindTransactionStatus(transactionItem.status)
             }
         }
 
@@ -97,7 +97,6 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
             binding.status.setBackgroundResource(R.drawable.bg_pill_pink)
         }
 
-        //todo could use one pill background and change the color per type or status
         private fun bindTransactionType(type: String?) {
             when (type) {
                 "SALE" -> {
@@ -141,7 +140,7 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                 }
                 else -> {
                     binding.status.text = error
-                    binding.status.setBackgroundResource(R.drawable.bg_pill_pink)
+                    binding.status.setBackgroundResource(R.drawable.bg_pill_grey)
                 }
 
             }
@@ -160,12 +159,13 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
 
     data class TransactionItem(
         val id: String,
-        val amount: String?,
+        val amount: String,
         val created: String?,
-        val type: String?,
-        val status: String?,
+        val type: String,
+        val status: String,
         val card: String?,
         val settled: Boolean,
-        val pending: Boolean
+        val pending: Boolean,
+        val voided: Boolean
     )
 }

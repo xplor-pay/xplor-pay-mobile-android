@@ -82,13 +82,9 @@ class MerchantSelectFragment : Fragment() {
         val selectedMerchant = viewModel.getMerchant()
         val selectedTerminal = viewModel.getTerminal()
         val allTerminals = sharedViewModel.terminals
+//        if (selectedMerchant != null && viewModel.isLoggedIn()) {
         if (selectedMerchant != null) {
             when {
-                allTerminals.size == 1 && allTerminals[0].terminalPKId == selectedTerminal?.terminalPKId -> {
-                    showNoTerminalsWarning(false)
-                    sharedViewModel.setAllowNext(true)
-                    binding.terminalClickArea.isClickable = true
-                }
                 allTerminals.isEmpty() && selectedTerminal == null -> {
                     showNoTerminalsWarning(true)
                     sharedViewModel.setAllowNext(false)
@@ -96,6 +92,11 @@ class MerchantSelectFragment : Fragment() {
                 }
                 selectedTerminal == null -> {
                     sharedViewModel.setAllowNext(false)
+                    binding.terminalClickArea.isClickable = true
+                }
+                allTerminals.size == 1 && allTerminals[0].terminalPKId == selectedTerminal.terminalPKId -> {
+                    showNoTerminalsWarning(false)
+                    sharedViewModel.setAllowNext(true)
                     binding.terminalClickArea.isClickable = true
                 }
                 else -> {
@@ -106,7 +107,7 @@ class MerchantSelectFragment : Fragment() {
             }
         } else {
             showNoTerminalsWarning(false)
-            sharedViewModel.setAllowNext(true)
+            sharedViewModel.setAllowNext(false)
             binding.terminalClickArea.isClickable = false
         }
     }
@@ -127,6 +128,7 @@ class MerchantSelectFragment : Fragment() {
                         when (terminalSelection) {
                             is TerminalSelection.TerminalAvailable -> {
                                 Timber.d("Selected terminal is ${terminalSelection.terminal.terminalName}")
+                                Timber.d("Selected terminal id ${terminalSelection.terminal.terminalPKId}")
                                 setupTerminalName(terminalSelection.terminal)
                             }
                             is TerminalSelection.NoTerminal -> {
@@ -162,6 +164,8 @@ class MerchantSelectFragment : Fragment() {
         with(binding) {
             merchant?.merchantName?.let {
                 merchantTextLayout.editText?.setText(it)
+            } ?: run {
+                merchantTextLayout.editText?.setText(getString(R.string.select_merchant))
             }
         }
     }
@@ -171,7 +175,7 @@ class MerchantSelectFragment : Fragment() {
             terminal?.terminalName?.also {
                 terminalTextLayout.editText?.setText(it)
             } ?: run {
-                terminalTextLayout.editText?.setText("")
+                terminalTextLayout.editText?.setText(getString(R.string.select_terminal))
             }
         }
     }

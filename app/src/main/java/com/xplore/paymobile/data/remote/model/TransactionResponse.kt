@@ -34,9 +34,11 @@ data class Transaction(
     var type: String,
     var settled: Boolean,
     var date: String,
-    var pending: Boolean
+    var pending: Boolean,
+    var voided: Boolean
 )
 
 data class PageData(
-    var last: Boolean
+    var last: Boolean,
+    @SerializedName("total-pages") var totalPages: Int = 0
 )

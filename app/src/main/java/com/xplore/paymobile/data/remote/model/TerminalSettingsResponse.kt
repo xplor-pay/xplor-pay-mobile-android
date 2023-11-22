@@ -5,19 +5,15 @@ import com.google.gson.annotations.SerializedName
 data class TerminalSettingsResponse(
     @SerializedName("code") var code: String,
     @SerializedName("status") var status: String,
-    @SerializedName("exchange-id") var exchangeId: String,
-    var links: Links,
-    var payload: TerminalSettingsPayload
+    var payload: TerminalSettingsPayloadResponse
 )
 
-data class TerminalSettingsPayload(
-    var terminalSettings: TerminalSettings
+data class TerminalSettingsPayloadResponse(
+    val payloadType: String? = null,
+    @SerializedName("terminal-settings")
+    val terminalSettings: TerminalSettings
 )
 
 data class TerminalSettings(
-    @SerializedName("terminal-settings") var terminalSetting: TerminalSetting
-)
-
-data class TerminalSetting(
-    @SerializedName("time-zone") var timeZone: String
+    @SerializedName("time-zone") val timeZone: String = ""
 )

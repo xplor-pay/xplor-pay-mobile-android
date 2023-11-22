@@ -1,6 +1,7 @@
 package com.xplore.paymobile.data.web
 
 import com.google.gson.Gson
+import com.xplore.paymobile.data.remote.model.Batches
 import com.xplore.paymobile.data.remote.model.Terminal
 import javax.inject.Inject
 

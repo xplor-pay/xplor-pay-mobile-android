@@ -26,7 +26,7 @@ class JSBridge @Inject constructor(
         backgroundScope.launch {
             jsBridgeFlows.authTokenFlow.emit(sharedPrefs.getAuthToken())
             jsBridgeFlows.merchantFlow.emit(sharedPrefs.getMerchant())
-            jsBridgeFlows.userRolesFlow.emit(sharedPrefs.getUserRoles())
+//            jsBridgeFlows.userRolesFlow.emit(sharedPrefs.getUserRoles())
         }
     }
 

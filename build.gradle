@@ -10,7 +10,8 @@ buildscript {
         fragment_version = "1.5.5"
         room_version = "2.5.0"
         timber_version = "5.0.1"
-        crypto_security_version = "1.0.0"
+//        crypto_security_version = "1.0.0" -- revert if necessary
+        crypto_security_version = "1.1.0-alpha06"
         okhttp3_version = "4.10.0"
     }
     repositories {

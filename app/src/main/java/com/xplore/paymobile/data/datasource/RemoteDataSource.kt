@@ -46,6 +46,10 @@ class RemoteDataSource(
         )
     } ?: throw VtTokenException("Missing terminal from shared preferences. vt-token is null.")
 
+    private fun getClearentApiHeader(merchantId: String) = mapOf(
+        *getClearentGatewayApiHeader().toList().toTypedArray(), "MerchantId" to merchantId
+    )
+
 //    private fun getCGWApiHeader() =
 //        mapOf(
 //            "Content-Type" to "application/json",
@@ -120,27 +124,18 @@ class RemoteDataSource(
 
     private var body = HashMap<String, String>()
 
-
-//    suspend fun getOpenBatch() = withContext(Dispatchers.IO) {
-//        try {
-//            val response = clearentGatewayApi.getOpenBatch(
-//                getClearentGatewayApiHeader(), getOpenBatchFilters()
-//            )
-//
-//            return@withContext if (response.isSuccessful) {
-//                NetworkResource.Success(response.body())
-//            } else {
-//                NetworkResource.Error(errorBody = response.errorBody())
-//            }
-//        } catch (ex: Exception) {
-//            return@withContext NetworkResource.Error(exception = ex)
-//        }
-//    }
-
-    suspend fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem): NetworkResource<Any?> = withContext(Dispatchers.IO) {
+    suspend fun processTransaction(
+        transactionId: String,
+        transactionAmount: String,
+        transactionType: String
+    ): NetworkResource<Any?> = withContext(Dispatchers.IO) {
         try {
-            body["type"] = TransactionType.VOID.name
-            body["id"] = transactionItem.id
+            body = hashMapOf()
+            body["type"] = transactionType.uppercase()
+            body["id"] = transactionId
+            if(transactionType.uppercase() == TransactionType.REFUND.name) {
+                body["amount"] = transactionAmount
+            }
             val response = clearentGatewayApi.postTransaction(getClearentGatewayApiHeader(), body)
 
             return@withContext if (response.isSuccessful) {
@@ -171,10 +166,27 @@ class RemoteDataSource(
         }
     }
 
-    suspend fun getTerminalSettings(): NetworkResource<Any?> = withContext(Dispatchers.IO) {
+    suspend fun getTerminalSettings(merchantId: String): NetworkResource<Any?> = withContext(Dispatchers.IO) {
         try {
             val response = clearentGatewayApi.getTerminalSettings(
-                getClearentGatewayApiHeader()
+                getClearentApiHeader(merchantId)
+            )
+
+            return@withContext if (response.isSuccessful) {
+                NetworkResource.Success(response.body())
+            } else {
+                NetworkResource.Error(errorBody = response.errorBody())
+            }
+        } catch (ex: Exception) {
+            return@withContext NetworkResource.Error(exception = ex)
+        }
+    }
+
+    suspend fun getBatches(batchStatus: String): NetworkResource<Any?> = withContext(Dispatchers.IO) {
+        try {
+            val response = clearentGatewayApi.getBatches(
+                getClearentGatewayApiHeader(),
+                batchStatus
             )
 
             return@withContext if (response.isSuccessful) {

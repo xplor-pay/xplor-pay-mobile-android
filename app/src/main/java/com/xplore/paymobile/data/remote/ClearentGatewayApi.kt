@@ -1,9 +1,8 @@
 package com.xplore.paymobile.data.remote
 
-import com.clearent.idtech.android.BuildConfig
+import com.clearent.idtech.android.wrapper.http.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.remote.model.MerchantTerminalsResponse
 import com.xplore.paymobile.data.remote.model.OpenBatchResponse
-import com.xplore.paymobile.data.remote.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.remote.model.TransactionResponse
 import retrofit2.Response
 import retrofit2.http.*
@@ -17,9 +16,9 @@ interface ClearentGatewayApi {
     }
 
     @GET("/rest/v2/batches")
-    suspend fun getOpenBatch(
+    suspend fun getBatches(
         @HeaderMap headers: Map<String, String>,
-        @QueryMap filters: Map<String, String>
+        @Query("status") status: String
     ): Response<OpenBatchResponse>
 
     @GET("/rest/v2/api/merchant/terminals?filter=mobile")

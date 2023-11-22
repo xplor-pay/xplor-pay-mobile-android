@@ -65,15 +65,8 @@ class App : Application() {
 
     private fun initSdkWrapper() {
         clearentWrapper.initializeSDK(
-            context = applicationContext
-            , baseUrl =
-//            if (BuildConfig.DEBUG) {
-//                BASE_URL_SANDBOX
-//            } else {
-                BASE_URL_PROD
-//            client
-//            }
-            ,
+            context = applicationContext,
+            baseUrl = BASE_URL_PROD,
             offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
 

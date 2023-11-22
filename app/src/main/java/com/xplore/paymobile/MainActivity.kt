@@ -2,15 +2,20 @@ package com.xplore.paymobile
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -22,7 +27,6 @@ import com.clearent.idtech.android.wrapper.listener.MerchantAndTerminalRequested
 import com.clearent.idtech.android.wrapper.model.NetworkStatus
 import com.clearent.idtech.android.wrapper.ui.util.checkPermissionsToRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -38,8 +42,7 @@ import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.BrowserState
 import com.xplore.paymobile.ui.login.OktaLoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -79,12 +82,15 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation =
             if (resources.getBoolean(R.bool.isTablet)) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
 
         setupListener()
+
+//        startOktaLoginIfLoggedOut()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
@@ -94,52 +100,69 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         setContentView(binding.root)
 
         showLogin(viewModel.loginVisible)
-        setupViews()
-        startOktaLoginIfLoggedOut()
-//        setupInactivityLogoutFlow()
-        setupNetworkFlow()
-        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
-    }
 
+        startOktaLoginIfLoggedOut()
+        setupAppView()
+//        setupInactivityLogoutFlow()
+//        setupNetworkFlow()
+//        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
+    }
+    //todo is this blocking the main thread?
     private fun startOktaLoginIfLoggedOut() {
         oktaLoginViewModel.state.observe(this) { state ->
+//            Logger.logMessage("Attempting to login.")
             when (state) {
                 is BrowserState.LoggedIn -> {
-                    oktaLoginViewModel.login(this)
-                    viewModel.loginVisible = false
-                }
-                is BrowserState.LoggedOut -> {
+                    println("++++++++++++++++++++++++++Attempting to login.")
                     oktaLoginViewModel.login(this)
                     viewModel.loginVisible = true
+                    //todo can set some of the external methods in the method caller
+
+                    interactionDetector.launchInactivityChecks()
+                    setupInactivityLogoutFlow()
+                    setupNetworkFlow()
+                    clearentWrapper.addMerchantAndTerminalRequestedListener(this)
+//                    navController.navigate(R.id.action_to_post_login)
+
+                }
+                is BrowserState.LoggedOut -> {
+                    println("===========================Attempting to login.")
+                    viewModel.loginVisible = false
+//                    if (state.errorMessage == "Flow cancelled.") {
+//                        this.finishAffinity()
+//                    } else {
+                    oktaLoginViewModel.login(this)
+//                    }
                 }
                 is BrowserState.Loading -> {
+                    println("----------------------------loading")
 //                    oktaLoginViewModel.login(this)
                 }
             }
         }
     }
 
+
+
+//    private suspend fun refreshOktaToken() {
+//        oktaLoginViewModel.refreshOktaToken(this)
+//    }
+
     override fun onResume() {
         super.onResume()
         isResumed = true
-        //todo check if access token is null or expired
 
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
         }
-//            if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
-//                showLogoutDialog()
-//            }
+        if (!binding.loginFragment.isVisible && !interactionDetector.shouldExtend) {
+            showLogoutDialog()
+        }
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 updateApp()
             }
         }
-//        }
-    }
-
-    private fun setupViews() {
-        setupAppView()
     }
 
     override fun onUserInteraction() {
@@ -148,17 +171,18 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     //todo will we want to implement in the future?
-//    private fun setupInactivityLogoutFlow() {
-//        lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                interactionDetector.userInteractionFlow.collect { event ->
-//                    if (event is UserInteractionEvent.Logout) {
-//                        showLogoutDialog()
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private fun setupInactivityLogoutFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                interactionDetector.userInteractionFlow.collect { event ->
+                    if (event is UserInteractionEvent.Logout) {
+                        showLogoutDialog()
+                        logout()
+                    }
+                }
+            }
+        }
+    }
 
 //    private fun setupLoginEventsFlow() {
 //        lifecycleScope.launch {
@@ -247,8 +271,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     fun logout() {
         interactionDetector.stopInactivityChecks()
-        sharedPreferencesDataSource.setAuthToken(null)
         oktaLoginViewModel.logout(this)
+        sharedPreferencesDataSource.setAuthToken(null)
+        navController.navigate(R.id.action_to_post_login)
     }
 
     private fun showLogin(show: Boolean) {
@@ -319,6 +344,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     override fun onDestroy() {
         super.onDestroy()
+        println("****************************destroyed")
         clearentWrapper.removeListener()
         clearentWrapper.removeMerchantAndTerminalRequestedListener(this)
     }
@@ -366,7 +392,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     class ListenerCallbackObserver(
         private val lifecycle: Lifecycle, private val callback: () -> Unit
-    ) : DefaultLifecycleObserver {
+    ) : DefaultLifecycleObserver, LifecycleObserver {
 
         override fun onStart(owner: LifecycleOwner) {
             callback()

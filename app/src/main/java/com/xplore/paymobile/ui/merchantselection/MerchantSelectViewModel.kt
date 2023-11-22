@@ -20,6 +20,9 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
+//NOTE: once the app can call cgw with the edge token, the quest-jwt call will be unnecessary
+
+
 @HiltViewModel
 class MerchantSelectViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
@@ -70,15 +73,24 @@ class MerchantSelectViewModel @Inject constructor(
         val networkResponse = remoteDataSource.fetchTerminals(merchantId)
         if (networkResponse is NetworkResource.Success) {
             val terminals = filterMobileTerminals(networkResponse.data as TerminalsResponse, merchantId)
-            if (terminals.isNotEmpty() && terminals.size == 1) {
+            if (terminals.isNotEmpty() && sharedPrefs.getTerminal() != null ) {
+                val currentTerminal = sharedPrefs.getTerminal()
+                for (terminal in terminals) {
+                    if (terminal.terminalPKId == currentTerminal?.terminalPKId) {
+                        sharedPrefs.setTerminal(terminal)
+                        setClearentCredentials(merchantId, terminal)
+                    }
+                }
+            } else if (terminals.isNotEmpty() && terminals.size == 1) {
                 val selectedTerminal: Terminal = terminals[0]
                 sharedPrefs.setTerminal(selectedTerminal)
                 setClearentCredentials(merchantId, selectedTerminal)
             }
             //todo test this portion
-            if (sharedPrefs.getTerminalTimezone().isBlank()) {
-                getTerminalSettings()
+            if (sharedPrefs.getTerminalTimezone() == null) {
+                getTerminalSettings(merchantId)
             }
+
             _terminalsFlow.emit(terminals)
         } else {
             _terminalsFlow.emit(emptyList())
@@ -122,12 +134,12 @@ class MerchantSelectViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getTerminalSettings() {
-        val networkResponse = remoteDataSource.getTerminalSettings()
+    private suspend fun getTerminalSettings(merchantId: String) {
+        val networkResponse = remoteDataSource.getTerminalSettings(merchantId)
         if (networkResponse is NetworkResource.Success) {
             val terminalSettings = networkResponse.data as TerminalSettingsResponse
-            terminalSettings.payload.terminalSettings?.terminalSetting?.timeZone?.let {
-                sharedPrefs.setTerminalTimezone(
+            terminalSettings.payload.terminalSettings.let {
+                sharedPrefs.setTerminalSettings(
                     it
                 )
             }
@@ -136,6 +148,8 @@ class MerchantSelectViewModel @Inject constructor(
 
     fun getMerchant() = sharedPrefs.getMerchant()
     fun getTerminal() = sharedPrefs.getTerminal()
+
+    fun isLoggedIn() = sharedPrefs.getIsLoggedIn()
 }
 
 sealed class TerminalSelection {

@@ -10,6 +10,7 @@ class UserInteractionDetector @Inject constructor() {
 
     companion object {
         private const val INACTIVITY_TIME = 1000 * 60 * 15L //15 minutes
+//        private const val INACTIVITY_TIME = 1000 * 60 * 1L //1 minute for testing
         private const val CHECK_INTERVAL = 1000 * 10L //10 seconds
     }
 
@@ -48,6 +49,8 @@ class UserInteractionDetector @Inject constructor() {
                 while (true) {
                     delay(CHECK_INTERVAL)
                     val currentTime = System.currentTimeMillis()
+//                    println("current time in ms: $currentTime")
+//                    println(currentTime - lastInteraction > INACTIVITY_TIME)
                     if (currentTime - lastInteraction > INACTIVITY_TIME) {
                         shouldExtend = false
                         logout()

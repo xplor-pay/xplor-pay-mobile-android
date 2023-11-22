@@ -1,80 +1,53 @@
-//package com.xplore.paymobile.ui.batches
-//
-//import android.view.LayoutInflater
-//import android.view.ViewGroup
-//import androidx.recyclerview.widget.DiffUtil
-//import androidx.recyclerview.widget.ListAdapter
-//import androidx.recyclerview.widget.RecyclerView
-//import com.xplore.paymobile.R
-//import com.xplore.paymobile.databinding.BatchCardBinding
-//import com.xplore.paymobile.databinding.TransactionCardBinding
-//
-//class BatchesAdapter() :
-//    ListAdapter<BatchesAdapter.BatchItem, BatchesAdapter.BatchesViewHolder>(
-//        BATCH_COMPARATOR
-//    ) {
-//
-//    private var currentScrollPosition = 0
-//    private val refund = "Refund"
-//    private val void = "Void"
-//    private val sale = "Sale"
-//    private val forcedSale = "Forced Sale"
-//    private val auth = "Auth"
-//    private val unmatchedRefund = "Unmatched Refund"
-//    private val approved = "Approved"
-//    private val declined = "Declined"
-//    private val settled = "Settled"
-//    private val error = "System Error"
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BatchesViewHolder {
-//        val binding =
-//            BatchCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-//        return BatchesViewHolder(binding)
-//    }
-//
-//    override fun onBindViewHolder(holder: BatchesViewHolder, position: Int) {
-////        println("position: $position")
-////        currentScrollPosition = holder.bindingAdapterPosition
-////        val currentItem = getItem(position)
-////        holder.bind(currentItem)
-//    }
-//
-//    fun getCurrentScrollPosition(): Int {
-//        return currentScrollPosition
-//    }
-//
-//    inner class BatchesViewHolder(private val binding: BatchCardBinding) :
-//        RecyclerView.ViewHolder(binding.root) {
-//
-//        fun bind(batchItem: BatchItem) {
-//            binding.batchNumber.text = batchItem.created
-//            binding.amount.text = buildString {
-//                append("$")
-//                append(batchItem.amount)
-//            }
-//
-//
-//        }
-//    }
-//
-//    companion object {
-//        private val BATCH_COMPARATOR = object : DiffUtil.ItemCallback<BatchItem>() {
-//            override fun areItemsTheSame(oldItem: BatchItem, newItem: BatchItem) =
-//                oldItem.id == newItem.id
-//
-//            override fun areContentsTheSame(oldItem: BatchItem, newItem: BatchItem) =
-//                oldItem == newItem
-//        }
-//    }
-//
-//    data class BatchItem(
-//        val id: String,
-//        val amount: String,
-//        val created: String?,
-//        val type: String,
-//        val status: String,
-//        val card: String?,
-//        val settled: Boolean,
-//        val pending: Boolean
-//    )
-//}
+package com.xplore.paymobile.ui.batches
+
+import com.xplore.paymobile.data.datasource.NetworkResource
+import com.xplore.paymobile.data.datasource.RemoteDataSource
+import com.xplore.paymobile.data.remote.model.Batch
+import com.xplore.paymobile.data.remote.model.OpenBatchResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+class BatchesHelper @Inject constructor(private val remoteDataSource: RemoteDataSource) {
+
+    private val bgScope = CoroutineScope(Dispatchers.IO)
+    private var isLoading = false
+
+    private val _resultsFlow = MutableStateFlow<List<Batch>>(listOf())
+    val resultsFlow: Flow<List<Batch>> = _resultsFlow
+
+    fun getOpenBatch() {
+        getBatch("open")
+    }
+
+    private fun getBatch(batchStatus: String) {
+        bgScope.launch {
+            isLoading = true
+            when (val batchResource =
+                remoteDataSource.getBatches(
+                    batchStatus
+                )
+            ) {
+                is NetworkResource.Success -> {
+                    val transactionList = batchResource.data as OpenBatchResponse
+                    val transactions = transactionList.payload?.batches?.batch
+                    if (transactions != null) {
+                        _resultsFlow.emit(transactions)
+                    }
+                    isLoading = false
+                }
+                is NetworkResource.Error -> {
+                    _resultsFlow.emit(emptyList())
+                    Timber.d("Batches request failed")
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    fun getLoading() = isLoading
+}

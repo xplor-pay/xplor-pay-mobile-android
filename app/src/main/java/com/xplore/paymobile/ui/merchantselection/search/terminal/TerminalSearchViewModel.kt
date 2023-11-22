@@ -50,6 +50,7 @@ class TerminalSearchViewModel @Inject constructor(
             item.terminalPKId == merchantItem.id
         }
         selectedTerminal?.also { terminal ->
+            sharedPrefs.setTerminal(terminal)
             clearentWrapper.sdkCredentials.clearentCredentials =
                 ClearentCredentials.MerchantHomeApiCredentials(
                     merchantId = merchantItem.id,

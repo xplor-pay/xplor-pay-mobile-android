@@ -6,8 +6,8 @@
         android:gravity="center" />
     <item
         android:width="60dp"
-        android:height="60dp"
+        android:height="100dp"
         android:drawable="@drawable/splash_screen_text"
         android:gravity="center"
-        android:top="110dp" />
+        android:top="100dp" />
 </layer-list>
