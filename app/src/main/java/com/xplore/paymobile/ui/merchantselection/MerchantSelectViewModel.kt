@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clearent.idtech.android.wrapper.ClearentCredentials
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.http.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.MerchantTerminal
 import com.xplore.paymobile.data.remote.model.Terminal
-import com.xplore.paymobile.data.remote.model.TerminalSettingsResponse
 import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.data.web.Merchant
 import dagger.hilt.android.lifecycle.HiltViewModel

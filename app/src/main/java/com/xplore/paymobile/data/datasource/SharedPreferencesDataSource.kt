@@ -3,9 +3,10 @@ package com.xplore.paymobile.data.datasource
 import android.content.Context
 import androidx.core.content.edit
 import com.clearent.idtech.android.wrapper.ClearentWrapper
+import com.clearent.idtech.android.wrapper.http.model.TerminalSettings
 
 import com.xplore.paymobile.data.remote.model.Terminal
-import com.xplore.paymobile.data.remote.model.TerminalSettings
+//import com.xplore.paymobile.data.remote.model.TerminalSettings
 import com.xplore.paymobile.data.web.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
