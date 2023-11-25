@@ -78,7 +78,7 @@ class TransactionsHelper @Inject constructor(
         transactionType: String
     ) {
         bgScope.launch {
-            when (val transactionResource =
+            when (
                 remoteDataSource.processTransaction(
                     transactionItem.id,
                     transactionItem.amount,
