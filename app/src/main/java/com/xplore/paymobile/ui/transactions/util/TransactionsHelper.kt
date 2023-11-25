@@ -16,7 +16,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionsHelper @Inject constructor(
-    private val sharedPrefs: SharedPreferencesDataSource,
     private val remoteDataSource: RemoteDataSource) {
     companion object {
         private const val PAGE_SIZE = "30"
@@ -26,7 +25,7 @@ class TransactionsHelper @Inject constructor(
 
     private val bgScope = CoroutineScope(Dispatchers.IO)
     //todo: determine why collecting of transactions occurs twice.
-    private var currentPage = 0
+    private var currentPage = 1
     private var isLastPage = false
     private var isLoading = false
     private var isProcessTransactionSuccessful = false
@@ -38,7 +37,7 @@ class TransactionsHelper @Inject constructor(
 
     fun nextPage() {
         println("last: $isLastPage loading: $isLoading")
-        if ((!isLastPage && !isLoading) || currentPage <= totalPages) {
+        if (!isLastPage && !isLoading) {
             requestTransactions()
         }
         currentPage++

@@ -87,11 +87,12 @@ class TransactionsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupTitle()
-        setTransactionListAdapter()
-        submitTransactionList()
         setupLoadingFlow()
+        viewModel.nextPage()
+        setTransactionListAdapter()
         setOnScrollListener()
         setupRefreshListener()
+        submitTransactionList()
     }
 
     private fun setupRefreshListener() {
@@ -234,7 +235,6 @@ class TransactionsFragment : BaseFragment() {
             transactionItemsList.adapter = concatAdapter
             transactionItemsList.layoutManager = LinearLayoutManager(requireContext())
             transactionItemsList.addItemDecoration(MarginItemDecoration(40, 20))
-            viewModel.nextPage()
         }
     }
 
