@@ -8,7 +8,7 @@ import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.JSBridge
-import com.xplore.paymobile.data.web.VTRefreshManager
+import com.xplore.paymobile.data.web.VtTokenRefreshManager
 import com.xplore.paymobile.data.web.JsonConverterUtil
 import com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantPaginationHelper
 import dagger.Module
@@ -125,5 +125,5 @@ object NetworkingModule {
     fun provideVTTimerManager(
         remoteDataSource: RemoteDataSource,
         sharedPreferencesDataSource: SharedPreferencesDataSource
-    ): VTRefreshManager = VTRefreshManager(remoteDataSource, sharedPreferencesDataSource)
+    ): VtTokenRefreshManager = VtTokenRefreshManager(remoteDataSource, sharedPreferencesDataSource)
 }

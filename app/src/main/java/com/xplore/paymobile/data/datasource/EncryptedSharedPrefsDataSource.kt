@@ -9,8 +9,8 @@ class EncryptedSharedPrefsDataSource(context: Context) {
 
     companion object {
         private const val KEY_PREFERENCES = "ENCRYPTED_SHARED_PREFS"
-        private const val API_KEY = "API_KEY"
-        private const val PUBLIC_KEY = "PUBLIC_KEY"
+        private const val VT_TOKEN = "VT_TOKEN"
+//        private const val PUBLIC_KEY = "PUBLIC_KEY"
         private const val PASSPHRASE_KEY = "PASSPHRASE_KEY"
     }
 
@@ -24,18 +24,43 @@ class EncryptedSharedPrefsDataSource(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
+    //    private var spec: KeyGenParameterSpec = MasterKey.Builder(
+//        KEY_PREFERENCES,
+//        KeyProperties.PURPOSE_ENCRYPT.toString()
+//    )
+//        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+//        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+//        .setKeySize(KEY_SIZE)
+//        .build()
+//
+//    var masterKey = MasterKey.Builder(this@MainActivity)
+//        .setKeyGenParameterSpec(spec)
+//        .build()
+//    private val sharedPrefs = EncryptedSharedPreferences.create(
+//        KEY_PREFERENCES,
+//        masterKeyAlias,
+//        context,
+//        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+//        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+//    )
+
     fun setDbPassphrase(passphrase: String) =
         sharedPrefs.edit { putString(PASSPHRASE_KEY, passphrase) }
 
     fun getDbPassphrase(): String = sharedPrefs.getString(PASSPHRASE_KEY, "") ?: ""
 
-    fun setApiKey(apiKey: String) =
-        sharedPrefs.edit { putString(API_KEY, apiKey) }
+    fun setVtToken(apiKey: String) =
+        sharedPrefs.edit { putString(VT_TOKEN, apiKey) }
 
-    fun getApiKey(): String = sharedPrefs.getString(API_KEY, "") ?: ""
+    fun getVtToken(): String = sharedPrefs.getString(VT_TOKEN, "") ?: ""
 
-    fun setPublicKey(publicKey: String) =
-        sharedPrefs.edit { putString(PUBLIC_KEY, publicKey) }
-
-    fun getPublicKey(): String = sharedPrefs.getString(PUBLIC_KEY, "") ?: ""
+//    fun setApiKey(apiKey: String) =
+//        sharedPrefs.edit { putString(API_KEY, apiKey) }
+//
+//    fun getApiKey(): String = sharedPrefs.getString(API_KEY, "") ?: ""
+//
+//    fun setPublicKey(publicKey: String) =
+//        sharedPrefs.edit { putString(PUBLIC_KEY, publicKey) }
+//
+//    fun getPublicKey(): String = sharedPrefs.getString(PUBLIC_KEY, "") ?: ""
 }

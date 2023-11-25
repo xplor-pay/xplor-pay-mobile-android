@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class VTRefreshManager @Inject constructor(
+class VtTokenRefreshManager @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val sharedPrefs: SharedPreferencesDataSource
 ) {
