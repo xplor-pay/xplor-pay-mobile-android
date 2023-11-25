@@ -24,7 +24,6 @@ class TransactionsHelper @Inject constructor(
     private val className: String = "TransactionHelper"
 
     private val bgScope = CoroutineScope(Dispatchers.IO)
-    //todo: determine why collecting of transactions occurs twice.
     private var currentPage = 1
     private var isLastPage = false
     private var isLoading = false
