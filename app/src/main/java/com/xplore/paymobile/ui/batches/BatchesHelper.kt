@@ -21,10 +21,11 @@ class BatchesHelper @Inject constructor(private val remoteDataSource: RemoteData
     val resultsFlow: Flow<List<Batch>> = _resultsFlow
 
     fun getOpenBatch() {
-        getBatch("open")
+        getBatch()
     }
 
-    private fun getBatch(batchStatus: String) {
+    //todo will the batches tab ever access closed transactions?
+    private fun getBatch(batchStatus: String = "open") {
         bgScope.launch {
             isLoading = true
             when (val batchResource =
@@ -33,10 +34,10 @@ class BatchesHelper @Inject constructor(private val remoteDataSource: RemoteData
                 )
             ) {
                 is NetworkResource.Success -> {
-                    val transactionList = batchResource.data as OpenBatchResponse
-                    val transactions = transactionList.payload?.batches?.batch
-                    if (transactions != null) {
-                        _resultsFlow.emit(transactions)
+                    val batchesList = batchResource.data as OpenBatchResponse
+                    val batches = batchesList.payload?.batches?.batch
+                    if (batches != null) {
+                        _resultsFlow.emit(batches)
                     }
                     isLoading = false
                 }
