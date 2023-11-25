@@ -29,14 +29,12 @@ class TransactionsHelper @Inject constructor(
     private var isLastPage = false
     private var isLoading = false
     private var isProcessTransactionSuccessful = false
-    private var totalPages = 0
 
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
     val resultsFlow: Flow<List<Transaction>> = _resultsFlow
 
 
     fun nextPage() {
-        println("last: $isLastPage loading: $isLoading")
         if (!isLastPage && !isLoading) {
             requestTransactions()
         }

@@ -88,11 +88,15 @@ class TransactionsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupTitle()
         setupLoadingFlow()
-        viewModel.nextPage()
+        loadTransactions()
         setTransactionListAdapter()
         setOnScrollListener()
         setupRefreshListener()
         submitTransactionList()
+    }
+
+    private fun loadTransactions() {
+        viewModel.nextPage()
     }
 
     private fun setupRefreshListener() {
@@ -106,9 +110,9 @@ class TransactionsFragment : BaseFragment() {
         binding.transactionItemsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 20) {
+                if (transactionListAdapter.getCurrentScrollPosition() == transactionListAdapter.currentList.size - 10) {
                     if (!viewModel.isLoading() && !viewModel.isLastTransactionPage()) {
-                        viewModel.nextPage()
+                        loadTransactions()
                     }
                 }
             }
