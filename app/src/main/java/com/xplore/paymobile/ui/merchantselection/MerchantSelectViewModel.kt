@@ -86,10 +86,7 @@ class MerchantSelectViewModel @Inject constructor(
                 sharedPrefs.setTerminal(selectedTerminal)
                 setClearentCredentials(merchantId, selectedTerminal)
             }
-            //todo test this portion
-            if (sharedPrefs.getTerminalTimezone() == null) {
-                getTerminalSettings(merchantId)
-            }
+            getTerminalSettings(merchantId)
 
             _terminalsFlow.emit(terminals)
         } else {
@@ -149,7 +146,7 @@ class MerchantSelectViewModel @Inject constructor(
     fun getMerchant() = sharedPrefs.getMerchant()
     fun getTerminal() = sharedPrefs.getTerminal()
 
-    fun isLoggedIn() = sharedPrefs.getIsLoggedIn()
+    fun isLoggedIn() = sharedPrefs.isLoggedIn()
 }
 
 sealed class TerminalSelection {
