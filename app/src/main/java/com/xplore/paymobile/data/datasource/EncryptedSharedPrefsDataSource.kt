@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-
+// NOTE: tink library crashed with later versions so this conversation
+// said to use 1.1.0-alpha01
+//https://issuetracker.google.com/issues/164901843
 class EncryptedSharedPrefsDataSource(context: Context) {
 
     companion object {
         private const val KEY_PREFERENCES = "ENCRYPTED_SHARED_PREFS"
-        private const val VT_TOKEN = "VT_TOKEN"
+//        private const val API_KEY = "API_KEY"
 //        private const val PUBLIC_KEY = "PUBLIC_KEY"
         private const val PASSPHRASE_KEY = "PASSPHRASE_KEY"
     }
@@ -24,35 +26,10 @@ class EncryptedSharedPrefsDataSource(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    //    private var spec: KeyGenParameterSpec = MasterKey.Builder(
-//        KEY_PREFERENCES,
-//        KeyProperties.PURPOSE_ENCRYPT.toString()
-//    )
-//        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-//        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-//        .setKeySize(KEY_SIZE)
-//        .build()
-//
-//    var masterKey = MasterKey.Builder(this@MainActivity)
-//        .setKeyGenParameterSpec(spec)
-//        .build()
-//    private val sharedPrefs = EncryptedSharedPreferences.create(
-//        KEY_PREFERENCES,
-//        masterKeyAlias,
-//        context,
-//        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-//        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-//    )
-
     fun setDbPassphrase(passphrase: String) =
         sharedPrefs.edit { putString(PASSPHRASE_KEY, passphrase) }
 
     fun getDbPassphrase(): String = sharedPrefs.getString(PASSPHRASE_KEY, "") ?: ""
-
-    fun setVtToken(apiKey: String) =
-        sharedPrefs.edit { putString(VT_TOKEN, apiKey) }
-
-    fun getVtToken(): String = sharedPrefs.getString(VT_TOKEN, "") ?: ""
 
 //    fun setApiKey(apiKey: String) =
 //        sharedPrefs.edit { putString(API_KEY, apiKey) }

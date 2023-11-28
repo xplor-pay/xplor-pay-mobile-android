@@ -21,15 +21,15 @@ class SettingsFragment : BaseFragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
-//    private val activityLauncher = registerForActivityResult(
-//        ActivityResultContracts.StartActivityForResult()
-//    ) { result ->
-//        Timber.d(
-//            "SDK UI result code: ${
-//                result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0).toString()
-//            }"
-//        )
-//    }
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        Timber.d(
+            "SDK UI result code: ${
+                result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0).toString()
+            }"
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

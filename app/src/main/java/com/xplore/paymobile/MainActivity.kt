@@ -15,7 +15,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -36,7 +35,6 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
-import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.BrowserState
@@ -100,30 +98,28 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         setContentView(binding.root)
 
         showLogin(viewModel.loginVisible)
-
-        startOktaLoginIfLoggedOut()
         setupAppView()
 //        setupInactivityLogoutFlow()
 //        setupNetworkFlow()
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
-    //todo is this blocking the main thread?
+
     private fun startOktaLoginIfLoggedOut() {
         oktaLoginViewModel.state.observe(this) { state ->
 //            Logger.logMessage("Attempting to login.")
             when (state) {
                 is BrowserState.LoggedIn -> {
-                    println("++++++++++++++++++++++++++Attempting to login.")
-                    oktaLoginViewModel.login(this)
-                    viewModel.loginVisible = true
-                    //todo can set some of the external methods in the method caller
+                    if (!oktaLoginViewModel.isLoggingIn && !sharedPreferencesDataSource.isLoggedIn()) {
+                        println("++++++++++++++++++++++++++Attempting to login.")
+                        oktaLoginViewModel.login(this)
+                        viewModel.loginVisible = true
+                        //todo can set some of the external methods in the method caller
 
-                    interactionDetector.launchInactivityChecks()
-                    setupInactivityLogoutFlow()
-                    setupNetworkFlow()
-                    clearentWrapper.addMerchantAndTerminalRequestedListener(this)
-//                    navController.navigate(R.id.action_to_post_login)
-
+                        interactionDetector.launchInactivityChecks()
+//                    setupInactivityLogoutFlow()
+                        setupNetworkFlow()
+                        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
+                    }
                 }
                 is BrowserState.LoggedOut -> {
                     println("===========================Attempting to login.")
@@ -131,11 +127,12 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //                    if (state.errorMessage == "Flow cancelled.") {
 //                        this.finishAffinity()
 //                    } else {
+                    navController.navigate(R.id.action_to_post_login)
                     oktaLoginViewModel.login(this)
 //                    }
                 }
                 is BrowserState.Loading -> {
-                    println("----------------------------loading")
+//                    println("----------------------------loading")
 //                    oktaLoginViewModel.login(this)
                 }
             }
@@ -151,7 +148,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     override fun onResume() {
         super.onResume()
         isResumed = true
-
+        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
+            startOktaLoginIfLoggedOut()
+        }
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
         }
@@ -171,20 +170,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     //todo will we want to implement in the future?
-    private fun setupInactivityLogoutFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                interactionDetector.userInteractionFlow.collect { event ->
-                    if (event is UserInteractionEvent.Logout) {
-                        showLogoutDialog()
-                        logout()
-                    }
-                }
-            }
-        }
-    }
-
-//    private fun setupLoginEventsFlow() {
+//    private fun setupInactivityLogoutFlow() {
 //        lifecycleScope.launch {
 //            repeatOnLifecycle(Lifecycle.State.STARTED) {
 //                webViewModel.loginEventsFlow.collect { loginEvent ->
@@ -241,18 +227,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         askPermissions()
     }
 
-//    private fun showMerchantChangedDialog() {
-//        BasicDialog(getString(R.string.merchant_changed_dialog_title),
-//            getString(R.string.merchant_changed_dialog_description),
-//            BasicDialog.DialogButton(getString(R.string.ok)) {
-//                if (isOktaEnabled) {
-//                navController.navigate(R.id.merchant_select_fragment)
-//                } else {
-//                    navController.navigate(R.id.action_to_post_login)
-//                }
-//            }).show(supportFragmentManager, BasicDialog::class.java.simpleName)
-//    }
-
     fun navigateToBottomNavItemSelected() {
         navController.navigate(bottomNavItemIdSelected)
     }
@@ -273,7 +247,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         interactionDetector.stopInactivityChecks()
         oktaLoginViewModel.logout(this)
         sharedPreferencesDataSource.setAuthToken(null)
-        navController.navigate(R.id.action_to_post_login)
     }
 
     private fun showLogin(show: Boolean) {
@@ -344,7 +317,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     override fun onDestroy() {
         super.onDestroy()
-        println("****************************destroyed")
         clearentWrapper.removeListener()
         clearentWrapper.removeMerchantAndTerminalRequestedListener(this)
     }

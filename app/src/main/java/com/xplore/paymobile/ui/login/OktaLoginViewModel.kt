@@ -15,6 +15,7 @@ import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,7 +32,7 @@ class OktaLoginViewModel @Inject constructor(
 
 //    private val clearentWrapper = ClearentWrapper.getInstance()
 
-    var isLoggedIn: Boolean = false
+    var isLoggingIn: Boolean = false
     private val _state = MutableLiveData<BrowserState>(BrowserState.Loading)
     val state: LiveData<BrowserState> = _state
 
@@ -50,12 +51,17 @@ class OktaLoginViewModel @Inject constructor(
 //    TODO: the jsbridge is not required anymore as it was used for merchant home.  remove the web views once the app is stable
 
     fun login(context: Context) {
+        isLoggingIn = true
 //        Logger.logMessage("Attempting to login.")
 //        sharedPrefs.setIsLoggedIn(false)
         viewModelScope.launch {
-            if (!isTokenExpired()) {
-                println("===============token not expired")
+            if (sharedPrefs.isLoggedIn()
+                && BrowserState.currentCredentialState().equals(BrowserState.LoggedIn))
+            {
+                println("Browser State = ${BrowserState.currentCredentialState()}")
+                isLoggingIn = false
                 sharedPrefs.setIsLoggedIn(true)
+                isLoggingIn = false
                 return@launch
             }
             println("===============token expired")
@@ -64,17 +70,18 @@ class OktaLoginViewModel @Inject constructor(
                 context = context,
                 redirectUrl = Constants.SIGN_IN_REDIRECT
             )
+
             when (result) {
                 is OidcClientResult.Error -> {
                     println(result.exception.message)
-                    val errorMessage = result.exception.message
-                    if (!errorMessage.isNullOrBlank() && errorMessage == "Flow cancelled.") {
-                        println("***************************")
-                        _state.value = BrowserState.currentCredentialState(errorMessage)
-                    } else {
+//                    val errorMessage = result.exception.message
+//                    if (!errorMessage.isNullOrBlank()) {
+//                        println("***************************")
+//                        _state.value = BrowserState.currentCredentialState(errorMessage)
+//                    } else {
                         Timber.e(result.exception, "Failed to login.")
                         _state.value = BrowserState.currentCredentialState("Failed to login.")
-                    }
+//                    }
                 }
                 is OidcClientResult.Success -> {
                     result.result.refreshToken
@@ -88,14 +95,15 @@ class OktaLoginViewModel @Inject constructor(
                     val decodedString = String(decodedBytes)
 
                     sharedPrefs.setUserInfo(decodedString)
-                    sharedPrefs.setIsLoggedIn(true)
                     //todo need to figure out the okta refresh timer
 //                    launchOktaRefreshTimer()
                     if (hasUserRolePermissionsToAccessApp()) {
                         _state.value = BrowserState.LoggedIn.create()
+                        sharedPrefs.setIsLoggedIn(true)
                     } else {
                         logout(context)
                     }
+                    isLoggingIn = false
                 }
             }
         }
@@ -118,7 +126,7 @@ class OktaLoginViewModel @Inject constructor(
 //            authToken?.let { CredentialBootstrap.oidcClient.revokeToken(it) }
 //            _state.value = BrowserState.LoggedOut()
 //            sharedPrefs.setAuthToken(null)
-//            sharedPrefs.setIsLoggedIn(false)
+            sharedPrefs.setIsLoggedIn(false)
 //
 //            if (isTokenExpired()) {
 //                println("((((((((((((((((((((((((((((((((token exprired")
@@ -133,11 +141,15 @@ class OktaLoginViewModel @Inject constructor(
 //            sharedPrefs.setIsLoggedIn(false)
 //            sharedPrefs.setAuthToken(null)
 //            _state.value = BrowserState.LoggedOut()
+            if (isLoggingIn) {
+                return@launch
+            }
             val oktaToken = CredentialBootstrap.defaultCredential().token?.idToken ?: ""
-            if (oktaToken.isBlank()) {
-                sharedPrefs.setAuthToken(null)
+            if (oktaToken.isBlank() || BrowserState.currentCredentialState() == BrowserState.LoggedOut()) {
+                println("Browser State = ${BrowserState.currentCredentialState()}")
+//                sharedPrefs.setAuthToken(null)
                 _state.value = BrowserState.LoggedOut()
-                sharedPrefs.setIsLoggedIn(false)
+//                sharedPrefs.setIsLoggedIn(false)
                 return@launch
             }
             val result =
@@ -150,17 +162,20 @@ class OktaLoginViewModel @Inject constructor(
                 is OidcClientResult.Error -> {
                     Timber.e(result.exception, "Failed to logout.")
                     _state.value = BrowserState.currentCredentialState("Failed to logout.")
-                    sharedPrefs.setAuthToken(null)
+                    println("unsuccessful logout.......")
+//                    sharedPrefs.setAuthToken(null)
                     _state.value = BrowserState.LoggedOut()
-                    sharedPrefs.setIsLoggedIn(false)
+//                    sharedPrefs.setIsLoggedIn(false)
                 }
                 is OidcClientResult.Success -> {
+                    println("successful logout.......")
                     CredentialBootstrap.defaultCredential().delete()
-                    sharedPrefs.setAuthToken(null)
+//                    sharedPrefs.setAuthToken(null)
                     _state.value = BrowserState.LoggedOut()
                     sharedPrefs.setIsLoggedIn(false)
                 }
             }
+            delay(500L)
         }
     }
 

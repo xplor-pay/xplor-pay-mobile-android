@@ -163,13 +163,12 @@ class SharedPreferencesDataSource @Inject constructor(
         this.isLoggedIn = isLoggedIn
     }
 
-    fun getIsLoggedIn() : Boolean {
+    fun isLoggedIn() : Boolean {
         return this.isLoggedIn
     }
 
 
     fun setTerminalSettings(terminalSettings: TerminalSettings) {
-        ClearentWrapper.getInstance().getCurrentTerminalSettings()
         val terminalTimeZone = terminalSettings.timeZone
         sharedPrefs.edit {
             putString(

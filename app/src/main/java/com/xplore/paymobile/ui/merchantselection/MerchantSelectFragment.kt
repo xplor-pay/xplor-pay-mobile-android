@@ -82,7 +82,9 @@ class MerchantSelectFragment : Fragment() {
         val selectedMerchant = viewModel.getMerchant()
         val selectedTerminal = viewModel.getTerminal()
         val allTerminals = sharedViewModel.terminals
-//        if (selectedMerchant != null && viewModel.isLoggedIn()) {
+//        if (viewModel.isLoggedIn()) {
+//            binding.merchantLayout.visibility = View.VISIBLE
+//        }
         if (selectedMerchant != null) {
             when {
                 allTerminals.isEmpty() && selectedTerminal == null -> {
@@ -150,6 +152,12 @@ class MerchantSelectFragment : Fragment() {
             }
         }
     }
+
+//    private fun setupMerchantSelectPageVisibility() {
+//        if (viewModel.isLoggedIn()) {
+//            binding.merchantLayout.visibility = View.VISIBLE
+//        }
+//    }
 
     private fun setupMerchantFlow() {
         lifecycleScope.launchWhenStarted {
