@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
         registerForActivityResult(multiplePermissionsContract) {}
-
+// todo let's not show the merchant select screen before the user is logged in
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation =
             if (resources.getBoolean(R.bool.isTablet)) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -88,8 +88,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
         setupListener()
 
-//        startOktaLoginIfLoggedOut()
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
@@ -98,12 +96,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         setContentView(binding.root)
 
         showLogin(viewModel.loginVisible)
-        setupAppView()
+//        setupAppView()
 //        setupInactivityLogoutFlow()
 //        setupNetworkFlow()
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
 
+    //todo sometimes the app logs out but immediately logs back in.
+    // need to find a way to revoke or delete the credential token.
+    // sometimes the app opens the web browser multiple times when logging in.
+    // the user can still press the "Continue to Xplor Pay app" to be redirected back to the app...not optimal
     private fun startOktaLoginIfLoggedOut() {
         oktaLoginViewModel.state.observe(this) { state ->
 //            Logger.logMessage("Attempting to login.")
@@ -117,6 +119,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
                         interactionDetector.launchInactivityChecks()
 //                    setupInactivityLogoutFlow()
+                        setupAppView()
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
                     }
@@ -138,12 +141,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
             }
         }
     }
-
-
-
-//    private suspend fun refreshOktaToken() {
-//        oktaLoginViewModel.refreshOktaToken(this)
-//    }
 
     override fun onResume() {
         super.onResume()

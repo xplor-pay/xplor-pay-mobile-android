@@ -31,6 +31,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+//todo determine why collecting of transactions occurs twice.
+// first time collecting transactions, call not made to get transactions
 @AndroidEntryPoint
 class TransactionsFragment : BaseFragment() {
 

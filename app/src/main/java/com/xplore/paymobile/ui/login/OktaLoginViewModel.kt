@@ -21,7 +21,7 @@ import timber.log.Timber
 import javax.inject.Inject
 import org.apache.commons.codec.binary.Base64
 
-
+//todo could we use a webview to login?  not a fan of destroying and rerending the home page
 @HiltViewModel
 class OktaLoginViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource

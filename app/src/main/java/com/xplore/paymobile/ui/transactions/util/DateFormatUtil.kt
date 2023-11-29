@@ -6,6 +6,7 @@ import java.util.*
 
 object DateFormatUtil {
 
+    //todo figure out why the terminal settings is not set when using the app for the first time
     fun formatDateTime(transactionDate: String, terminalTimezone: String?): String? {
         return try {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
