@@ -61,7 +61,6 @@ class OktaLoginViewModel @Inject constructor(
                 println("Browser State = ${BrowserState.currentCredentialState()}")
                 isLoggingIn = false
                 sharedPrefs.setIsLoggedIn(true)
-                isLoggingIn = false
                 return@launch
             }
             println("===============token expired")

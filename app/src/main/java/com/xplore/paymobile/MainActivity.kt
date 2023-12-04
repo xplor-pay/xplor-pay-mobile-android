@@ -10,11 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -96,7 +92,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         setContentView(binding.root)
 
         showLogin(viewModel.loginVisible)
-//        setupAppView()
+        setupAppView()
 //        setupInactivityLogoutFlow()
 //        setupNetworkFlow()
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
@@ -115,10 +111,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
                         println("++++++++++++++++++++++++++Attempting to login.")
                         oktaLoginViewModel.login(this)
                         viewModel.loginVisible = true
-                        //todo can set some of the external methods in the method caller
 
-                        interactionDetector.launchInactivityChecks()
-//                    setupInactivityLogoutFlow()
+                        //todo setup the inactivity flow 
+//                        setupInactivityLogoutFlow()
                         setupAppView()
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
@@ -130,7 +125,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //                    if (state.errorMessage == "Flow cancelled.") {
 //                        this.finishAffinity()
 //                    } else {
-                    navController.navigate(R.id.action_to_post_login)
+//                    navController.navigate(R.id.action_to_post_login)
                     oktaLoginViewModel.login(this)
 //                    }
                 }
@@ -145,8 +140,14 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     override fun onResume() {
         super.onResume()
         isResumed = true
-        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
+        //todo remove this.  if the user does not accept permissions, check permissions before initiating transaction
+//        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
+        if (clearentWrapper.hasAppPermissions() && sharedPreferencesDataSource.isSdkSetUp() && !sharedPreferencesDataSource.isLoggedIn()) {
             startOktaLoginIfLoggedOut()
+            if (sharedPreferencesDataSource.isLoggedIn()) {
+                interactionDetector.launchInactivityChecks()
+                navController.navigate(R.id.action_to_post_login)
+            }
         }
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
@@ -170,7 +171,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //    private fun setupInactivityLogoutFlow() {
 //        lifecycleScope.launch {
 //            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                webViewModel.loginEventsFlow.collect { loginEvent ->
+//                viewModel. .collect { loginEvent ->
 //                    when (loginEvent) {
 //                        LoginEvents.Logout -> {
 //                            showLogoutDialog()

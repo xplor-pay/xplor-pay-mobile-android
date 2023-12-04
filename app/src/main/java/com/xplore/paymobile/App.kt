@@ -36,9 +36,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-//        if (BuildConfig.DEBUG) {
-//            Timber.plant(Timber.DebugTree())
-//        }
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
         AuthFoundationDefaults.cache = SharedPreferencesCache.create(this)
         val oidcConfiguration = OidcConfiguration(
             clientId = Constants.CLIENT_ID,

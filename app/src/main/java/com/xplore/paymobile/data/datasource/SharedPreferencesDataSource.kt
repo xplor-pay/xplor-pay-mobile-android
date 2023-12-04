@@ -169,7 +169,8 @@ class SharedPreferencesDataSource @Inject constructor(
 
 
     fun setTerminalSettings(terminalSettings: TerminalSettings) {
-        val terminalTimeZone = terminalSettings.timeZone
+//        val terminalTimeZone = terminalSettings.timeZone
+        val terminalTimeZone = "US/Central"
         sharedPrefs.edit {
             putString(
                 TERMINAL_TIMEZONE,
