@@ -12,14 +12,6 @@ sealed class GroupedUserRoles(val roles: Set<String>) {
         )
     )
 
-    object MerchantHomeRoles : GroupedUserRoles(
-        setOf(
-            "MerchantHomeUser",
-            "CustomerSupport",
-            "SalesRep"
-        )
-    )
-
     object NoAccess : GroupedUserRoles(setOf(""))
 
     companion object {
@@ -30,10 +22,6 @@ sealed class GroupedUserRoles(val roles: Set<String>) {
             for (role in roles) {
                 if (VirtualTerminalRoles.roles.contains(role))
                     return VirtualTerminalRoles
-
-                if (MerchantHomeRoles.roles.contains(role))
-                    return MerchantHomeRoles
-
             }
             println("**************************no access")
             return NoAccess

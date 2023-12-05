@@ -25,7 +25,8 @@ object Logger {
     private fun sendLogsToClearentWrapper(logMessage: String) {
 //        if (clearentWrapper.getCurrentTerminalSettings() == null) {
 //        }
-        clearentWrapper.logAppMessage(clientVersion, logMessage)
+        println("logMessage: $logMessage")
+//        clearentWrapper.logAppMessage(clientVersion, logMessage)
     }
 
 //    companion object {

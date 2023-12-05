@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.transactions.TransactionsFragment">
 
+    <FrameLayout
+        android:id="@+id/no_transactions_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="No transactions found. Please fo to the payment tab to start processing your first transaction."
+        app:flow_verticalAlign="center"
+        app:flow_horizontalAlign="center"/>
+
     <include
         android:id="@+id/toolbar_layout"
         layout="@layout/layout_toolbar"

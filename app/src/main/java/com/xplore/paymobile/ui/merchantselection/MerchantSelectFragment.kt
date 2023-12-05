@@ -24,6 +24,8 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MerchantSelectFragment : Fragment() {
 
+    private var selectedMerchantId: String? = ""
+
     private var _binding: FragmentMerchantSelectBinding? = null
     private val binding get() = _binding!!
 
@@ -132,6 +134,7 @@ class MerchantSelectFragment : Fragment() {
                                 Timber.d("Selected terminal is ${terminalSelection.terminal.terminalName}")
                                 Timber.d("Selected terminal id ${terminalSelection.terminal.terminalPKId}")
                                 setupTerminalName(terminalSelection.terminal)
+                                viewModel.getTerminalSettings(selectedMerchantId!!)
                             }
                             is TerminalSelection.NoTerminal -> {
                                 Timber.d("No terminal selected")
@@ -163,6 +166,7 @@ class MerchantSelectFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.merchantFlow.collect { merchant ->
                 Timber.d("Selected merchant is ${merchant?.merchantName}")
+                selectedMerchantId = merchant?.merchantNumber
                 setupMerchantName(merchant)
             }
         }
