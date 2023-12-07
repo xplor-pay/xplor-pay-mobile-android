@@ -58,9 +58,7 @@ class BatchesFragment : BaseFragment() {
     private fun setupTitle() {
         with(binding) {
             toolbarLayout.toolbarTitle.text = getString(R.string.batches_title)
-            toolbarLayout.backButton.setOnClickListener {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
+            toolbarLayout.backButton.isVisible = false
         }
     }
 
