@@ -10,7 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -102,25 +106,26 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     // need to find a way to revoke or delete the credential token.
     // sometimes the app opens the web browser multiple times when logging in.
     // the user can still press the "Continue to Xplor Pay app" to be redirected back to the app...not optimal
-    private fun startOktaLoginIfLoggedOut() {
+    private fun startOktaFlow() {
         oktaLoginViewModel.state.observe(this) { state ->
 //            Logger.logMessage("Attempting to login.")
             when (state) {
                 is BrowserState.LoggedIn -> {
                     if (!oktaLoginViewModel.isLoggingIn && !sharedPreferencesDataSource.isLoggedIn()) {
                         println("++++++++++++++++++++++++++Attempting to login.")
-                        oktaLoginViewModel.login(this)
+//                        oktaLoginViewModel.login(this)
                         viewModel.loginVisible = true
 
                         //todo setup the inactivity flow 
 //                        setupInactivityLogoutFlow()
-                        setupAppView()
+//                        setupAppView()
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
+                        navController.navigate(R.id.action_to_post_login)
                     }
                 }
                 is BrowserState.LoggedOut -> {
-                    println("===========================Attempting to login.")
+                    println("===========================Attempting to logout.")
                     viewModel.loginVisible = false
 //                    if (state.errorMessage == "Flow cancelled.") {
 //                        this.finishAffinity()
@@ -130,7 +135,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //                    }
                 }
                 is BrowserState.Loading -> {
-//                    println("----------------------------loading")
+                    println("----------------------------loading")
 //                    oktaLoginViewModel.login(this)
                 }
             }
@@ -143,10 +148,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         //todo remove this.  if the user does not accept permissions, check permissions before initiating transaction
 //        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
         if (clearentWrapper.hasAppPermissions() && sharedPreferencesDataSource.isSdkSetUp() && !sharedPreferencesDataSource.isLoggedIn()) {
-            startOktaLoginIfLoggedOut()
+            startOktaFlow()
             if (sharedPreferencesDataSource.isLoggedIn()) {
                 interactionDetector.launchInactivityChecks()
-                navController.navigate(R.id.action_to_post_login)
             }
         }
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
