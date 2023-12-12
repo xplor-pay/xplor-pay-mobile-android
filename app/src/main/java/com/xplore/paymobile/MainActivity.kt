@@ -159,9 +159,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 interactionDetector.userInteractionFlow.collect { event ->
                     if (event is UserInteractionEvent.Logout) {
-                        //todo need to fix show logout dialog
-//                        showLogoutDialog()
-                        logout()
+                        showLogoutDialog()
                     }
                 }
             }
