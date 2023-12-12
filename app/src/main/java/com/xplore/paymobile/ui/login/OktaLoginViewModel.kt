@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.okta.authfoundation.claims.name
 import com.okta.authfoundation.client.OidcClientResult
+import com.okta.authfoundation.credential.Token
 import com.okta.authfoundationbootstrap.CredentialBootstrap
 import com.okta.webauthenticationui.WebAuthenticationClient.Companion.createWebAuthenticationClient
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.GroupedUserRoles
+import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -20,13 +22,12 @@ import org.apache.commons.codec.binary.Base64
 
 @HiltViewModel
 class OktaLoginViewModel @Inject constructor(
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
+    private val interactionDetector: UserInteractionDetector
 ) : ViewModel() {
 
     private val timerScope = CoroutineScope(Dispatchers.IO)
     private var timerJob: Job? = null
-
-//    private val clearentWrapper = ClearentWrapper.getInstance()
 
     var isLoggingIn: Boolean = false
     private val _state = MutableLiveData<BrowserState>(BrowserState.Loading)
@@ -47,6 +48,7 @@ class OktaLoginViewModel @Inject constructor(
     }
 
     fun login(context: Context, isRefresh: Boolean = false) {
+        startInactivityTimer()
         isLoggingIn = true
 //        Logger.logMessage("Attempting to login.")
         viewModelScope.launch {
@@ -66,44 +68,49 @@ class OktaLoginViewModel @Inject constructor(
                 redirectUrl = Constants.SIGN_IN_REDIRECT
             )
 
-            when (result) {
-                is OidcClientResult.Error -> {
-                    println(result.exception.message)
-//                    val errorMessage = result.exception.message
-//                    if (!errorMessage.isNullOrBlank()) {
-//                        println("***************************")
-//                        _state.value = BrowserState.currentCredentialState(errorMessage)
-//                    } else {
-                        Timber.e(result.exception, "Failed to login.")
-//                        _state.value = BrowserState.currentCredentialState("Failed to login.")
-//                    }
-                }
-                is OidcClientResult.Success -> {
-                    result.result.refreshToken
-                    val credential = CredentialBootstrap.defaultCredential()
-                    credential.storeToken(token = result.result) //use to track expired token?  maybe??
-                    //TODO the getValidAccessToken will also refresh the token if it is expired
-                    val accessToken: String? = credential.getValidAccessToken()
-                    sharedPrefs.setAuthToken(accessToken)
-                    val base64Url: String? = accessToken?.split(".")?.get(1)
-                    val decodedBytes = base64.decode(base64Url)
-                    val decodedString = String(decodedBytes)
+            handleOktaLoginResponse(result, context)
+        }
+    }
 
-                    sharedPrefs.setUserInfo(decodedString)
-                    //todo need to figure out the okta refresh timer
-//                    launchOktaRefreshTimer()
-                    if (hasUserRolePermissionsToAccessApp()) {
-                        _state.value = BrowserState.LoggedIn.create()
-                        sharedPrefs.setIsLoggedIn(true)
-                    } else {
-                        println("logout in login")
-                        logout(context)
-                    }
-                    launchOktaRefreshTimer(context)
-                    isLoggingIn = false
+    private suspend fun handleOktaLoginResponse(
+        result: OidcClientResult<Token>,
+        context: Context
+    ) {
+        when (result) {
+            is OidcClientResult.Error -> {
+                println(result.exception.message)
+                Timber.e(result.exception, "Failed to login.")
+                _state.value = BrowserState.currentCredentialState("Failed to login.")
+            }
+            is OidcClientResult.Success -> {
+                val refreshToken = result.result.refreshToken
+                println("refresh token: $refreshToken")
+                launchOktaRefreshTimer()
+                val credential = CredentialBootstrap.defaultCredential()
+                credential.storeToken(token = result.result) //use to track expired token?  maybe??
+                //TODO the getValidAccessToken will also refresh the token if it is expired
+                val accessToken: String? = credential.getValidAccessToken()
+                sharedPrefs.setAuthToken(accessToken)
+                val base64Url: String? = accessToken?.split(".")?.get(1)
+                val decodedBytes = base64.decode(base64Url)
+                val decodedString = String(decodedBytes)
+
+                sharedPrefs.setUserInfo(decodedString)
+                if (hasUserRolePermissionsToAccessApp()) {
+                    _state.value = BrowserState.LoggedIn.create()
+                    sharedPrefs.setIsLoggedIn(true)
+                } else {
+                    println("logout in login")
+                    logout(context)
                 }
+
+                isLoggingIn = false
             }
         }
+    }
+
+    fun startInactivityTimer() {
+        interactionDetector.launchInactivityChecks()
     }
 
     private fun hasUserRolePermissionsToAccessApp(): Boolean {
@@ -133,31 +140,35 @@ class OktaLoginViewModel @Inject constructor(
                     redirectUrl = Constants.LOGOUT_REDIRECT,
                     oktaToken
                 )
-            when (result) {
-                is OidcClientResult.Error -> {
-                    Timber.e(result.exception, "Failed to logout.")
-                    _state.value = BrowserState.currentCredentialState("Failed to logout.")
-                    println("unsuccessful logout.......")
-                    _state.value = BrowserState.LoggedOut()
-                }
-                is OidcClientResult.Success -> {
-                    println("successful logout.......")
-                    CredentialBootstrap.defaultCredential().delete()
-                    _state.value = BrowserState.LoggedOut()
-                }
-            }
+            handleOktaLogoutResponse(result)
             println("sleeping**************")
-            delay(1000L)
+            launchOktaRefreshTimer(false)
         }
     }
 
-    private fun launchOktaRefreshTimer(context: Context) {
+    private suspend fun handleOktaLogoutResponse(result: OidcClientResult<Unit>) {
+        when (result) {
+            is OidcClientResult.Error -> {
+                Timber.e(result.exception, "Failed to logout.")
+                _state.value = BrowserState.currentCredentialState("Failed to logout.")
+                println("unsuccessful logout.......")
+                _state.value = BrowserState.LoggedOut()
+            }
+            is OidcClientResult.Success -> {
+                println("successful logout.......")
+                CredentialBootstrap.defaultCredential().delete()
+                _state.value = BrowserState.LoggedOut()
+            }
+        }
+    }
+
+    fun launchOktaRefreshTimer(startRefreshCheck: Boolean = true) {
         Timber.d("Launch Okta refresh timer")
         timerJob = timerScope.launch {
             while (true) {
-                delay(1000 * 60 * 10L)
-                Timber.d("refreshing token")
-//                login(context, isRefresh = true)
+                delay(1000 * 60 * 10L) // 10 minute delay
+//                delay(1000 * 60 * 1L) //for testing
+                Timber.d("refreshing bearer token")
                 refreshOktaToken()
             }
         }
@@ -168,50 +179,16 @@ class OktaLoginViewModel @Inject constructor(
 //    }
 
     private suspend fun refreshOktaToken() {
-//        if (currentCredentialState() == BrowserState.LoggedOut
-//        )
-        val credential = CredentialBootstrap.defaultCredential()
-        var token = credential.token?.accessToken
-        if (token.isNullOrBlank()) {
-            token = credential.getValidAccessToken()
+        val result = CredentialBootstrap.defaultCredential().refreshToken()
+        when (result) {
+            is OidcClientResult.Error -> {
+                println("failed to refresh")
+            }
+            is OidcClientResult.Success -> {
+                sharedPrefs.setAuthToken(CredentialBootstrap.defaultCredential().getValidAccessToken())
+                println("succeeded to refresh ${CredentialBootstrap.defaultCredential().getValidAccessToken()}")
+            }
         }
-//        Timber.d("bearer token before refresh $token")
-        val result = token?.let { CredentialBootstrap.oidcClient.refreshToken(it) }
-//        Timber.d("after refresh ${result.toString()}")
-//        launchOktaRefreshTimer()
-
-//        val result = CredentialBootstrap.oidcClient.createWebAuthenticationClient().login(
-//            context = context,
-//            redirectUrl = Constants.SIGN_IN_REDIRECT
-//        )
-//        when (result) {
-//            is OidcClientResult.Error -> {
-//                println(result.exception.message)
-//                val errorMessage = result.exception.message
-//                if (!errorMessage.isNullOrBlank() && errorMessage == "Flow cancelled.") {
-//                    println("***************************")
-////                    _state.value = BrowserState.currentCredentialState(errorMessage)
-//                } else {
-//                    Timber.e(result.exception, "Failed to login.")
-////                    _state.value = BrowserState.currentCredentialState("Failed to login.")
-//                }
-//            }
-//            is OidcClientResult.Success -> {
-//                val credential = CredentialBootstrap.defaultCredential()
-//                credential.storeToken(token = result.result) //use to track expired token?  maybe??
-//                //TODO the getValidAccessToken will also refresh the token if it is expired
-//                val accessToken: String? = credential.getValidAccessToken()
-//                sharedPrefs.setAuthToken(accessToken)
-//                val base64Url: String? = accessToken?.split(".")?.get(1)
-//                val decodedBytes = base64.decode(base64Url)
-//                val decodedString = String(decodedBytes)
-//
-//                sharedPrefs.setUserInfo(decodedString)
-//                sharedPrefs.setIsLoggedIn(true)
-//
-////                _state.value = BrowserState.LoggedIn.create()
-//            }
-//        }
     }
 }
 

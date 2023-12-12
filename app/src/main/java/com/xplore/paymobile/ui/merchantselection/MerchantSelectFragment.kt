@@ -52,6 +52,7 @@ class MerchantSelectFragment : Fragment() {
         setupMerchantFlow()
         setupTerminalFlow()
         setupLoadingFlow()
+//        setupMerchantSelectPageVisibility()
     }
 
     private fun setupLoadingFlow() {

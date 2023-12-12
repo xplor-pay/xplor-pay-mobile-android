@@ -42,5 +42,5 @@ object Constants {
     const val SB_CLIENT_ID = "0oa3a1ic7mGSRLqrZ1d7"
     const val SB_DISCOVERY_URL = "https://auth-sb.clearent.net/oauth2/aus3a1kavt9qzEcsz1d7/.well-known/openid-configuration"
 
-    const val DEFAULT_SCOPE = "openid profile"
+    const val DEFAULT_SCOPE = "openid profile offline_access"
 }

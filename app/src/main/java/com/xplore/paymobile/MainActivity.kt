@@ -35,6 +35,7 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.ActivityMainBinding
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
+import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
 import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.BrowserState
@@ -97,7 +98,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
         showLogin(viewModel.loginVisible)
         setupAppView()
-//        setupInactivityLogoutFlow()
+        setupInactivityLogoutFlow()
 //        setupNetworkFlow()
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
@@ -108,31 +109,22 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     // the user can still press the "Continue to Xplor Pay app" to be redirected back to the app...not optimal
     private fun startOktaFlow() {
         oktaLoginViewModel.state.observe(this) { state ->
-//            Logger.logMessage("Attempting to login.")
             when (state) {
                 is BrowserState.LoggedIn -> {
-                    if (!oktaLoginViewModel.isLoggingIn && !sharedPreferencesDataSource.isLoggedIn()) {
+                    if (!oktaLoginViewModel.isLoggingIn) {
+                        if (!sharedPreferencesDataSource.isLoggedIn())
+                            viewModel.loginVisible = true
                         println("++++++++++++++++++++++++++Attempting to login.")
-//                        oktaLoginViewModel.login(this)
-                        viewModel.loginVisible = true
-
-                        //todo setup the inactivity flow 
-//                        setupInactivityLogoutFlow()
-//                        setupAppView()
+                        oktaLoginViewModel.login(this)
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
-                        navController.navigate(R.id.action_to_post_login)
                     }
                 }
                 is BrowserState.LoggedOut -> {
                     println("===========================Attempting to logout.")
                     viewModel.loginVisible = false
-//                    if (state.errorMessage == "Flow cancelled.") {
-//                        this.finishAffinity()
-//                    } else {
-//                    navController.navigate(R.id.action_to_post_login)
+                    navController.navigate(R.id.action_to_post_login)
                     oktaLoginViewModel.login(this)
-//                    }
                 }
                 is BrowserState.Loading -> {
                     println("----------------------------loading")
@@ -145,13 +137,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     override fun onResume() {
         super.onResume()
         isResumed = true
-        //todo remove this.  if the user does not accept permissions, check permissions before initiating transaction
-//        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
-        if (clearentWrapper.hasAppPermissions() && sharedPreferencesDataSource.isSdkSetUp() && !sharedPreferencesDataSource.isLoggedIn()) {
+        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
             startOktaFlow()
-            if (sharedPreferencesDataSource.isLoggedIn()) {
-                interactionDetector.launchInactivityChecks()
-            }
         }
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {
             showForceLoginDialog()
@@ -171,21 +158,19 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         return super.onUserInteraction()
     }
 
-    //todo will we want to implement in the future?
-//    private fun setupInactivityLogoutFlow() {
-//        lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel. .collect { loginEvent ->
-//                    when (loginEvent) {
-//                        LoginEvents.Logout -> {
-//                            showLogoutDialog()
-//                        }
-//                        else -> {}
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private fun setupInactivityLogoutFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                interactionDetector.userInteractionFlow.collect { event ->
+                    if (event is UserInteractionEvent.Logout) {
+                        //todo need to fix show logout dialog
+//                        showLogoutDialog()
+                        logout()
+                    }
+                }
+            }
+        }
+    }
 
     private fun showLogoutDialog() {
         interactionDetector.stopInactivityChecks()
