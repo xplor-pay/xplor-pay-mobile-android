@@ -110,7 +110,7 @@ class SharedPreferencesDataSource @Inject constructor(
                 jsonConverterUtil.toJson(terminal)
             )
         }
-//        ClearentWrapper.getInstance().vtToken = terminal.questJwt.token
+        ClearentWrapper.getInstance().setVtToken(terminal.questJwt.token)
         _terminalFlow.emit(terminal)
     }
 

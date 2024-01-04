@@ -11,8 +11,8 @@ class EncryptedSharedPrefsDataSource(context: Context) {
 
     companion object {
         private const val KEY_PREFERENCES = "ENCRYPTED_SHARED_PREFS"
-//        private const val API_KEY = "API_KEY"
-//        private const val PUBLIC_KEY = "PUBLIC_KEY"
+        private const val API_KEY = "API_KEY"
+        private const val PUBLIC_KEY = "PUBLIC_KEY"
         private const val PASSPHRASE_KEY = "PASSPHRASE_KEY"
     }
 
@@ -31,13 +31,13 @@ class EncryptedSharedPrefsDataSource(context: Context) {
 
     fun getDbPassphrase(): String = sharedPrefs.getString(PASSPHRASE_KEY, "") ?: ""
 
-//    fun setApiKey(apiKey: String) =
-//        sharedPrefs.edit { putString(API_KEY, apiKey) }
-//
-//    fun getApiKey(): String = sharedPrefs.getString(API_KEY, "") ?: ""
-//
-//    fun setPublicKey(publicKey: String) =
-//        sharedPrefs.edit { putString(PUBLIC_KEY, publicKey) }
-//
-//    fun getPublicKey(): String = sharedPrefs.getString(PUBLIC_KEY, "") ?: ""
+    fun setApiKey(apiKey: String) =
+        sharedPrefs.edit { putString(API_KEY, apiKey) }
+
+    fun getApiKey(): String = sharedPrefs.getString(API_KEY, "") ?: ""
+
+    fun setPublicKey(publicKey: String) =
+        sharedPrefs.edit { putString(PUBLIC_KEY, publicKey) }
+
+    fun getPublicKey(): String = sharedPrefs.getString(PUBLIC_KEY, "") ?: ""
 }

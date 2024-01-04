@@ -110,21 +110,21 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
                     if (!oktaLoginViewModel.isLoggingIn) {
                         if (!sharedPreferencesDataSource.isLoggedIn())
                             viewModel.loginVisible = true
-                        println("++++++++++++++++++++++++++Attempting to login.")
                         oktaLoginViewModel.login(this)
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
                     }
                 }
                 is BrowserState.LoggedOut -> {
-                    println("===========================Attempting to logout.")
+                    println("===========================Attempting to login.")
                     viewModel.loginVisible = false
-                    navController.navigate(R.id.action_to_post_login)
-                    oktaLoginViewModel.login(this)
+                    if (!oktaLoginViewModel.isLoggingIn && clearentWrapper.hasAppPermissions()) {
+                        oktaLoginViewModel.login(this)
+                        navController.navigate(R.id.action_to_post_login)
+                    }
                 }
                 is BrowserState.Loading -> {
                     println("----------------------------loading")
-//                    oktaLoginViewModel.login(this)
                 }
             }
         }
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     override fun onResume() {
         super.onResume()
         isResumed = true
-        if (clearentWrapper.hasAppPermissions() && !sharedPreferencesDataSource.isLoggedIn()) {
+        if (clearentWrapper.hasAppPermissions() && (!sharedPreferencesDataSource.isLoggedIn() || oktaLoginViewModel.isTokenExpired)) {
             startOktaFlow()
         }
         if (viewModel.shouldShowForceLoginDialog && !binding.loginFragment.isVisible) {

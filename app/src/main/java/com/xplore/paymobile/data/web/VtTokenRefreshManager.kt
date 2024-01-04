@@ -9,7 +9,7 @@ import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
-
+//todo consider storing all terminal info when refreshing.  no need to update in settings page
 class VtTokenRefreshManager @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val sharedPrefs: SharedPreferencesDataSource

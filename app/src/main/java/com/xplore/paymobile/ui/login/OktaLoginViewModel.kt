@@ -28,6 +28,7 @@ class OktaLoginViewModel @Inject constructor(
 
     private val timerScope = CoroutineScope(Dispatchers.IO)
     private var timerJob: Job? = null
+    var isTokenExpired: Boolean = true
 
     var isLoggingIn: Boolean = false
     private val _state = MutableLiveData<BrowserState>(BrowserState.Loading)
@@ -41,20 +42,21 @@ class OktaLoginViewModel @Inject constructor(
         }
     }
 
-    suspend fun isTokenExpired() = getValidToken().isNullOrBlank()
+    private suspend fun setTokenExpiredValue() {
+        isTokenExpired = getValidToken().isNullOrBlank()
+    }
 
-    suspend fun getValidToken(): String? {
+    private suspend fun getValidToken(): String? {
         return CredentialBootstrap.defaultCredential().getAccessTokenIfValid()
     }
 
     fun login(context: Context, isRefresh: Boolean = false) {
-        startInactivityTimer()
         isLoggingIn = true
 //        Logger.logMessage("Attempting to login.")
         viewModelScope.launch {
             if (sharedPrefs.isLoggedIn()
                 && BrowserState.currentCredentialState().equals(BrowserState.LoggedIn)
-                && !isTokenExpired() && !isRefresh)
+                && !isTokenExpired && !isRefresh)
             {
                 println("Browser State = ${BrowserState.currentCredentialState()}")
                 isLoggingIn = false
@@ -99,17 +101,18 @@ class OktaLoginViewModel @Inject constructor(
                 if (hasUserRolePermissionsToAccessApp()) {
                     _state.value = BrowserState.LoggedIn.create()
                     sharedPrefs.setIsLoggedIn(true)
+                    startInactivityTimer()
                 } else {
                     println("logout in login")
                     logout(context)
                 }
-
-                isLoggingIn = false
+                setTokenExpiredValue()
             }
         }
+        isLoggingIn = false
     }
 
-    fun startInactivityTimer() {
+    private fun startInactivityTimer() {
         interactionDetector.launchInactivityChecks()
     }
 
@@ -141,6 +144,7 @@ class OktaLoginViewModel @Inject constructor(
                     oktaToken
                 )
             handleOktaLogoutResponse(result)
+            isTokenExpired = true
             println("sleeping**************")
             launchOktaRefreshTimer(false)
         }
@@ -162,13 +166,14 @@ class OktaLoginViewModel @Inject constructor(
         }
     }
 
-    fun launchOktaRefreshTimer(startRefreshCheck: Boolean = true) {
+    private fun launchOktaRefreshTimer(startRefreshCheck: Boolean = true) {
         Timber.d("Launch Okta refresh timer")
         timerJob = timerScope.launch {
             while (true) {
                 delay(1000 * 60 * 10L) // 10 minute delay
 //                delay(1000 * 60 * 1L) //for testing
                 Timber.d("refreshing bearer token")
+                setTokenExpiredValue()
                 refreshOktaToken()
             }
         }
@@ -189,6 +194,7 @@ class OktaLoginViewModel @Inject constructor(
                 println("succeeded to refresh ${CredentialBootstrap.defaultCredential().getValidAccessToken()}")
             }
         }
+        setTokenExpiredValue()
     }
 }
 
