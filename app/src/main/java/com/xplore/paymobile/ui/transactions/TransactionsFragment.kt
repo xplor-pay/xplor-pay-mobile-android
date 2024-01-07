@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+//TODO Discuss Having TODOs like this is bad. We should create a ticket for every issue we are looking into.
 //todo determine why collecting of transactions occurs twice.
 // first time collecting transactions, call not made to get transactions
 @AndroidEntryPoint
@@ -188,6 +189,7 @@ class TransactionsFragment : BaseFragment() {
             viewModel.processTransaction(transactionItem, transactionType)
             //todo let's see if we can reduce the delay time
             delay(3500)
+            //TODO Discuss ticket 50560 Crash
             showDialogMessage(transactionType)
         }
     }

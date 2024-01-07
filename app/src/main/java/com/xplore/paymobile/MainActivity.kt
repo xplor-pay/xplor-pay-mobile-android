@@ -99,6 +99,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
 
+    //TODO Discuss Do we have a ticket for this ?
     //todo sometimes the app logs out but immediately logs back in.
     // need to find a way to revoke or delete the credential token.
     // sometimes the app opens the web browser multiple times when logging in.

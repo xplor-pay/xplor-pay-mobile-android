@@ -69,7 +69,7 @@ class App : Application() {
             baseUrl = BASE_URL_PROD,
             offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
         )
-
+        ClearentWrapper.getInstance().addRemoteLogRequest(Constants.APPLICATION_VERSION,"Initialized SDK")
         // set up the sdk store and forward mode once so we don't override user preferences
         if (sharedPreferencesDataSource.isSdkSetUp()) return
 

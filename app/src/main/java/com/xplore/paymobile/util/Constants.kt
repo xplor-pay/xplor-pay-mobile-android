@@ -43,4 +43,6 @@ object Constants {
     const val SB_DISCOVERY_URL = "https://auth-sb.clearent.net/oauth2/aus3a1kavt9qzEcsz1d7/.well-known/openid-configuration"
 
     const val DEFAULT_SCOPE = "openid profile offline_access"
+
+    const val APPLICATION_VERSION: String = "ANDROID: Xplor Pay Mobile - 1.0.0"
 }
