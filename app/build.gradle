@@ -19,8 +19,8 @@ android {
         applicationId "com.xplore.paymobile"
         minSdk 24
         targetSdk 33
-        versionCode 26
-        versionName "1.0.7"
+        versionCode 28
+        versionName "1.0.9"
 
         buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
         buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
