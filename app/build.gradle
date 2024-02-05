@@ -20,6 +20,7 @@ android {
         minSdk 24
         targetSdk 33
         versionCode 31
+//      {app version}.{feature version}.{bug fix version}
         versionName "1.0.12"
 
         buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
