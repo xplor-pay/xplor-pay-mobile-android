@@ -132,8 +132,4 @@ class BatchesFragment : BaseFragment() {
         binding.progressBar.isVisible = loading
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

@@ -44,5 +44,5 @@ object Constants {
 
     const val DEFAULT_SCOPE = "openid profile offline_access"
 
-    const val APPLICATION_VERSION: String = "ANDROID: Xplor Pay Mobile - 1.0.10"
+    const val APPLICATION_VERSION: String = "ANDROID: Xplor Pay Mobile - 1.0.12"
 }

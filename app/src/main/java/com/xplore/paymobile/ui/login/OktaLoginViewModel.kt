@@ -13,7 +13,9 @@ import com.okta.webauthenticationui.WebAuthenticationClient.Companion.createWebA
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
+import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.util.Constants
+import com.xplore.paymobile.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -25,6 +27,8 @@ class OktaLoginViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
     private val interactionDetector: UserInteractionDetector
 ) : ViewModel() {
+
+    private val className = "OktaLoginViewModel"
 
     private val timerScope = CoroutineScope(Dispatchers.IO)
     private var timerJob: Job? = null
@@ -52,31 +56,30 @@ class OktaLoginViewModel @Inject constructor(
 
     fun login(context: Context, isRefresh: Boolean = false) {
         isLoggingIn = true
+//        showNoPermissionsDialog()
 //        Logger.logMessage("Attempting to login.")
         viewModelScope.launch {
             if (sharedPrefs.isLoggedIn()
                 && BrowserState.currentCredentialState().equals(BrowserState.LoggedIn)
-                && !isTokenExpired && !isRefresh)
+                && !isTokenExpired && !isRefresh && hasUserRolePermissionsToAccessApp())
             {
                 println("Browser State = ${BrowserState.currentCredentialState()}")
                 isLoggingIn = false
                 sharedPrefs.setIsLoggedIn(true)
                 return@launch
             }
-            println("===============token expired or refreshing")
+            Logger.logMobileMessage(className, "token expired or refreshing")
             _state.value = BrowserState.Loading
             val result = CredentialBootstrap.oidcClient.createWebAuthenticationClient().login(
                 context = context,
                 redirectUrl = Constants.SIGN_IN_REDIRECT
             )
-
-            handleOktaLoginResponse(result, context)
+            handleOktaLoginResponse(result)
         }
     }
 
     private suspend fun handleOktaLoginResponse(
-        result: OidcClientResult<Token>,
-        context: Context
+        result: OidcClientResult<Token>
     ) {
         when (result) {
             is OidcClientResult.Error -> {
@@ -96,20 +99,46 @@ class OktaLoginViewModel @Inject constructor(
                 val base64Url: String? = accessToken?.split(".")?.get(1)
                 val decodedBytes = base64.decode(base64Url)
                 val decodedString = String(decodedBytes)
-
-                sharedPrefs.setUserInfo(decodedString)
-                if (hasUserRolePermissionsToAccessApp()) {
-                    _state.value = BrowserState.LoggedIn.create()
-                    sharedPrefs.setIsLoggedIn(true)
-                    startInactivityTimer()
+//                val decodedString = ""
+                if (decodedString.isNotBlank()) {
+                    try {
+                        setUserInfo(decodedString)
+                    } catch (e: Exception) {
+                        Logger.logMobileMessage(className, "Exception occurred while setting the user info ${e.stackTrace}")
+                        showNoPermissionsDialog()
+                    }
                 } else {
-                    println("logout in login")
-                    logout(context)
+                    Logger.logMobileMessage(className, "Decoded string is blank")
+                    showNoPermissionsDialog()
                 }
-                setTokenExpiredValue()
             }
         }
         isLoggingIn = false
+    }
+
+    private suspend fun setUserInfo(
+        decodedString: String
+    ) {
+        sharedPrefs.setUserInfo(decodedString)
+        if (hasUserRolePermissionsToAccessApp()) {
+            Logger.logMobileMessage(className, "User name: ${sharedPrefs.getUserName()}")
+            Logger.logMobileMessage(className, "User does have permissions: ${sharedPrefs.getUserRoles()}")
+            _state.value = BrowserState.LoggedIn.create()
+            sharedPrefs.setIsLoggedIn(true)
+            startInactivityTimer()
+            setTokenExpiredValue()
+        } else {
+            Logger.logMobileMessage(className, "User name: ${sharedPrefs.getUserName()}")
+            Logger.logMobileMessage(className, "User does not have permissions: ${sharedPrefs.getUserRoles()}")
+            sharedPrefs.setIsLoggedIn(false)
+            showNoPermissionsDialog()
+        }
+    }
+
+    private fun showNoPermissionsDialog() {
+        BasicDialog("No Access",
+            "Your user does not have permission to this application. With your business owner, please contact support at 866–435–0666 for help."
+        )
     }
 
     private fun startInactivityTimer() {

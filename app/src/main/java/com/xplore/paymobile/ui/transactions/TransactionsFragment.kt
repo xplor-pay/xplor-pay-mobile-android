@@ -184,7 +184,6 @@ class TransactionsFragment : BaseFragment() {
 
     //todo move this method into the process transaction class (make adapter with onclick behavior)
     private fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem, transactionType: String) {
-
         lifecycleScope.launch {
             viewModel.processTransaction(transactionItem, transactionType)
             //todo let's see if we can reduce the delay time
@@ -270,10 +269,5 @@ class TransactionsFragment : BaseFragment() {
 
     private fun showLoading(loading: Boolean) {
         binding.progressBar.isVisible = loading
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

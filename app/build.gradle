@@ -19,8 +19,8 @@ android {
         applicationId "com.xplore.paymobile"
         minSdk 24
         targetSdk 33
-        versionCode 29
-        versionName "1.0.10"
+        versionCode 31
+        versionName "1.0.12"
 
         buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
         buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
@@ -75,7 +75,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+//    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     // Kotlin navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
