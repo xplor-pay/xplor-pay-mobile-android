@@ -19,7 +19,11 @@ import androidx.navigation.fragment.findNavController
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.listener.OfflineStatusListener
 import com.clearent.idtech.android.wrapper.listener.ReaderStatusListener
-import com.clearent.idtech.android.wrapper.model.*
+import com.clearent.idtech.android.wrapper.model.BatteryLifeState
+import com.clearent.idtech.android.wrapper.model.PaymentInfo
+import com.clearent.idtech.android.wrapper.model.ReaderState
+import com.clearent.idtech.android.wrapper.model.ReaderStatus
+import com.clearent.idtech.android.wrapper.model.SignalState
 import com.clearent.idtech.android.wrapper.ui.ClearentAction
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity
 import com.clearent.idtech.android.wrapper.ui.ClearentSDKActivity.Companion.CLEARENT_RESULT_CODE
@@ -62,30 +66,33 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
     internal lateinit var sharedPrefs: SharedPreferencesDataSource
 
     private val activityLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult(),
     ) { result ->
         Timber.d(
             "SDK UI result code: ${
-                result.data?.getIntExtra(CLEARENT_RESULT_CODE, 0).toString()
-            }"
+                result.data?.getIntExtra(CLEARENT_RESULT_CODE, 0)
+            }",
         )
 
         transactionOngoing = false
 
-        if (result.resultCode != Activity.RESULT_OK)
+        if (result.resultCode != Activity.RESULT_OK) {
             return@registerForActivityResult
+        }
 
         if (result.data?.getIntExtra(CLEARENT_RESULT_CODE, 0)
                 ?.and(SdkUiResultCode.TransactionSuccess.value) != 0
-        ) clearChargeAmount()
+        ) {
+            clearChargeAmount()
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        //todo exception being thrown - investigate when there is time to work on bug tickets. this issue predates the okta login work
+        // todo exception being thrown - investigate when there is time to work on bug tickets. this issue predates the okta login work
         //   W/ResourcesCompat: Failed to inflate ColorStateList, leaving it to the framework
         //      java.lang.UnsupportedOperationException: Failed to resolve attribute at index 0: TypedValue{t=0x2/d=0x7f0300fc a=-1}
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -96,8 +103,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.shouldShowHints())
+        if (viewModel.shouldShowHints()) {
             showHints()
+        }
 
         setTerminalState()
         setNumericKeyPadBackground()
@@ -132,15 +140,15 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
             cardReaderButton.strokeColor = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     requireContext(),
-                    cardReaderBgColor
-                )
+                    cardReaderBgColor,
+                ),
             )
             cardReaderButton.setTextColor(requireContext().getColor(cardReaderTextColor))
             manualEntryButton.strokeColor = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     requireContext(),
-                    manualEntryBgColor
-                )
+                    manualEntryBgColor,
+                ),
             )
             manualEntryButton.setTextColor(requireContext().getColor(manualEntryTextColor))
         }
@@ -152,7 +160,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         listener?.also {
             it.showFirstPair(
                 { startPairingProcess() },
-                { viewModel.firstPairSkipped() }
+                { viewModel.firstPairSkipped() },
             )
         }
     }
@@ -194,7 +202,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
                     numpad6,
                     numpad7,
                     numpad8,
-                    numpad9
+                    numpad9,
                 )
                 numericKeys.forEachIndexed { index, key ->
                     key.setOnClickListener {
@@ -223,12 +231,12 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
                     ClearentAction.Transaction(
                         PaymentInfo(
                             amount = chargeAmount.toDouble() / 100,
-                            softwareType = "Xplor Pay Mobile"
+                            softwareType = "Xplor Pay Mobile",
                         ),
                         viewModel.shouldShowHints(),
                         shouldShowSignature,
-                        if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY
-                    )
+                        if (viewModel.isCardReaderSelected) PaymentMethod.CARD_READER else PaymentMethod.MANUAL_ENTRY,
+                    ),
                 )
             }
             noEligibleTerminal.setOnClickListener {
@@ -244,8 +252,9 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         findNavController().navigate(R.id.navigation_settings)
 
     private fun startSdkActivityForResult(clearentAction: ClearentAction) {
-        if (transactionOngoing)
+        if (transactionOngoing) {
             return
+        }
 
         transactionOngoing = true
 
@@ -283,36 +292,39 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
             when {
                 length > 8 -> "$" + chargeAmount.let {
                     it.slice(IntRange(0, length - 9)) + "," +
-                            it.slice(IntRange(length - 8, length - 6)) + "," +
-                            it.slice(IntRange(length - 5, length - 3)) + "." +
-                            it.takeLast(2)
+                        it.slice(IntRange(length - 8, length - 6)) + "," +
+                        it.slice(IntRange(length - 5, length - 3)) + "." +
+                        it.takeLast(2)
                 }
                 length > 5 -> "$" + chargeAmount.let {
                     it.slice(IntRange(0, length - 6)) + "," +
-                            it.slice(IntRange(length - 5, length - 3)) + "." +
-                            it.takeLast(2)
+                        it.slice(IntRange(length - 5, length - 3)) + "." +
+                        it.takeLast(2)
                 }
                 length > 2 -> "$" + chargeAmount.insert(length - 2, ".")
-                length == 2 -> "\$0.$chargeAmount"
-                length == 1 -> "\$0.0$chargeAmount"
+                length == 2 -> "$0.$chargeAmount"
+                length == 1 -> "$0.0$chargeAmount"
                 else -> DEFAULT_CHARGE_AMOUNT
             }
         }
 
     private fun appendDigitToChargeAmount(digit: String) {
-        if (chargeAmount.isBlank() && digit == "0")
+        if (chargeAmount.isBlank() && digit == "0") {
             return
+        }
 
-        if (chargeAmount.length >= 11)
+        if (chargeAmount.length >= 11) {
             return
+        }
 
         chargeAmount = chargeAmount.plus(digit)
         renderChargeAmount()
     }
 
     private fun popDigitFromChargeAmount() {
-        if (chargeAmount.isBlank())
+        if (chargeAmount.isBlank()) {
             return
+        }
 
         chargeAmount = chargeAmount.dropLast(1)
         renderChargeAmount()
@@ -322,7 +334,6 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
         chargeAmount = ""
         renderChargeAmount()
     }
-
 
     private fun setReaderState(readerState: ReaderState) {
         when (readerState) {
@@ -390,7 +401,7 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
             iconId,
             0,
             0,
-            0
+            0,
         )
 
     private fun setNoReaderPaired() {
@@ -430,20 +441,20 @@ class HomeFragment : BaseFragment(), ReaderStatusListener, OfflineStatusListener
 
     override fun onOfflineStatusChanged(offlineStatus: OfflineStatusListener.OfflineStatus) {
         lifecycleScope.launch {
-                _binding?.apply {
-                    when (offlineStatus) {
-                        OfflineStatusListener.OfflineStatus.Disabled -> {
-                            offlineModeEnabled.isVisible = false
-                        }
-                        is OfflineStatusListener.OfflineStatus.Enabled -> {
-                            offlineModeEnabled.isVisible = true
-                            offlineModeEnabled.text = getString(
-                                R.string.offline_mode_enabled_text,
-                                offlineStatus.unprocessedTransactionsSize.toString()
-                            )
-                        }
+            _binding?.apply {
+                when (offlineStatus) {
+                    OfflineStatusListener.OfflineStatus.Disabled -> {
+                        offlineModeEnabled.isVisible = false
+                    }
+                    is OfflineStatusListener.OfflineStatus.Enabled -> {
+                        offlineModeEnabled.isVisible = true
+                        offlineModeEnabled.text = getString(
+                            R.string.offline_mode_enabled_text,
+                            offlineStatus.unprocessedTransactionsSize.toString(),
+                        )
                     }
                 }
+            }
         }
     }
 }

@@ -14,19 +14,23 @@ import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import com.xplore.paymobile.data.web.Merchant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-//NOTE: once the app can call cgw with the edge token, the quest-jwt call will be unnecessary
-
+// NOTE: once the app can call cgw with the edge token, the quest-jwt call will be unnecessary
 
 @HiltViewModel
 class MerchantSelectViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
 ) : ViewModel() {
 
     private val _merchantFlow = MutableStateFlow<Merchant?>(null)
@@ -64,7 +68,7 @@ class MerchantSelectViewModel @Inject constructor(
     }
 
     private suspend fun fetchTerminals(merchantId: String) {
-        //TODO look into this later.  could be a time saver if we are caching terminals.
+        // TODO look into this later.  could be a time saver if we are caching terminals.
 //             multiple terminals could be an issue...
 //        if (sharedPrefs.getTerminal() != null) {
 //            setClearentCredentials(merchantId, sharedPrefs.getTerminal()!!)
@@ -73,7 +77,7 @@ class MerchantSelectViewModel @Inject constructor(
         val networkResponse = remoteDataSource.fetchTerminals(merchantId)
         if (networkResponse is NetworkResource.Success) {
             val terminals = filterMobileTerminals(networkResponse.data as TerminalsResponse, merchantId)
-            if (terminals.isNotEmpty() && sharedPrefs.getTerminal() != null ) {
+            if (terminals.isNotEmpty() && sharedPrefs.getTerminal() != null) {
                 val currentTerminal = sharedPrefs.getTerminal()
                 for (terminal in terminals) {
                     if (terminal.terminalPKId == currentTerminal?.terminalPKId) {
@@ -97,14 +101,13 @@ class MerchantSelectViewModel @Inject constructor(
         } else {
             _terminalsFlow.emit(emptyList())
         }
-
     }
 
     private fun setClearentCredentials(merchantId: String, selectedTerminal: Terminal) {
         clearentWrapper.sdkCredentials.clearentCredentials =
             ClearentCredentials.MerchantHomeApiCredentials(
                 merchantId = merchantId,
-                vtToken = selectedTerminal.questJwt.token
+                vtToken = selectedTerminal.questJwt.token,
             )
     }
 
@@ -124,7 +127,6 @@ class MerchantSelectViewModel @Inject constructor(
         return filteredTerminals
     }
 
-
     private suspend fun getMobileTerminals(merchantId: String): List<MerchantTerminal> {
         return when (val networkResponse = remoteDataSource.getMobileTerminals(merchantId)) {
             is NetworkResource.Success -> {
@@ -142,7 +144,7 @@ class MerchantSelectViewModel @Inject constructor(
             val terminalSettings = networkResponse.data as TerminalSettingsResponse
             terminalSettings.payload.terminalSettings.let {
                 sharedPrefs.setTerminalSettings(
-                    it
+                    it,
                 )
             }
         }

@@ -40,13 +40,15 @@ class MerchantPaginationHelper @Inject constructor(private val remoteDataSource:
 
     private fun requestMerchants() {
         bgScope.launch {
-            when (val merchantsResource =
-                remoteDataSource.searchMerchants(
-                    getDefaultSearchOptionsFor(
-                        query,
-                        currentPage.toString()
+            when (
+                val merchantsResource =
+                    remoteDataSource.searchMerchants(
+                        getDefaultSearchOptionsFor(
+                            query,
+                            currentPage.toString(),
+                        ),
                     )
-                )) {
+            ) {
                 is NetworkResource.Success -> {
                     val merchants = merchantsResource.data as MerchantsResponse
                     _resultsFlow.emit(merchants.content)
@@ -63,6 +65,6 @@ class MerchantPaginationHelper @Inject constructor(private val remoteDataSource:
             searchString = query,
             pageNumber = pageNumber,
             pageSize = PAGE_SIZE.toString(),
-            includeClosed = "false"
+            includeClosed = "false",
         )
 }

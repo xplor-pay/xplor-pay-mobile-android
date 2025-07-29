@@ -1,17 +1,23 @@
 package com.xplore.paymobile.interactiondetection
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class UserInteractionDetector @Inject constructor() {
 
     companion object {
-        private const val INACTIVITY_TIME = 1000 * 60 * 15L //15 minutes
+        private const val INACTIVITY_TIME = 1000 * 60 * 15L // 15 minutes
+
 //        private const val INACTIVITY_TIME = 1000 * 60 * 1L //1 minute for testing
-        private const val CHECK_INTERVAL = 1000 * 10L //10 seconds
+        private const val CHECK_INTERVAL = 1000 * 10L // 10 seconds
     }
 
     private val bgScope = CoroutineScope(Dispatchers.IO)

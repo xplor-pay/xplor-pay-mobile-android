@@ -10,7 +10,7 @@ import com.xplore.paymobile.databinding.ItemSeeMoreBinding
 
 class SeeMoreListAdapter(val onItemClicked: (SeeMoreItem) -> Unit) :
     ListAdapter<SeeMoreListAdapter.SeeMoreItem, SeeMoreListAdapter.SeeMoreViewHolder>(
-        SEE_MORE_COMPARATOR
+        SEE_MORE_COMPARATOR,
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeeMoreViewHolder {
@@ -60,6 +60,6 @@ class SeeMoreListAdapter(val onItemClicked: (SeeMoreItem) -> Unit) :
 
     data class SeeMoreItem(
         val title: String,
-        var isLoading: Boolean
+        var isLoading: Boolean,
     )
 }

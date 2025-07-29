@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
     private val paginationHelper: TransactionsHelper,
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
 ) : ViewModel() {
 
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
@@ -29,7 +29,7 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             paginationHelper.resultsFlow.collect { transactions ->
                 val listOfCollectedTransactionItems = mutableListOf<Transaction>()
-                //todo test
+                // todo test
 //                val vtToken = clearentWrapper.sdkCredentials.clearentCredentials.toString()
                 if (paginationHelper.getCurrentPage() >= 2) {
                     listOfCollectedTransactionItems.addAll(_resultsFlow.value)
@@ -42,7 +42,7 @@ class TransactionsViewModel @Inject constructor(
 
     fun processTransaction(
         transactionItem: TransactionListAdapter.TransactionItem,
-        transactionType: String
+        transactionType: String,
     ) {
         viewModelScope.launch {
             paginationHelper.processTransaction(transactionItem, transactionType)

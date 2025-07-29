@@ -2,14 +2,15 @@ package com.xplore.paymobile.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.data.datasource.RemoteDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.ClearentGatewayApi
 import com.xplore.paymobile.data.remote.XplorApi
 import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.web.JSBridge
-import com.xplore.paymobile.data.web.VtTokenRefreshManager
 import com.xplore.paymobile.data.web.JsonConverterUtil
+import com.xplore.paymobile.data.web.VtTokenRefreshManager
 import com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantPaginationHelper
 import dagger.Module
 import dagger.Provides
@@ -69,10 +70,10 @@ object NetworkingModule {
     @Named(XPLOR_API_NAME)
     fun provideRetrofitXplorApi(
         client: OkHttpClient,
-        converterFactory: Converter.Factory
+        converterFactory: Converter.Factory,
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl(XplorApi.BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL_API)
             .client(client)
             .addConverterFactory(converterFactory)
             .build()
@@ -87,9 +88,9 @@ object NetworkingModule {
     @Named(XPLOR_BOARDING_API_NAME)
     fun provideRetrofitXplorBoardingApi(
         client: OkHttpClient,
-        converterFactory: Converter.Factory
+        converterFactory: Converter.Factory,
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(XplorBoardingApi.BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL_BOARDING)
         .client(client)
         .addConverterFactory(converterFactory)
         .build()
@@ -104,9 +105,9 @@ object NetworkingModule {
     @Named(CLEARENT_GATEWAY_API_NAME)
     fun provideRetrofitClearentGatewayApi(
         client: OkHttpClient,
-        converterFactory: Converter.Factory
+        converterFactory: Converter.Factory,
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(ClearentGatewayApi.BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL_GATEWAY)
         .client(client)
         .addConverterFactory(converterFactory)
         .build()
@@ -124,6 +125,6 @@ object NetworkingModule {
     @Singleton
     fun provideVTTimerManager(
         remoteDataSource: RemoteDataSource,
-        sharedPreferencesDataSource: SharedPreferencesDataSource
+        sharedPreferencesDataSource: SharedPreferencesDataSource,
     ): VtTokenRefreshManager = VtTokenRefreshManager(remoteDataSource, sharedPreferencesDataSource)
 }

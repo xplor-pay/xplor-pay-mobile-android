@@ -1,19 +1,19 @@
-//package com.xplore.paymobile.data.remote.model
+// package com.xplore.paymobile.data.remote.model
 //
-//import com.google.gson.annotations.SerializedName
+// import com.google.gson.annotations.SerializedName
 //
-//data class TerminalSettingsResponse(
+// data class TerminalSettingsResponse(
 //    @SerializedName("code") var code: String,
 //    @SerializedName("status") var status: String,
 //    var payload: TerminalSettingsPayloadResponse
-//)
+// )
 //
-//data class TerminalSettingsPayloadResponse(
+// data class TerminalSettingsPayloadResponse(
 //    val payloadType: String? = null,
 //    @SerializedName("terminal-settings")
 //    val terminalSettings: TerminalSettings
-//)
+// )
 //
-//data class TerminalSettings(
+// data class TerminalSettings(
 //    @SerializedName("time-zone") val timeZone: String = ""
-//)
+// )

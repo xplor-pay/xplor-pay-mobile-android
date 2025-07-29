@@ -1,22 +1,22 @@
-//package com.xplore.paymobile.data.web
+// package com.xplore.paymobile.data.web
 //
-//import android.annotation.SuppressLint
-//import android.content.Context
-//import android.content.Intent
-//import android.webkit.*
-//import androidx.core.content.ContextCompat
-//import com.xplore.paymobile.util.Constants
-//import timber.log.Timber
-//import java.net.HttpURLConnection
+// import android.annotation.SuppressLint
+// import android.content.Context
+// import android.content.Intent
+// import android.webkit.*
+// import androidx.core.content.ContextCompat
+// import com.xplore.paymobile.util.Constants
+// import timber.log.Timber
+// import java.net.HttpURLConnection
 //
-//@SuppressLint("SetJavaScriptEnabled")
-//open class XplorWebView(
+// @SuppressLint("SetJavaScriptEnabled")
+// open class XplorWebView(
 //    private val webView: WebView,
 //    jsBridge: JSBridge,
 //    context: Context,
 //    onWebViewSetupDone: (() -> Unit)? = null,
 //    onPageLoaded: (() -> Unit)? = null
-//) {
+// ) {
 //
 //    init {
 //        webView.run {
@@ -89,4 +89,4 @@
 //        Timber.d("Sending command to web view: $command")
 //        command.evaluateJs(webView)
 //    }
-//}
+// }

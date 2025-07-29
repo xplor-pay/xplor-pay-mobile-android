@@ -6,7 +6,7 @@ data class Merchant(
     @SerializedName("address") val address: Address,
     @SerializedName("merchantName") val merchantName: String,
     @SerializedName("merchantNumber") val merchantNumber: String,
-    @SerializedName("merchantStatus") val merchantStatus: MerchantStatus
+    @SerializedName("merchantStatus") val merchantStatus: MerchantStatus,
 )
 
 data class Address(
@@ -17,7 +17,7 @@ data class Address(
     @SerializedName("line3") val line3: String,
     @SerializedName("merchantNumber") val merchantNumber: String,
     @SerializedName("state") val state: String,
-    @SerializedName("zip") val zip: Any?
+    @SerializedName("zip") val zip: Any?,
 )
 
 data class MerchantStatus(
@@ -28,5 +28,5 @@ data class MerchantStatus(
     @SerializedName("merchantLifeCycleStatusId") val merchantLifeCycleStatusId: Int,
     @SerializedName("merchantLifeCycleStatusName") val merchantLifeCycleStatusName: String,
     @SerializedName("merchantNumber") val merchantNumber: String,
-    @SerializedName("reportedCreateDateTime") val reportedCreateDateTime: String
+    @SerializedName("reportedCreateDateTime") val reportedCreateDateTime: String,
 )

@@ -1,18 +1,18 @@
-//package com.xplore.paymobile.data.web
+// package com.xplore.paymobile.data.web
 //
-//import android.content.Context
-//import android.webkit.WebView
-//import com.xplore.paymobile.data.remote.model.Terminal
-//import timber.log.Timber
+// import android.content.Context
+// import android.webkit.WebView
+// import com.xplore.paymobile.data.remote.model.Terminal
+// import timber.log.Timber
 //
 //
-//class XplorLoginWebView(
+// class XplorLoginWebView(
 //    private val webView: WebView,
 //    jsBridge: JSBridge,
 //    context: Context,
 //    onWebViewSetupDone: (() -> Unit)? = null,
 //    onPageLoaded: (() -> Unit)? = null
-//) : XplorWebView(webView, jsBridge, context, onWebViewSetupDone, onPageLoaded) {
+// ) : XplorWebView(webView, jsBridge, context, onWebViewSetupDone, onPageLoaded) {
 //
 //    companion object {
 //        private const val changeMerchantJsCommand =
@@ -66,4 +66,4 @@
 //            }
 //        }
 //    }
-//}
+// }

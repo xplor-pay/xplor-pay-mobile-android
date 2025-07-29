@@ -35,7 +35,7 @@ class MerchantSelectFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentMerchantSelectBinding.inflate(inflater, container, false)
 

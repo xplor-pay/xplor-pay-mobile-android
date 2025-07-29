@@ -5,14 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource.FirstPair
-import com.xplore.paymobile.data.remote.model.Terminal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     application: Application,
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
 ) : AndroidViewModel(application) {
 
     var isCardReaderSelected = true

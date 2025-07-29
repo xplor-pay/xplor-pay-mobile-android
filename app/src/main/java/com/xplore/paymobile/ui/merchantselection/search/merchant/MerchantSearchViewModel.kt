@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MerchantSearchViewModel @Inject constructor(
     private val paginationHelper: MerchantPaginationHelper,
-    private val sharedPrefs: SharedPreferencesDataSource
+    private val sharedPrefs: SharedPreferencesDataSource,
 ) : ViewModel() {
 
     private val clearentWrapper = ClearentWrapper.getInstance()

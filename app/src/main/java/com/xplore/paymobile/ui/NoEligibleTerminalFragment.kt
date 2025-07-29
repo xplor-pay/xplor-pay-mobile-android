@@ -19,8 +19,9 @@ class NoEligibleTerminalFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentNoEligibleTerminalBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,7 +46,7 @@ class NoEligibleTerminalFragment : Fragment() {
                     clickableString,
                     range.first,
                     range.last + 1,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE,
                 )
             }
 

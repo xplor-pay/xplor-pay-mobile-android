@@ -15,7 +15,7 @@ class JSBridge @Inject constructor(
     val jsBridgeFlows: JSBridgeFlows,
     private val jsonConverterUtil: JsonConverterUtil,
     private val sharedPrefs: SharedPreferencesDataSource,
-    private val interactionDetector: UserInteractionDetector
+    private val interactionDetector: UserInteractionDetector,
 ) {
     private val backgroundScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -48,7 +48,7 @@ class JSBridge @Inject constructor(
         }
     }
 
-    //todo this seems to be the issue
+    // todo this seems to be the issue
     @JavascriptInterface
     fun merchantChanged(message: String) {
         backgroundScope.launch {
@@ -99,6 +99,6 @@ class JSBridge @Inject constructor(
         val authTokenFlow: MutableSharedFlow<String?> = MutableSharedFlow(),
         val merchantFlow: MutableSharedFlow<Merchant?> = MutableSharedFlow(),
         val loggedOutFlow: MutableSharedFlow<LoggedOut?> = MutableSharedFlow(),
-        val userRolesFlow: MutableSharedFlow<UserRoles?> = MutableSharedFlow()
+        val userRolesFlow: MutableSharedFlow<UserRoles?> = MutableSharedFlow(),
     )
 }

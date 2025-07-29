@@ -1,27 +1,23 @@
 package com.xplore.paymobile.data.remote
 
-import com.clearent.idtech.android.BuildConfig
-import com.xplore.paymobile.data.remote.model.*
+import com.xplore.paymobile.data.remote.model.MerchantDetailsResponse
+import com.xplore.paymobile.data.remote.model.TerminalsResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
 
 interface XplorApi {
-
-    companion object {
-        val BASE_URL =
-//            if (BuildConfig.DEBUG) "https://api-qa.clearent.net" else
-                "https://api.clearent.net"
-    }
 
     @GET("/api/merchantfrontendplatform/v1.0/features/web/{merchantId}")
     suspend fun getMerchantDetails(
         @HeaderMap headers: Map<String, String>,
-        @Path("merchantId") merchantId: String
+        @Path("merchantId") merchantId: String,
     ): Response<MerchantDetailsResponse>
 
     // WARNING: The body will be null if there are no terminals for respective merchant
     @GET("/api/quest/terminals")
     suspend fun fetchTerminals(
-        @HeaderMap headers: Map<String, String>
+        @HeaderMap headers: Map<String, String>,
     ): Response<TerminalsResponse>
 }

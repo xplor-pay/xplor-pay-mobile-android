@@ -1,16 +1,16 @@
-//package com.xplore.paymobile.ui.settings.old
+// package com.xplore.paymobile.ui.settings.old
 //
-//import android.app.Application
-//import androidx.lifecycle.AndroidViewModel
-//import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
-//import dagger.hilt.android.lifecycle.HiltViewModel
-//import javax.inject.Inject
+// import android.app.Application
+// import androidx.lifecycle.AndroidViewModel
+// import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
+// import dagger.hilt.android.lifecycle.HiltViewModel
+// import javax.inject.Inject
 //
-//@HiltViewModel
-//class OldSettingsViewModel @Inject constructor(
+// @HiltViewModel
+// class OldSettingsViewModel @Inject constructor(
 //    application: Application,
 //    private val encryptedPrefs: EncryptedSharedPrefsDataSource
-//) : AndroidViewModel(application) {
+// ) : AndroidViewModel(application) {
 //
 //    fun setApiKey(apiKey: String) = encryptedPrefs.setApiKey(apiKey)
 //
@@ -21,4 +21,4 @@
 //    fun getPublicKey() = encryptedPrefs.getPublicKey()
 //
 //    fun getPassPhrase() = encryptedPrefs.getDbPassphrase()
-//}
+// }
