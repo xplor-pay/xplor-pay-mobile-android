@@ -29,7 +29,7 @@ class BatchesFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentBatchesBinding.inflate(inflater, container, false)
 
@@ -68,8 +68,9 @@ class BatchesFragment : BaseFragment() {
         }
         lifecycleScope.launch {
             viewModel.resultsFlow.collect { batchList ->
-                if (batchList.isNotEmpty())
+                if (batchList.isNotEmpty()) {
                     setupViews(batchList)
+                }
             }
         }
     }
@@ -99,7 +100,7 @@ class BatchesFragment : BaseFragment() {
                 append(batch.refundCount)
                 append(")")
             }
-            if(batch.refundTotal == "0.00" ) {
+            if (batch.refundTotal == "0.00") {
                 batchRefundTotalAmount.text = buildString {
                     append("$")
                     append(batch.refundTotal)
@@ -114,7 +115,6 @@ class BatchesFragment : BaseFragment() {
                 append("$")
                 append(batch.netAmount)
             }
-
         }
     }
 
@@ -131,5 +131,4 @@ class BatchesFragment : BaseFragment() {
     private fun showLoading(loading: Boolean) {
         binding.progressBar.isVisible = loading
     }
-
 }

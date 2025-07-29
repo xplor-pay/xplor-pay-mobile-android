@@ -6,5 +6,5 @@ data class SearchMerchantOptions(
     @SerializedName("merchantNumberOrDbaSearchTerm") val searchString: String?,
     @SerializedName("pageNumber") val pageNumber: String,
     @SerializedName("pageSize") val pageSize: String,
-    @SerializedName("includeClosed") val includeClosed: String = "false"
+    @SerializedName("includeClosed") val includeClosed: String = "false",
 )

@@ -13,11 +13,10 @@ import com.xplore.paymobile.data.datasource.EncryptedSharedPrefsDataSource
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.interactiondetection.AppLifecycleCallbacks
 import com.xplore.paymobile.util.Constants
-import com.xplore.paymobile.util.Constants.BASE_URL_PROD
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -41,12 +40,12 @@ class App : Application() {
         }
         AuthFoundationDefaults.cache = SharedPreferencesCache.create(this)
         val oidcConfiguration = OidcConfiguration(
-            clientId = Constants.CLIENT_ID,
+            clientId = BuildConfig.CLIENT_ID,
             defaultScope = Constants.DEFAULT_SCOPE,
         )
         val client = OidcClient.createFromDiscoveryUrl(
             oidcConfiguration,
-            Constants.DISCOVERY_URL.toHttpUrl(),
+            BuildConfig.DISCOVERY_URL.toHttpUrl(),
         )
         CredentialBootstrap.initialize(client.createCredentialDataSource(this))
 
@@ -58,7 +57,7 @@ class App : Application() {
         initSdkWrapper()
     }
 
-    //todo change the logout web view method name
+    // todo change the logout web view method name
 //    private fun logoutWebView() {
 //        sharedPreferencesDataSource.setAuthToken(null)
 //    }
@@ -66,10 +65,10 @@ class App : Application() {
     private fun initSdkWrapper() {
         clearentWrapper.initializeSDK(
             context = applicationContext,
-            baseUrl = BASE_URL_PROD,
-            offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase())
+            baseUrl = BuildConfig.BASE_URL_GATEWAY,
+            offlineModeConfig = OfflineModeConfig(encryptedPrefs.getDbPassphrase()),
         )
-        ClearentWrapper.getInstance().addRemoteLogRequest(Constants.APPLICATION_VERSION,"Initialized SDK")
+        ClearentWrapper.getInstance().addRemoteLogRequest(Constants.APPLICATION_VERSION, "Initialized SDK")
         // set up the sdk store and forward mode once so we don't override user preferences
         if (sharedPreferencesDataSource.isSdkSetUp()) return
 

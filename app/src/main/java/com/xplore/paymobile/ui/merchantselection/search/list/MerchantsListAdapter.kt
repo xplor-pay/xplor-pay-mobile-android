@@ -10,7 +10,7 @@ import com.xplore.paymobile.databinding.ItemMerchantListBinding
 
 class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
     ListAdapter<MerchantsListAdapter.MerchantItem, MerchantsListAdapter.MerchantViewHolder>(
-        MERCHANT_COMPARATOR
+        MERCHANT_COMPARATOR,
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MerchantViewHolder {
@@ -57,6 +57,6 @@ class MerchantsListAdapter(val onItemClicked: (MerchantItem, Int) -> Unit) :
 
     data class MerchantItem(
         val name: String,
-        val id: String
+        val id: String,
     )
 }

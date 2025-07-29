@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TerminalSearchViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
-    private val vtTokenRefreshManager: VtTokenRefreshManager
+    private val vtTokenRefreshManager: VtTokenRefreshManager,
 ) : ViewModel() {
 
     private val clearentWrapper = ClearentWrapper.getInstance()
@@ -36,12 +36,14 @@ class TerminalSearchViewModel @Inject constructor(
 
     fun searchForQuery(query: String) {
         viewModelScope.launch {
-            _sortedTerminalsFlow.emit(terminals.filter {
-                it.terminalName.contains(
-                    query,
-                    ignoreCase = true
-                )
-            })
+            _sortedTerminalsFlow.emit(
+                terminals.filter {
+                    it.terminalName.contains(
+                        query,
+                        ignoreCase = true,
+                    )
+                },
+            )
         }
     }
 
@@ -54,7 +56,7 @@ class TerminalSearchViewModel @Inject constructor(
             clearentWrapper.sdkCredentials.clearentCredentials =
                 ClearentCredentials.MerchantHomeApiCredentials(
                     merchantId = merchantItem.id,
-                    vtToken = terminal.questJwt.token
+                    vtToken = terminal.questJwt.token,
                 )
             vtTokenRefreshManager.startTimer(false)
         }

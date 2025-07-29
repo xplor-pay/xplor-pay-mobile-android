@@ -24,14 +24,15 @@ class BatchesHelper @Inject constructor(private val remoteDataSource: RemoteData
         getBatch()
     }
 
-    //todo will the batches tab ever access closed transactions?
+    // todo will the batches tab ever access closed transactions?
     private fun getBatch(batchStatus: String = "open") {
         bgScope.launch {
             isLoading = true
-            when (val batchResource =
-                remoteDataSource.getBatches(
-                    batchStatus
-                )
+            when (
+                val batchResource =
+                    remoteDataSource.getBatches(
+                        batchStatus,
+                    )
             ) {
                 is NetworkResource.Success -> {
                     val batchesList = batchResource.data as OpenBatchResponse

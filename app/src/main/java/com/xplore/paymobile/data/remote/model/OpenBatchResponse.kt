@@ -7,15 +7,15 @@ data class OpenBatchResponse(
     @SerializedName("status") var status: String? = null,
 //    @SerializedName("exchange-id") var exchangeID: String? = null,
 //    @SerializedName("links") var links: List<Links>? = null,
-    @SerializedName("payload") var payload: Payload? = null
+    @SerializedName("payload") var payload: Payload? = null,
 )
 
 data class Payload(
-    @SerializedName("batches") var batches: Batches? = null
+    @SerializedName("batches") var batches: Batches? = null,
 )
 
 data class Batches(
-    @SerializedName("batch") var batch: List<Batch>? = null
+    @SerializedName("batch") var batch: List<Batch>? = null,
 )
 
 data class Batch(
@@ -30,5 +30,5 @@ data class Batch(
     @SerializedName("merchant-id") var merchantID: String? = null,
     @SerializedName("terminal-id") var terminalID: String? = null,
     @SerializedName("terminal-name") var terminalName: String? = null,
-    @SerializedName("date-opened") var dateOpened: String? = null
+    @SerializedName("date-opened") var dateOpened: String? = null,
 )

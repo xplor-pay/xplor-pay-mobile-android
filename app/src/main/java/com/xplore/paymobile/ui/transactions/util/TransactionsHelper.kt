@@ -2,7 +2,6 @@ package com.xplore.paymobile.ui.transactions.util
 
 import com.xplore.paymobile.data.datasource.NetworkResource
 import com.xplore.paymobile.data.datasource.RemoteDataSource
-import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.remote.model.Transaction
 import com.xplore.paymobile.data.remote.model.TransactionResponse
 import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
@@ -16,7 +15,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionsHelper @Inject constructor(
-    private val remoteDataSource: RemoteDataSource) {
+    private val remoteDataSource: RemoteDataSource,
+) {
     companion object {
         private const val PAGE_SIZE = "30"
     }
@@ -33,7 +33,6 @@ class TransactionsHelper @Inject constructor(
     private val _resultsFlow = MutableStateFlow<List<Transaction>>(listOf())
     val resultsFlow: Flow<List<Transaction>> = _resultsFlow
 
-
     fun nextPage() {
         if (!isLastPage && !isLoading) {
             requestTransactions()
@@ -44,14 +43,15 @@ class TransactionsHelper @Inject constructor(
     private fun requestTransactions() {
         bgScope.launch {
             isLoading = true
-            when (val transactionResource =
-                remoteDataSource.getTransactions(
-                    currentPage.toString(),
-                    PAGE_SIZE
+            when (
+                val transactionResource =
+                    remoteDataSource.getTransactions(
+                        currentPage.toString(),
+                        PAGE_SIZE,
                     )
-                ) {
+            ) {
                 is NetworkResource.Success -> {
-                    Logger.logMobileMessage(className,"Get transactions success")
+                    Logger.logMobileMessage(className, "Get transactions success")
 
                     val transactionList = transactionResource.data as TransactionResponse
                     isLastPage = transactionList.page.last
@@ -62,7 +62,7 @@ class TransactionsHelper @Inject constructor(
                     isLoading = false
                 }
                 is NetworkResource.Error -> {
-                    Logger.logMobileMessage(className,"Get transactions failed")
+                    Logger.logMobileMessage(className, "Get transactions failed")
                     _resultsFlow.emit(emptyList())
                     isLoading = false
                 }
@@ -72,14 +72,14 @@ class TransactionsHelper @Inject constructor(
 
     fun processTransaction(
         transactionItem: TransactionListAdapter.TransactionItem,
-        transactionType: String
+        transactionType: String,
     ) {
         bgScope.launch {
             when (
                 remoteDataSource.processTransaction(
                     transactionItem.id,
                     transactionItem.amount,
-                    transactionType
+                    transactionType,
                 )
             ) {
                 is NetworkResource.Success -> {
@@ -111,7 +111,7 @@ class TransactionsHelper @Inject constructor(
     }
 
     fun refreshPage() {
-        //todo: determine why collecting of transactions occurs twice.
+        // todo: determine why collecting of transactions occurs twice.
         currentPage = 0
         nextPage()
     }

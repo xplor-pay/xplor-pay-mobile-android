@@ -1,30 +1,30 @@
-//package com.xplore.paymobile.ui.settings.old
+// package com.xplore.paymobile.ui.settings.old
 //
-//import android.content.Intent
-//import android.net.Uri
-//import android.os.Bundle
-//import android.view.LayoutInflater
-//import android.view.View
-//import android.view.ViewGroup
-//import android.widget.Toast
-//import androidx.core.content.ContextCompat
-//import androidx.core.content.FileProvider
-//import androidx.fragment.app.viewModels
-//import androidx.navigation.fragment.findNavController
-//import com.clearent.idtech.android.wrapper.ClearentDataSource
-//import com.clearent.idtech.android.wrapper.ClearentWrapper
-//import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
-//import com.xplore.paymobile.BuildConfig
-//import com.xplore.paymobile.R
-//import com.xplore.paymobile.databinding.FragmentSettingsOldBinding
-//import com.xplore.paymobile.ui.base.BaseFragment
-//import com.xplore.paymobile.ui.dialog.BasicDialog
-//import com.xplore.paymobile.util.Constants
-//import dagger.hilt.android.AndroidEntryPoint
-//import timber.log.Timber
+// import android.content.Intent
+// import android.net.Uri
+// import android.os.Bundle
+// import android.view.LayoutInflater
+// import android.view.View
+// import android.view.ViewGroup
+// import android.widget.Toast
+// import androidx.core.content.ContextCompat
+// import androidx.core.content.FileProvider
+// import androidx.fragment.app.viewModels
+// import androidx.navigation.fragment.findNavController
+// import com.clearent.idtech.android.wrapper.ClearentDataSource
+// import com.clearent.idtech.android.wrapper.ClearentWrapper
+// import com.clearent.idtech.android.wrapper.offline.config.OfflineModeConfig
+// import com.xplore.paymobile.BuildConfig
+// import com.xplore.paymobile.R
+// import com.xplore.paymobile.databinding.FragmentSettingsOldBinding
+// import com.xplore.paymobile.ui.base.BaseFragment
+// import com.xplore.paymobile.ui.dialog.BasicDialog
+// import com.xplore.paymobile.util.Constants
+// import dagger.hilt.android.AndroidEntryPoint
+// import timber.log.Timber
 //
-//@AndroidEntryPoint
-//class OldSettingsFragment : BaseFragment() {
+// @AndroidEntryPoint
+// class OldSettingsFragment : BaseFragment() {
 //
 //    override val hasBottomNavigation: Boolean = true
 //
@@ -153,4 +153,4 @@
 //
 //    private fun hideKey(key: String) =
 //        getString(R.string.hidden_key, key.takeLast(numberOfVisibleDigits))
-//}
+// }

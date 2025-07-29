@@ -10,7 +10,7 @@ import com.xplore.paymobile.databinding.TransactionCardBinding
 
 class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) :
     ListAdapter<TransactionListAdapter.TransactionItem, TransactionListAdapter.TransactionViewHolder>(
-        TRANSACTION_COMPARATOR
+        TRANSACTION_COMPARATOR,
     ) {
 
     private var currentScrollPosition = 0
@@ -112,7 +112,6 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                     binding.type.setBackgroundResource(R.drawable.bg_pill_pink)
                 }
                 "REFUND" -> {
-
                     binding.type.text = refund
                     binding.type.setBackgroundResource(R.drawable.bg_pill_yellow)
                 }
@@ -124,7 +123,6 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                     binding.type.text = auth
                     binding.type.setBackgroundResource(R.drawable.bg_pill_pink)
                 }
-
             }
         }
 
@@ -142,7 +140,6 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
                     binding.status.text = error
                     binding.status.setBackgroundResource(R.drawable.bg_pill_grey)
                 }
-
             }
         }
     }
@@ -166,6 +163,6 @@ class TransactionListAdapter(val onItemClicked: (TransactionItem, Int) -> Unit) 
         val card: String?,
         val settled: Boolean,
         val pending: Boolean,
-        val voided: Boolean
+        val voided: Boolean,
     )
 }

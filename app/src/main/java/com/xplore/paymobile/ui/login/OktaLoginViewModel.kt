@@ -10,22 +10,26 @@ import com.okta.authfoundation.client.OidcClientResult
 import com.okta.authfoundation.credential.Token
 import com.okta.authfoundationbootstrap.CredentialBootstrap
 import com.okta.webauthenticationui.WebAuthenticationClient.Companion.createWebAuthenticationClient
+import com.xplore.paymobile.BuildConfig
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.data.web.GroupedUserRoles
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.ui.dialog.BasicDialog
-import com.xplore.paymobile.util.Constants
 import com.xplore.paymobile.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.apache.commons.codec.binary.Base64
 import timber.log.Timber
 import javax.inject.Inject
-import org.apache.commons.codec.binary.Base64
 
 @HiltViewModel
 class OktaLoginViewModel @Inject constructor(
     private val sharedPrefs: SharedPreferencesDataSource,
-    private val interactionDetector: UserInteractionDetector
+    private val interactionDetector: UserInteractionDetector,
 ) : ViewModel() {
 
     private val className = "OktaLoginViewModel"
@@ -59,10 +63,10 @@ class OktaLoginViewModel @Inject constructor(
 //        showNoPermissionsDialog()
 //        Logger.logMessage("Attempting to login.")
         viewModelScope.launch {
-            if (sharedPrefs.isLoggedIn()
-                && BrowserState.currentCredentialState().equals(BrowserState.LoggedIn)
-                && !isTokenExpired && !isRefresh && hasUserRolePermissionsToAccessApp())
-            {
+            if (sharedPrefs.isLoggedIn() &&
+                BrowserState.currentCredentialState().equals(BrowserState.LoggedIn) &&
+                !isTokenExpired && !isRefresh && hasUserRolePermissionsToAccessApp()
+            ) {
                 println("Browser State = ${BrowserState.currentCredentialState()}")
                 isLoggingIn = false
                 sharedPrefs.setIsLoggedIn(true)
@@ -72,14 +76,14 @@ class OktaLoginViewModel @Inject constructor(
             _state.value = BrowserState.Loading
             val result = CredentialBootstrap.oidcClient.createWebAuthenticationClient().login(
                 context = context,
-                redirectUrl = Constants.SIGN_IN_REDIRECT
+                redirectUrl = BuildConfig.SIGN_IN_REDIRECT_URI,
             )
             handleOktaLoginResponse(result)
         }
     }
 
     private suspend fun handleOktaLoginResponse(
-        result: OidcClientResult<Token>
+        result: OidcClientResult<Token>,
     ) {
         when (result) {
             is OidcClientResult.Error -> {
@@ -92,8 +96,8 @@ class OktaLoginViewModel @Inject constructor(
                 println("refresh token: $refreshToken")
                 launchOktaRefreshTimer()
                 val credential = CredentialBootstrap.defaultCredential()
-                credential.storeToken(token = result.result) //use to track expired token?  maybe??
-                //TODO the getValidAccessToken will also refresh the token if it is expired
+                credential.storeToken(token = result.result) // use to track expired token?  maybe??
+                // TODO the getValidAccessToken will also refresh the token if it is expired
                 val accessToken: String? = credential.getValidAccessToken()
                 sharedPrefs.setAuthToken(accessToken)
                 val base64Url: String? = accessToken?.split(".")?.get(1)
@@ -117,7 +121,7 @@ class OktaLoginViewModel @Inject constructor(
     }
 
     private suspend fun setUserInfo(
-        decodedString: String
+        decodedString: String,
     ) {
         sharedPrefs.setUserInfo(decodedString)
         if (hasUserRolePermissionsToAccessApp()) {
@@ -136,8 +140,9 @@ class OktaLoginViewModel @Inject constructor(
     }
 
     private fun showNoPermissionsDialog() {
-        BasicDialog("No Access",
-            "Your user does not have permission to this application. With your business owner, please contact support at 866–435–0666 for help."
+        BasicDialog(
+            "No Access",
+            "Your user does not have permission to this application. With your business owner, please contact support at 866–435–0666 for help.",
         )
     }
 
@@ -154,9 +159,7 @@ class OktaLoginViewModel @Inject constructor(
         }
     }
 
-
     fun logout(context: Context) {
-
         viewModelScope.launch {
             sharedPrefs.setIsLoggedIn(false)
 
@@ -169,8 +172,8 @@ class OktaLoginViewModel @Inject constructor(
             val result =
                 CredentialBootstrap.oidcClient.createWebAuthenticationClient().logoutOfBrowser(
                     context = context,
-                    redirectUrl = Constants.LOGOUT_REDIRECT,
-                    oktaToken
+                    redirectUrl = BuildConfig.SIGN_OUT_REDIRECT_URI,
+                    oktaToken,
                 )
             handleOktaLogoutResponse(result)
             isTokenExpired = true
@@ -232,7 +235,7 @@ sealed class BrowserState {
     class LoggedOut(val errorMessage: String? = null) : BrowserState()
     class LoggedIn private constructor(
         val name: String,
-        val errorMessage: String?
+        val errorMessage: String?,
     ) : BrowserState() {
         companion object {
             suspend fun create(errorMessage: String? = null): BrowserState {
@@ -253,5 +256,4 @@ sealed class BrowserState {
             }
         }
     }
-
 }

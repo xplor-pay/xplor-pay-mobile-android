@@ -7,7 +7,6 @@ import com.xplore.paymobile.data.remote.XplorBoardingApi
 import com.xplore.paymobile.data.remote.model.SearchMerchantOptions
 import com.xplore.paymobile.exceptions.AuthTokenException
 import com.xplore.paymobile.exceptions.VtTokenException
-import com.xplore.paymobile.ui.transactions.adapter.TransactionListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -17,7 +16,7 @@ class RemoteDataSource(
     private val xplorApi: XplorApi,
     private val xplorBoardingApi: XplorBoardingApi,
     private val clearentGatewayApi: ClearentGatewayApi,
-    private val sharedPreferencesDataSource: SharedPreferencesDataSource
+    private val sharedPreferencesDataSource: SharedPreferencesDataSource,
 ) {
 
     private val authToken
@@ -30,24 +29,26 @@ class RemoteDataSource(
         mapOf(
             "Content-Type" to "application/json",
             "Accept" to "application/json, text/plain, */*",
-            "Authorization" to "Bearer $token"
+            "Authorization" to "Bearer $token",
         )
     } ?: throw AuthTokenException("Missing authToken from shared preferences. AuthToken is null.")
 
     private fun getXplorApiHeader(merchantId: String) = mapOf(
-        *getXplorApiHeader().toList().toTypedArray(), "MerchantId" to merchantId
+        *getXplorApiHeader().toList().toTypedArray(),
+        "MerchantId" to merchantId,
     )
 
     private fun getClearentGatewayApiHeader() = vtToken?.let { token ->
         mapOf(
             "Content-Type" to "application/json",
             "Accept" to "application/json, text/plain, */*",
-            "Authorization" to "vt-token $token"
+            "Authorization" to "vt-token $token",
         )
     } ?: throw VtTokenException("Missing terminal from shared preferences. vt-token is null.")
 
     private fun getClearentApiHeader(merchantId: String) = mapOf(
-        *getClearentGatewayApiHeader().toList().toTypedArray(), "MerchantId" to merchantId
+        *getClearentGatewayApiHeader().toList().toTypedArray(),
+        "MerchantId" to merchantId,
     )
 
 //    private fun getCGWApiHeader() =
@@ -57,18 +58,18 @@ class RemoteDataSource(
 //            "api-key" to "1573dd1f92af43e6ae59a0e6e4f5f32f"
 //        )
 
-
     private fun getClearentGatewayApiHeaderWithAuthToken(merchantId: String) = authToken?.let { token ->
         mapOf(
             "Content-Type" to "application/json",
             "Accept" to "application/json, text/plain, */*",
             "MerchantId" to merchantId,
-            "Authorization" to "Bearer $token"
+            "Authorization" to "Bearer $token",
         )
     } ?: throw AuthTokenException("Missing authToken from shared preferences. AuthToken is null.")
 
     private fun getOpenBatchFilters() = mapOf(
-        "level" to "merchant", "status" to "OPEN"
+        "level" to "merchant",
+        "status" to "OPEN",
     )
 
     suspend fun searchMerchants(searchMerchantOptions: SearchMerchantOptions) = try {
@@ -84,7 +85,8 @@ class RemoteDataSource(
 
     suspend fun getMerchantDetails(merchantId: String) = try {
         val response = xplorApi.getMerchantDetails(
-            getXplorApiHeader(merchantId), merchantId
+            getXplorApiHeader(merchantId),
+            merchantId,
         )
         if (response.isSuccessful) {
             NetworkResource.Success(response.body())
@@ -127,13 +129,13 @@ class RemoteDataSource(
     suspend fun processTransaction(
         transactionId: String,
         transactionAmount: String,
-        transactionType: String
+        transactionType: String,
     ): NetworkResource<Any?> = withContext(Dispatchers.IO) {
         try {
             body = hashMapOf()
             body["type"] = transactionType.uppercase()
             body["id"] = transactionId
-            if(transactionType.uppercase() == TransactionType.REFUND.name) {
+            if (transactionType.uppercase() == TransactionType.REFUND.name) {
                 body["amount"] = transactionAmount
             }
             val response = clearentGatewayApi.postTransaction(getClearentGatewayApiHeader(), body)
@@ -153,7 +155,7 @@ class RemoteDataSource(
             val response = clearentGatewayApi.getTransactions(
                 getClearentGatewayApiHeader(),
                 page,
-                pageSize
+                pageSize,
             )
 
             return@withContext if (response.isSuccessful) {
@@ -169,7 +171,7 @@ class RemoteDataSource(
     suspend fun getTerminalSettings(merchantId: String): NetworkResource<Any?> = withContext(Dispatchers.IO) {
         try {
             val response = clearentGatewayApi.getTerminalSettings(
-                getClearentApiHeader(merchantId)
+                getClearentApiHeader(merchantId),
             )
 
             return@withContext if (response.isSuccessful) {
@@ -186,7 +188,7 @@ class RemoteDataSource(
         try {
             val response = clearentGatewayApi.getBatches(
                 getClearentGatewayApiHeader(),
-                batchStatus
+                batchStatus,
             )
 
             return@withContext if (response.isSuccessful) {
@@ -198,13 +200,12 @@ class RemoteDataSource(
             return@withContext NetworkResource.Error(exception = ex)
         }
     }
-
 }
 
 sealed class NetworkResource<out T> {
     data class Success<T>(val data: T) : NetworkResource<T>()
     data class Error(
         val exception: Exception? = null,
-        val errorBody: ResponseBody? = null
+        val errorBody: ResponseBody? = null,
     ) : NetworkResource<Nothing>()
 }

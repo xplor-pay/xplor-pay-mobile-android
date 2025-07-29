@@ -10,7 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.lifecycle.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -30,6 +35,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.xplore.paymobile.data.datasource.SharedPreferencesDataSource
 import com.xplore.paymobile.databinding.ActivityMainBinding
+import com.xplore.paymobile.extensions.handleEdgeToEdge
 import com.xplore.paymobile.interactiondetection.UserInteractionDetector
 import com.xplore.paymobile.interactiondetection.UserInteractionEvent
 import com.xplore.paymobile.ui.FirstPairListener
@@ -37,7 +43,8 @@ import com.xplore.paymobile.ui.dialog.BasicDialog
 import com.xplore.paymobile.ui.login.BrowserState
 import com.xplore.paymobile.ui.login.OktaLoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -73,6 +80,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     private val multiplePermissionsContract = ActivityResultContracts.RequestMultiplePermissions()
     private val multiplePermissionsLauncher =
         registerForActivityResult(multiplePermissionsContract) {}
+
 // todo let's not show the merchant select screen before the user is logged in
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation =
@@ -91,6 +99,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.handleEdgeToEdge()
 
         showLogin(viewModel.loginVisible)
         setupAppView()
@@ -99,8 +108,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 //        clearentWrapper.addMerchantAndTerminalRequestedListener(this)
     }
 
-    //TODO Discuss Do we have a ticket for this ?
-    //todo sometimes the app logs out but immediately logs back in.
+    // TODO Discuss Do we have a ticket for this ?
+    // todo sometimes the app logs out but immediately logs back in.
     // need to find a way to revoke or delete the credential token.
     // sometimes the app opens the web browser multiple times when logging in.
     // the user can still press the "Continue to Xplor Pay app" to be redirected back to the app...not optimal
@@ -109,8 +118,9 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
             when (state) {
                 is BrowserState.LoggedIn -> {
                     if (!oktaLoginViewModel.isLoggingIn) {
-                        if (!sharedPreferencesDataSource.isLoggedIn())
+                        if (!sharedPreferencesDataSource.isLoggedIn()) {
                             viewModel.loginVisible = true
+                        }
                         oktaLoginViewModel.login(this)
                         setupNetworkFlow()
                         clearentWrapper.addMerchantAndTerminalRequestedListener(this)
@@ -169,13 +179,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     private fun showLogoutDialog() {
         interactionDetector.stopInactivityChecks()
-        BasicDialog(title = getString(R.string.logout_dialog_title),
+        BasicDialog(
+            title = getString(R.string.logout_dialog_title),
             message = getString(R.string.logout_dialog_description),
             positiveButton = BasicDialog.DialogButton(getString(R.string.ok)) {},
             onDismiss = {
                 logout()
-            }).show(
-            supportFragmentManager, BasicDialog::class.java.simpleName
+            },
+        ).show(
+            supportFragmentManager,
+            BasicDialog::class.java.simpleName,
         )
     }
 
@@ -193,8 +206,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
                 R.id.navigation_transactions,
                 R.id.navigation_batches,
                 R.id.navigation_settings,
-                R.id.navigation_info
-            )
+                R.id.navigation_info,
+            ),
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -217,7 +230,7 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             this.appUpdateInfo = appUpdateInfo
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
-                    AppUpdateType.IMMEDIATE
+                    AppUpdateType.IMMEDIATE,
                 )
             ) {
                 enableUpdateButton()
@@ -238,9 +251,11 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
 
     fun updateApp() {
         appUpdateManager.startUpdateFlow(
-            appUpdateInfo, this, AppUpdateOptions.newBuilder(
-                AppUpdateType.IMMEDIATE
-            ).setAllowAssetPackDeletion(false).build()
+            appUpdateInfo,
+            this,
+            AppUpdateOptions.newBuilder(
+                AppUpdateType.IMMEDIATE,
+            ).setAllowAssetPackDeletion(false).build(),
         )
     }
 
@@ -250,7 +265,6 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     private fun setupListener() {
         clearentWrapper.setListener(ClearentDataSource)
     }
-
 
     private fun setupNetworkFlow() {
         lifecycleScope.launch {
@@ -282,13 +296,16 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         val isShown =
             supportFragmentManager.findFragmentByTag(FORCE_LOGIN_DIALOG_TAG)?.isAdded ?: false
         if (isShown) return
-        BasicDialog(getString(R.string.logout_dialog_title),
+        BasicDialog(
+            getString(R.string.logout_dialog_title),
             getString(R.string.internet_restored),
             BasicDialog.DialogButton(getString(R.string.ok)) {
                 logout()
                 clearentWrapper.storeAndForwardEnabled = false
-            }).show(
-            supportFragmentManager, FORCE_LOGIN_DIALOG_TAG
+            },
+        ).show(
+            supportFragmentManager,
+            FORCE_LOGIN_DIALOG_TAG,
         )
     }
 
@@ -307,31 +324,33 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
         if (hintsShowed) return
 
         hintsShowed = true
-        lifecycle.addObserver(ListenerCallbackObserver(lifecycle) {
-            lifecycleScope.launch {
-                binding.apply {
-                    hintsContainer.visibility = View.VISIBLE
-                    hintsContainer.bringToFront()
+        lifecycle.addObserver(
+            ListenerCallbackObserver(lifecycle) {
+                lifecycleScope.launch {
+                    binding.apply {
+                        hintsContainer.visibility = View.VISIBLE
+                        hintsContainer.bringToFront()
 
-                    hints.apply {
-                        root.visibility = View.GONE
+                        hints.apply {
+                            root.visibility = View.GONE
 
-                        hintsPairingTip.hintsTipText.text =
-                            getString(R.string.first_pairing_tip_text)
-                        hintsFirstReaderButton.setOnClickListener {
-                            hintsContainer.visibility = View.GONE
-                            onClick()
+                            hintsPairingTip.hintsTipText.text =
+                                getString(R.string.first_pairing_tip_text)
+                            hintsFirstReaderButton.setOnClickListener {
+                                hintsContainer.visibility = View.GONE
+                                onClick()
+                            }
+                            hintsSkipPairing.setOnClickListener {
+                                hintsContainer.visibility = View.GONE
+                                onDismiss()
+                            }
+
+                            renderHints()
                         }
-                        hintsSkipPairing.setOnClickListener {
-                            hintsContainer.visibility = View.GONE
-                            onDismiss()
-                        }
-
-                        renderHints()
                     }
                 }
-            }
-        })
+            },
+        )
     }
 
     private fun renderHints() = lifecycleScope.launch {
@@ -345,7 +364,8 @@ class MainActivity : AppCompatActivity(), FirstPairListener, MerchantAndTerminal
     }
 
     class ListenerCallbackObserver(
-        private val lifecycle: Lifecycle, private val callback: () -> Unit
+        private val lifecycle: Lifecycle,
+        private val callback: () -> Unit,
     ) : DefaultLifecycleObserver, LifecycleObserver {
 
         override fun onStart(owner: LifecycleOwner) {

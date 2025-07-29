@@ -32,7 +32,7 @@ class InfoFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentInfoBinding.inflate(inflater, container, false)
         return binding.root
@@ -73,14 +73,14 @@ class InfoFragment : BaseFragment() {
                     getString(R.string.logout_confirm_title),
                     null,
                     positiveButton = BasicDialog.DialogButton(
-                        getString(R.string.yes)
+                        getString(R.string.yes),
                     ) { (requireActivity() as? MainActivity)?.logout() },
                     negativeButton = BasicDialog.DialogButton(
-                        getString(R.string.cancel)
-                    ) {}
+                        getString(R.string.cancel),
+                    ) {},
                 ).show(
                     parentFragmentManager,
-                    BasicDialog::class.java.simpleName
+                    BasicDialog::class.java.simpleName,
                 )
             }
         }

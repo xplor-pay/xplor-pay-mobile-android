@@ -48,7 +48,7 @@ class MerchantSearchFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentMerchantSearchBinding.inflate(inflater, container, false)
 
@@ -81,9 +81,11 @@ class MerchantSearchFragment : BaseFragment() {
     }
 
     private fun submitList(merchants: List<Merchant>) {
-        itemsAdapter.submitList(merchants.map {
-            MerchantsListAdapter.MerchantItem(it.merchantName, it.merchantNumber)
-        }) {
+        itemsAdapter.submitList(
+            merchants.map {
+                MerchantsListAdapter.MerchantItem(it.merchantName, it.merchantNumber)
+            },
+        ) {
             if (viewModel.currentPage() == 1 && merchants.isNotEmpty()) {
                 binding.itemsList.scrollToPosition(0)
             }

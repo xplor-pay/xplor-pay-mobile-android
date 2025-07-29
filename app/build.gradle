@@ -1,9 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp'
 }
 
 def localProperties = new Properties()
@@ -13,22 +13,42 @@ def oktaProperties = new Properties()
 rootProject.file("okta.properties").withInputStream { oktaProperties.load(it) }
 
 android {
-    compileSdk 33
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.xplore.paymobile"
         minSdk 24
-        targetSdk 33
+        targetSdk 36
         versionCode 31
 //      {app version}.{feature version}.{bug fix version}
         versionName "1.0.12"
 
-        buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
-        buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
         buildConfigField "String", 'SIGN_IN_REDIRECT_URI', "\"${oktaProperties.getProperty('signInRedirectUri')}\""
         buildConfigField "String", 'SIGN_OUT_REDIRECT_URI', "\"${oktaProperties.getProperty('signOutRedirectUri')}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions += "env"
+    productFlavors {
+        create("qa") {
+            dimension = "env"
+            buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding-qa.clearent.net\""
+            buildConfigField "String", "BASE_URL_API", "\"https://api-qa.clearent.net\""
+            buildConfigField "String", "BASE_URL_GATEWAY", "\"https://gateway-qa.clearent.net\""
+
+            buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl_SB')}\""
+            buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId_SB')}\""
+        }
+        create("prod") {
+            dimension = "env"
+            buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding.clearent.net\""
+            buildConfigField "String", "BASE_URL_API", "\"https://api.clearent.net\""
+            buildConfigField "String", "BASE_URL_GATEWAY", "\"https://gateway.clearent.net\""
+
+            buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
+            buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
+        }
     }
 
     defaultConfig.manifestPlaceholders = [
@@ -46,12 +66,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
         viewBinding true
@@ -59,24 +75,27 @@ android {
     hilt {
         enableAggregatingTask = true
     }
-    kapt {
-        correctErrorTypes = true
-    }
     namespace 'com.xplore.paymobile'
+}
+
+kotlin {
+    jvmToolchain(11)
+    compilerOptions {
+        freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:2.1.20"
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-//    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // Kotlin navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -105,7 +124,7 @@ dependencies {
 
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
-    kapt "com.google.dagger:hilt-compiler:$dagger_version"
+    ksp "com.google.dagger:hilt-compiler:$dagger_version"
 
     // Timber logger for file logging
     implementation "com.jakewharton.timber:timber:$timber_version"
@@ -113,21 +132,20 @@ dependencies {
     implementation "androidx.security:security-crypto:$crypto_security_version"
 
     // Play In-App Update Library
-    implementation("com.google.android.play:app-update:2.0.1")
-    implementation("com.google.android.play:app-update-ktx:2.0.1")
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     // Clearent Idtech Android SDK
     implementation project(':clearent-idtech-android')
 
     //Splash screen
-    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 
     implementation(platform('com.okta.kotlin:bom:1.0.0'))
     implementation('com.okta.kotlin:auth-foundation-bootstrap')
     implementation('com.okta.kotlin:web-authentication-ui')
 
-    implementation 'commons-codec:commons-codec:1.15'
-
+    implementation 'commons-codec:commons-codec:1.18.0'
 }
 
 static def parseScheme(String uri) {

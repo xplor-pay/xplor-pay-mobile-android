@@ -23,7 +23,7 @@ object DataSourceModule {
     @Provides
     fun provideSharedPrefs(
         @ApplicationContext context: Context,
-        jsonConverterUtil: JsonConverterUtil
+        jsonConverterUtil: JsonConverterUtil,
     ): SharedPreferencesDataSource =
         SharedPreferencesDataSource(context, jsonConverterUtil)
 
@@ -38,12 +38,12 @@ object DataSourceModule {
         xplorApi: XplorApi,
         xplorBoardingApi: XplorBoardingApi,
         clearentGatewayApi: ClearentGatewayApi,
-        sharedPreferencesDataSource: SharedPreferencesDataSource
+        sharedPreferencesDataSource: SharedPreferencesDataSource,
     ): RemoteDataSource =
         RemoteDataSource(
             xplorApi,
             xplorBoardingApi,
             clearentGatewayApi,
-            sharedPreferencesDataSource
+            sharedPreferencesDataSource,
         )
 }

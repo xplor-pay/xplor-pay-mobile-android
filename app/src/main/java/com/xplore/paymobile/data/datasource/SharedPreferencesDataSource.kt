@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.core.content.edit
 import com.clearent.idtech.android.wrapper.ClearentWrapper
 import com.clearent.idtech.android.wrapper.http.model.TerminalSettings
-
 import com.xplore.paymobile.data.remote.model.Terminal
-//import com.xplore.paymobile.data.remote.model.TerminalSettings
-import com.xplore.paymobile.data.web.*
+import com.xplore.paymobile.data.web.JsonConverterUtil
+import com.xplore.paymobile.data.web.Merchant
+import com.xplore.paymobile.data.web.UserInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class SharedPreferencesDataSource @Inject constructor(
     context: Context,
-    private val jsonConverterUtil: JsonConverterUtil
+    private val jsonConverterUtil: JsonConverterUtil,
 ) {
 
     companion object {
@@ -87,7 +87,7 @@ class SharedPreferencesDataSource @Inject constructor(
         sharedPrefs.edit {
             putString(
                 MERCHANT_BASE + getClientIdFromAuthToken(),
-                jsonConverterUtil.toJson(merchant)
+                jsonConverterUtil.toJson(merchant),
             )
         }
         clearTerminal()
@@ -107,7 +107,7 @@ class SharedPreferencesDataSource @Inject constructor(
         sharedPrefs.edit {
             putString(
                 TERMINAL_BASE + getClientIdFromAuthToken(),
-                jsonConverterUtil.toJson(terminal)
+                jsonConverterUtil.toJson(terminal),
             )
         }
         ClearentWrapper.getInstance().setVtToken(terminal.questJwt.token)
@@ -146,13 +146,13 @@ class SharedPreferencesDataSource @Inject constructor(
         sharedPrefs.edit {
             putString(
                 CLIENT_ID_CLAIM,
-                userInfo.clientId
+                userInfo.clientId,
             )
         }
         sharedPrefs.edit {
             putString(
                 USER_NAME,
-                userInfo.userName
+                userInfo.userName,
             )
         }
     }
@@ -163,17 +163,16 @@ class SharedPreferencesDataSource @Inject constructor(
         this.isLoggedIn = isLoggedIn
     }
 
-    fun isLoggedIn() : Boolean {
+    fun isLoggedIn(): Boolean {
         return this.isLoggedIn
     }
-
 
     fun setTerminalSettings(terminalSettings: TerminalSettings) {
         val terminalTimeZone = terminalSettings.timeZone
         sharedPrefs.edit {
             putString(
                 TERMINAL_TIMEZONE,
-                terminalTimeZone
+                terminalTimeZone,
             )
         }
     }
@@ -184,9 +183,10 @@ class SharedPreferencesDataSource @Inject constructor(
     private fun hasRefundAndVoidPermissions(): Boolean {
         val userRoles = getUserRoles()
 
-        for (userRole in VoidAndRefundRoles.values()) {
-            if (userRoles.contains(userRole.name))
+        for (userRole in VoidAndRefundRoles.entries) {
+            if (userRoles.contains(userRole.name)) {
                 return true
+            }
         }
         return false
     }
@@ -196,14 +196,14 @@ class SharedPreferencesDataSource @Inject constructor(
         VTAccountAdministrators,
         VTAccountOwners,
         VTAccountAnalysts,
-        VTAccountContacts
+        VTAccountContacts,
     }
 
     enum class FirstPair {
         NOT_DONE, SKIPPED, DONE;
 
         companion object {
-            fun fromOrdinal(firstPair: Int) = values().find { it.ordinal == firstPair } ?: NOT_DONE
+            fun fromOrdinal(firstPair: Int) = entries.find { it.ordinal == firstPair } ?: NOT_DONE
         }
     }
 }

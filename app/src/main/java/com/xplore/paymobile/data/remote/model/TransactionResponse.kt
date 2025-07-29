@@ -7,7 +7,7 @@ data class TransactionResponse(
     @SerializedName("status") var status: String,
     @SerializedName("exchange-id") var exchangeId: String,
     var page: PageData,
-    var payload: TransactionPayload
+    var payload: TransactionPayload,
 )
 
 data class TransactionPayload(
@@ -16,13 +16,13 @@ data class TransactionPayload(
 )
 
 data class Transactions(
-    @SerializedName("transaction") var transaction: ArrayList<Transaction>
+    @SerializedName("transaction") var transaction: ArrayList<Transaction>,
 )
 
 data class ResponseError(
     @SerializedName("error-message") var errorMessage: String,
     @SerializedName("result-code") var resultCode: String? = null,
-    @SerializedName("time-stamp") var timeStamp: String? = null
+    @SerializedName("time-stamp") var timeStamp: String? = null,
 )
 
 data class Transaction(
@@ -35,10 +35,10 @@ data class Transaction(
     var settled: Boolean,
     var date: String,
     var pending: Boolean,
-    var voided: Boolean
+    var voided: Boolean,
 )
 
 data class PageData(
     var last: Boolean,
-    @SerializedName("total-pages") var totalPages: Int = 0
+    @SerializedName("total-pages") var totalPages: Int = 0,
 )

@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.xplore.paymobile.MainActivity
 
-open class BaseFragment: Fragment() {
+open class BaseFragment : Fragment() {
 
     open val hasBottomNavigation = true
 

@@ -38,7 +38,7 @@ class TerminalSearchFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentMerchantSearchBinding.inflate(inflater, container, false)
 
@@ -57,9 +57,11 @@ class TerminalSearchFragment : BaseFragment() {
         viewModel.setTerminals(sharedViewModel.terminals)
         lifecycleScope.launch {
             viewModel.terminalsFlow.collect { list ->
-                adapter.submitList(list.map {
-                    MerchantsListAdapter.MerchantItem(it.terminalName, it.terminalPKId)
-                })
+                adapter.submitList(
+                    list.map {
+                        MerchantsListAdapter.MerchantItem(it.terminalName, it.terminalPKId)
+                    },
+                )
             }
         }
     }

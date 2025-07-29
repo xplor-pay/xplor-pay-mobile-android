@@ -6,7 +6,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 // NOTE: tink library crashed with later versions so this conversation
 // said to use 1.1.0-alpha01
-//https://issuetracker.google.com/issues/164901843
+// https://issuetracker.google.com/issues/164901843
 class EncryptedSharedPrefsDataSource(context: Context) {
 
     companion object {
@@ -23,7 +23,7 @@ class EncryptedSharedPrefsDataSource(context: Context) {
         masterKeyAlias,
         context,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
 
     fun setDbPassphrase(passphrase: String) =

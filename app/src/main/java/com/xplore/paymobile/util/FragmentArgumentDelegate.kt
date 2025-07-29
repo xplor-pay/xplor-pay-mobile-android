@@ -35,7 +35,6 @@ class FragmentArgumentDelegate<T : Any?> : ReadWriteProperty<Fragment, T?> {
         val key = property.name
 
         with(args) {
-
             when (value) {
                 is Boolean -> putBoolean(key, value)
                 is Byte -> putByte(key, value)

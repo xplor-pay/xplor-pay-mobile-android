@@ -11,7 +11,7 @@ class BasicDialog(
     private val message: String?,
     private val positiveButton: DialogButton? = null,
     private val negativeButton: DialogButton? = null,
-    private val onDismiss: (() -> Unit)? = null
+    private val onDismiss: (() -> Unit)? = null,
 ) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

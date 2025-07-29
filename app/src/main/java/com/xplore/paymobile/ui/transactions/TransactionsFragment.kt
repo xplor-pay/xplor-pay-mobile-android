@@ -31,8 +31,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-//TODO Discuss Having TODOs like this is bad. We should create a ticket for every issue we are looking into.
-//todo determine why collecting of transactions occurs twice.
+// TODO Discuss Having TODOs like this is bad. We should create a ticket for every issue we are looking into.
+// todo determine why collecting of transactions occurs twice.
 // first time collecting transactions, call not made to get transactions
 @AndroidEntryPoint
 class TransactionsFragment : BaseFragment() {
@@ -51,11 +51,11 @@ class TransactionsFragment : BaseFragment() {
                 val processType = determineTransactionProcessType(
                     transactionItem.type,
                     transactionItem.settled,
-                    transactionItem.pending
+                    transactionItem.pending,
                 )
 
                 if (processType.isNotBlank() && viewModel.hasVoidAndRefundPermissions() && !transactionItem.voided) {
-                    Logger.logMobileMessage(className,"Attempting to process transaction id: ${transactionItem.id}")
+                    Logger.logMobileMessage(className, "Attempting to process transaction id: ${transactionItem.id}")
                     showProcessTransactionDialog(transactionItem, processType)
                 }
             }
@@ -64,7 +64,7 @@ class TransactionsFragment : BaseFragment() {
     private fun determineTransactionProcessType(
         transactionType: String?,
         isSettled: Boolean,
-        isPending: Boolean
+        isPending: Boolean,
     ): String {
         return if (isSettled && transactionType != "REFUND" && transactionType != "UNMATCHED REFUND" && transactionType != "AUTH") {
             "REFUND"
@@ -80,7 +80,7 @@ class TransactionsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentTransactionsBinding.inflate(inflater, container, false)
 
@@ -141,10 +141,10 @@ class TransactionsFragment : BaseFragment() {
         }
     }
 
-    //todo move this method into the process transaction class
+    // todo move this method into the process transaction class
     private fun showProcessTransactionDialog(
         transactionItem: TransactionListAdapter.TransactionItem,
-        transactionType: String
+        transactionType: String,
     ) {
         val processTransactionDialog = BottomSheetDialog(requireContext())
         processTransactionDialog.setContentView(R.layout.process_transaction)
@@ -166,12 +166,12 @@ class TransactionsFragment : BaseFragment() {
         processTransactionDialog.findViewById<TextView>(R.id.process_created)?.text = transactionItem.created
 
         cancelButton?.setOnClickListener {
-            Logger.logMobileMessage(className,"User cancelled processing of transaction id: ${transactionItem.id}")
+            Logger.logMobileMessage(className, "User cancelled processing of transaction id: ${transactionItem.id}")
             processTransactionDialog.dismiss()
         }
 
         processTransactionButton?.setOnClickListener {
-            Logger.logMobileMessage(className,"User clicked $transactionType button: ${transactionItem.id}")
+            Logger.logMobileMessage(className, "User clicked $transactionType button: ${transactionItem.id}")
             processTransaction(transactionItem, transactionType)
             processTransactionDialog.dismiss()
         }
@@ -182,19 +182,19 @@ class TransactionsFragment : BaseFragment() {
         processTransactionDialog.show()
     }
 
-    //todo move this method into the process transaction class (make adapter with onclick behavior)
+    // todo move this method into the process transaction class (make adapter with onclick behavior)
     private fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem, transactionType: String) {
         lifecycleScope.launch {
             viewModel.processTransaction(transactionItem, transactionType)
-            //todo let's see if we can reduce the delay time
+            // todo let's see if we can reduce the delay time
             delay(3500)
-            //TODO Discuss ticket 50560 Crash
+            // TODO Discuss ticket 50560 Crash
             showDialogMessage(transactionType)
         }
     }
 
     private fun showDialogMessage(type: String) {
-        if(viewModel.isProcessTransactionSuccessful()) {
+        if (viewModel.isProcessTransactionSuccessful()) {
             showSuccessMessage(type)
             viewModel.refreshPage()
         } else {
@@ -210,10 +210,9 @@ class TransactionsFragment : BaseFragment() {
                 successMessage.text = getString(R.string.transaction_refunded)
             }
             successMessageLayout.isVisible = true
-            val animSlideDown = AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up);
+            val animSlideDown = AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
             successMessageLayout.startAnimation(animSlideDown)
             successMessageLayout.isVisible = false
-
         }
     }
 
@@ -221,10 +220,9 @@ class TransactionsFragment : BaseFragment() {
         with(binding) {
             errorMessageLayout.isVisible = true
             val animSlideDown =
-                AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up);
+                AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
             errorMessageLayout.startAnimation(animSlideDown)
             errorMessageLayout.isVisible = false
-
         }
     }
 
@@ -244,19 +242,21 @@ class TransactionsFragment : BaseFragment() {
     }
 
     private fun submitList(transactionItemList: List<Transaction>) {
-        transactionListAdapter.submitList(transactionItemList.map {
-            TransactionListAdapter.TransactionItem(
-                it.id,
-                it.amount,
-                formatCreatedDate(it.created),
-                it.type,
-                it.status,
-                it.card,
-                it.settled,
-                it.pending,
-                it.voided
-            )
-        }) {
+        transactionListAdapter.submitList(
+            transactionItemList.map {
+                TransactionListAdapter.TransactionItem(
+                    it.id,
+                    it.amount,
+                    formatCreatedDate(it.created),
+                    it.type,
+                    it.status,
+                    it.card,
+                    it.settled,
+                    it.pending,
+                    it.voided,
+                )
+            },
+        ) {
             if (viewModel.currentPage() == 0 && transactionItemList.isNotEmpty()) {
                 binding.transactionItemsList.scrollToPosition(0)
             }

@@ -22,19 +22,19 @@ class SettingsFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val activityLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult(),
     ) { result ->
         Timber.d(
             "SDK UI result code: ${
-                result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0).toString()
-            }"
+                result.data?.getIntExtra(ClearentSDKActivity.CLEARENT_RESULT_CODE, 0)
+            }",
         )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
