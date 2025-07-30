@@ -75,8 +75,8 @@ class MerchantSelectViewModel @Inject constructor(
 //            return
 //        }
         val networkResponse = remoteDataSource.fetchTerminals(merchantId)
-        if (networkResponse is NetworkResource.Success) {
-            val terminals = filterMobileTerminals(networkResponse.data as TerminalsResponse, merchantId)
+        if (networkResponse is NetworkResource.Success && networkResponse.data != null) {
+            val terminals = filterMobileTerminals(networkResponse.data, merchantId)
             if (terminals.isNotEmpty() && sharedPrefs.getTerminal() != null) {
                 val currentTerminal = sharedPrefs.getTerminal()
                 for (terminal in terminals) {

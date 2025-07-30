@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId "com.xplore.paymobile"
         minSdk 24
-        targetSdk 36
+        targetSdk 35
         versionCode 31
 //      {app version}.{feature version}.{bug fix version}
         versionName "1.0.12"
