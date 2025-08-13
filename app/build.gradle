@@ -31,7 +31,7 @@ android {
 
     flavorDimensions += "env"
     productFlavors {
-        create("qa") {
+        register("qa") {
             dimension = "env"
             buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding-qa.clearent.net\""
             buildConfigField "String", "BASE_URL_API", "\"https://api-qa.clearent.net\""
@@ -40,7 +40,7 @@ android {
             buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl_SB')}\""
             buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId_SB')}\""
         }
-        create("prod") {
+        register("prod") {
             dimension = "env"
             buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding.clearent.net\""
             buildConfigField "String", "BASE_URL_API", "\"https://api.clearent.net\""
@@ -61,7 +61,8 @@ android {
         }
         release {
             debuggable false
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -94,8 +95,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:2.1.20"
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 
     // Kotlin navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -145,7 +146,7 @@ dependencies {
     implementation('com.okta.kotlin:auth-foundation-bootstrap')
     implementation('com.okta.kotlin:web-authentication-ui')
 
-    implementation 'commons-codec:commons-codec:1.18.0'
+    implementation 'commons-codec:commons-codec:1.19.0'
 }
 
 static def parseScheme(String uri) {
