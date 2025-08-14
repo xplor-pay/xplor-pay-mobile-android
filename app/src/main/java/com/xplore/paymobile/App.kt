@@ -63,6 +63,7 @@ class App : Application() {
 //    }
 
     private fun initSdkWrapper() {
+        System.loadLibrary("sqlcipher")
         clearentWrapper.initializeSDK(
             context = applicationContext,
             baseUrl = BuildConfig.BASE_URL_GATEWAY,
