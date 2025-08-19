@@ -32,6 +32,8 @@
 -keep,includedescriptorclasses class net.sqlcipher.** { *; }
 -keep,includedescriptorclasses interface net.sqlcipher.** { *; }
 
+-keep class com.xplore.paymobile.data.remote.model.data** { *; }
+
 # Keep all classes that are serialized/deserialized using Gson
 -keep class com.google.gson.** { *; }
 
