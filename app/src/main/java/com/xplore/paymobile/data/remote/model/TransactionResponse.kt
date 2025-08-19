@@ -1,18 +1,19 @@
 package com.xplore.paymobile.data.remote.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class TransactionResponse(
     @SerializedName("code") var code: String,
     @SerializedName("status") var status: String,
     @SerializedName("exchange-id") var exchangeId: String,
+    @SerializedName("payload") var payload: TransactionPayload,
     var page: PageData,
-    var payload: TransactionPayload,
 )
 
 data class TransactionPayload(
-    var error: ResponseError,
-    var transactions: Transactions?,
+    @SerializedName("error") var error: ResponseError,
+    @SerializedName("transactions") var transactions: Transactions?,
 )
 
 data class Transactions(
@@ -25,6 +26,7 @@ data class ResponseError(
     @SerializedName("time-stamp") var timeStamp: String? = null,
 )
 
+@Keep
 data class Transaction(
     var id: String,
     var created: String,

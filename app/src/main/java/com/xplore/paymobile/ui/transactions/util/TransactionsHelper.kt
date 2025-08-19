@@ -55,7 +55,7 @@ class TransactionsHelper @Inject constructor(
 
                     val transactionList = transactionResource.data as TransactionResponse
                     isLastPage = transactionList.page.last
-                    val transactions = transactionList.payload.transactions?.transaction
+                    val transactions = transactionList?.payload?.transactions?.transaction
                     if (transactions != null) {
                         _resultsFlow.emit(transactions)
                     }

@@ -1,7 +1,9 @@
 package com.xplore.paymobile.data.remote.model
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 class TerminalsResponse : ArrayList<Terminal>()
 
 data class Terminal(
