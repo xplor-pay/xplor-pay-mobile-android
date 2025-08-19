@@ -19,9 +19,9 @@ android {
         applicationId "com.xplore.paymobile"
         minSdk 24
         targetSdk 35
-        versionCode 31
+        versionCode 33
 //      {app version}.{feature version}.{bug fix version}
-        versionName "1.0.12"
+        versionName "1.0.13"
 
         buildConfigField "String", 'SIGN_IN_REDIRECT_URI', "\"${oktaProperties.getProperty('signInRedirectUri')}\""
         buildConfigField "String", 'SIGN_OUT_REDIRECT_URI', "\"${oktaProperties.getProperty('signOutRedirectUri')}\""
