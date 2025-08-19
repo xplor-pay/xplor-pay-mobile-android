@@ -19,3 +19,24 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Security Crypto for EncryptedSharedPreferences
+-keep class androidx.security.** { *; }
+-keep class android.security.keystore.** { *; }
+
+# Keep all Tink crypto classes
+-keep class com.google.crypto.tink.** { *; }
+-keep class com.google.crypto.tink.proto.** { *; }
+
+# Keep SQLCipher classes
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }
+
+# Keep all classes that are serialized/deserialized using Gson
+-keep class com.google.gson.** { *; }
+
+# Ignore AWT classes
+-dontwarn java.awt.**
+-dontwarn java.awt.image.**
+
+-keep class com.clearent.idtech.** { *; }

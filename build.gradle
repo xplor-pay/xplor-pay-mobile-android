@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        nav_version = "2.9.2"
+        nav_version = "2.9.3"
         lifecycles_version = "2.9.2"
         dagger_version = "2.57"
         retrofit_version = "3.0.0"
