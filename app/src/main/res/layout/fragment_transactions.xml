@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.transactions.TransactionsFragment">
+
+    <FrameLayout
+        android:id="@+id/no_transactions_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="No transactions found. Please fo to the payment tab to start processing your first transaction."
+        app:flow_verticalAlign="center"
+        app:flow_horizontalAlign="center"/>
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/layout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_small"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/error_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:visibility="invisible"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:background="@drawable/bg_error_message">
+
+        <ImageView
+            android:id="@+id/info_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/margin_small"
+            android:src="@drawable/ic_process_error"
+            android:contentDescription="@string/pairing_device_select_icon_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_name"
+            style="@style/TextPrimaryStartSingleLine14"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingTop="@dimen/padding_medium_small"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium_small"
+            android:textColor="#6D071A"
+            android:textSize="16sp"
+            android:text="@string/failed_to_update_please_try_again"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/info_image_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/success_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:visibility="invisible"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:background="@drawable/bg_success_message">
+
+        <ImageView
+            android:id="@+id/success_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/margin_small"
+            android:src="@drawable/ic_success"
+            android:contentDescription="@string/success_checkmark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/success_message"
+            style="@style/TextPrimaryStartSingleLine14"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textColor="#013220"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingTop="@dimen/padding_medium_small"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium_small"
+            android:text="Transaction successful"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/success_image_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_xxxlarge">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/transaction_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_xxlarge"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/transaction_frame_layout"/>
+
+<!--                todo not working-->
+                <FrameLayout
+                    android:id="@+id/transaction_frame_layout"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_height="@dimen/margin_xlarge"
+                    android:layout_width="match_parent" />
+
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/margin_extra_large"
+        android:layout_height="@dimen/margin_extra_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:indeterminateTint="@color/color_primary"
+        android:foregroundGravity="center"
+        android:visibility="invisible"
+        app:flow_verticalAlign="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

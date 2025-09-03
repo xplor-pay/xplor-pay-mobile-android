@@ -1,0 +1,3 @@
+[submodule "clearent-idtech-android"]
+      path = clearent-idtech-android
+      url = https://xplortechnologies@dev.azure.com/xplortechnologies/Nexus/_git/clearent-idtech-android

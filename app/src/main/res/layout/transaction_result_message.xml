@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:id="@+id/result_message_layout"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_gravity="center_horizontal"
+android:background="#00FFFFFF" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:background="@drawable/bg_error_message">
+
+        <ImageView
+            android:id="@+id/info_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/margin_small"
+            android:src="@drawable/ic_process_error"
+            android:contentDescription="@string/pairing_device_select_icon_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_name"
+            style="@style/TextPrimaryStartSingleLine14"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingTop="@dimen/padding_medium_small"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium_small"
+            android:text="Failed to update. Please try again."
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/info_image_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

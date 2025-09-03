@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/post_login_fragment">
+
+    <fragment
+        android:id="@+id/post_login_fragment"
+        android:name="com.xplore.paymobile.ui.merchantselection.PostLoginMerchantSelectFragment"
+        tools:layout="@layout/fragment_post_login_merchant_select">
+        <action
+            android:id="@+id/action_post_login_to_payment"
+            app:destination="@id/navigation_payment"
+            app:popUpTo="@+id/post_login_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/merchant_search_fragment"
+        android:name="com.xplore.paymobile.ui.merchantselection.search.merchant.MerchantSearchFragment"
+        tools:layout="@layout/fragment_merchant_search"/>
+
+    <fragment
+        android:id="@+id/terminal_search_fragment"
+        android:name="com.xplore.paymobile.ui.merchantselection.search.terminal.TerminalSearchFragment"
+        tools:layout="@layout/fragment_merchant_search"/>
+
+    <fragment
+        android:id="@+id/navigation_payment"
+        android:name="com.xplore.paymobile.ui.home.HomeFragment"
+        android:label="@string/title_payment"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_transactions"
+        android:name="com.xplore.paymobile.ui.transactions.TransactionsFragment"
+        android:label="@string/title_transactions"
+        tools:layout="@layout/fragment_transactions" />
+
+    <fragment
+        android:id="@+id/navigation_batches"
+        android:name="com.xplore.paymobile.ui.batches.BatchesFragment"
+        android:label="@string/title_batches"
+        tools:layout="@layout/fragment_batches" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.xplore.paymobile.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings_sdk"/>
+
+    <fragment
+        android:id="@+id/navigation_settings_old"
+        android:name="com.xplore.paymobile.ui.settings.old.OldSettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings_old">
+        <action
+            android:id="@+id/action_navigation_settings_to_logsFragment"
+            app:destination="@id/logsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_info"
+        android:name="com.xplore.paymobile.ui.info.InfoFragment"
+        android:label="@string/title_info"
+        tools:layout="@layout/fragment_info" />
+
+    <fragment
+        android:id="@+id/logsFragment"
+        android:name="com.xplore.paymobile.ui.settings.old.LogsFragment"
+        android:label="fragment_logs"
+        tools:layout="@layout/fragment_logs" />
+
+    <action
+        android:id="@+id/action_to_post_login"
+        app:destination="@id/post_login_fragment"
+        app:popUpTo="@+id/post_login_fragment"
+        app:popUpToInclusive="true" />
+</navigation>

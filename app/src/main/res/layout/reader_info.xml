@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/devices_dropdown"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium_small"
+        android:layout_marginEnd="@dimen/margin_medium_small"
+        android:maxWidth="@dimen/devices_dropdown_max_width"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="IDTECH-VP3300-26970" />
+
+    <TextView
+        android:id="@+id/no_device_connected"
+        style="@style/TextSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium_small"
+        android:layout_marginTop="@dimen/margin_extra_small"
+        android:layout_marginEnd="@dimen/margin_medium_small"
+        android:drawablePadding="@dimen/drawable_padding"
+        android:text="@string/status_no_device_connected"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown" />
+
+    <TextView
+        android:id="@+id/device_idle"
+        style="@style/TextSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium_small"
+        android:layout_marginTop="@dimen/margin_extra_small"
+        android:layout_marginEnd="@dimen/margin_medium_small"
+        android:drawablePadding="@dimen/drawable_padding"
+        android:text="@string/status_idle"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_device_idle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/device_paired"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium_small"
+        android:layout_marginTop="@dimen/margin_extra_small"
+        android:layout_marginEnd="@dimen/margin_medium_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices_dropdown">
+
+        <TextView
+            android:id="@+id/device_signal_strength"
+            style="@style/TextSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/drawable_padding"
+            android:text="@string/device_signal_connected"
+            app:drawableStartCompat="@drawable/ic_device_idle" />
+
+        <View
+            android:id="@+id/separator"
+            style="@style/Separator"
+            android:layout_width="@dimen/separator_width"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginStart="@dimen/margin_medium_small"
+            android:layout_marginEnd="@dimen/margin_medium_small" />
+
+        <TextView
+            android:id="@+id/device_battery_level"
+            style="@style/TextSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/drawable_padding"
+            app:drawableStartCompat="@drawable/ic_battery_life_100"
+            tools:text="100%" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

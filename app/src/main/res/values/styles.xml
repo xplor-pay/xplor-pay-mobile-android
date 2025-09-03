@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    BASE STYLES -->
+
+    <style name="TextNormal" parent="">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextSmall" parent="TextNormal">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="TextMedium" parent="TextNormal">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextBig" parent="TextNormal">
+        <item name="android:textSize">@dimen/text_size_big</item>
+    </style>
+
+    <style name="TextBold" parent="TextNormal">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextBoldBig" parent="TextBold">
+        <item name="android:textSize">@dimen/text_size_big</item>
+    </style>
+
+    <style name="TextBoldLarge" parent="TextBold">
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="TextWarningSmall" parent="TextSmall">
+        <item name="android:textColor">@color/warning_red</item>
+        <item name="android:gravity">start</item>
+    </style>
+
+    <style name="TextWarningMedium" parent="TextMedium">
+        <item name="android:textColor">@color/warning_red</item>
+        <item name="android:gravity">start</item>
+    </style>
+
+    <style name="Separator" parent="">
+        <item name="android:background">@color/gray</item>
+    </style>
+
+    <!--    TEXT -->
+
+    <style name="TextLogLine" parent="TextSmall">
+        <item name="android:textAlignment">textStart</item>
+    </style>
+
+    <!--    BUTTONS -->
+
+    <style name="ChargeButton" parent="Widget.Material3.Button.TextButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.Rounded
+        </item>
+        <item name="backgroundTintMode">src_in</item>
+        <item name="android:backgroundTint">@color/button_green_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
+        <item name="android:paddingTop">@dimen/drawable_padding_large</item>
+        <item name="android:paddingBottom">@dimen/drawable_padding_large</item>
+    </style>
+
+    <style name="SaveButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
+        <item name="backgroundTint">@color/teal_200</item>
+    </style>
+
+    <style name="LoggerButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/teal_200</item>
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/charge_button_corner_size</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.NoRoundedCorners" parent="">
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.RoundedTopLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/numeric_key_pad_corner_size</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.RoundedTopRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/numeric_key_pad_corner_size</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.RoundedBottomLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyBottomLeft">rounded</item>
+        <item name="cornerSizeBottomLeft">@dimen/numeric_key_pad_corner_size</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.RoundedBottomRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyBottomRight">rounded</item>
+        <item name="cornerSizeBottomRight">@dimen/numeric_key_pad_corner_size</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.PaymentMethodLeft" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyBottomLeft">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/margin_medium</item>
+        <item name="cornerSizeBottomLeft">@dimen/margin_medium</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Button.PaymentMethodRight" parent="ShapeAppearanceOverlay.Button.NoRoundedCorners">
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerFamilyBottomRight">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/margin_medium</item>
+        <item name="cornerSizeBottomRight">@dimen/margin_medium</item>
+    </style>
+
+    <style name="PaymentMethodButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="PaymentMethodButtonLeft" parent="PaymentMethodButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.PaymentMethodLeft
+        </item>
+    </style>
+
+    <style name="PaymentMethodButtonRight" parent="PaymentMethodButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.PaymentMethodRight
+        </item>
+    </style>
+
+    <!--    NUMERIC KEY PAD -->
+
+    <style name="NumericKeyPadButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.NoRoundedCorners
+        </item>
+        <item name="backgroundTint">@color/numeric_key_pad_background</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:textSize">@dimen/text_size_big</item>
+        <item name="android:textStyle">bold</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_rowWeight">1</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyle.ClearButton" parent="NumericKeyPadButtonStyle">
+        <item name="android:textSize">@dimen/text_size_medium_big</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyleTopLeft" parent="NumericKeyPadButtonStyle">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.RoundedTopLeft
+        </item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyleTopRight" parent="NumericKeyPadButtonStyle">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.RoundedTopRight
+        </item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyleBottomLeft" parent="NumericKeyPadButtonStyle">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.RoundedBottomLeft
+        </item>
+    </style>
+
+    <style name="NumericKeyPadButtonStyleBottomRight" parent="NumericKeyPadButtonStyle.ClearButton">
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay.Button.RoundedBottomRight
+        </item>
+    </style>
+
+    <!-- Search input layout -->
+    <style name="OutlinedRoundedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.TextInputLayout.Rounded</item>
+        <item name="boxStrokeColor">@color/edit_text_stroke_color</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.TextInputLayout.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="MerchantSelectTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:textColorHint">@color/color_secondary</item>
+        <item name="hintTextColor">@color/color_secondary</item>
+    </style>
+
+</resources>

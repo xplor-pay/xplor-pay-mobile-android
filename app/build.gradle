@@ -1,0 +1,158 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp'
+}
+
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
+def oktaProperties = new Properties()
+rootProject.file("okta.properties").withInputStream { oktaProperties.load(it) }
+
+android {
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.xplore.paymobile"
+        minSdk 24
+        targetSdk 35
+        versionCode 35
+//      {app version}.{feature version}.{bug fix version}
+        versionName "1.0.13"
+
+        buildConfigField "String", 'SIGN_IN_REDIRECT_URI', "\"${oktaProperties.getProperty('signInRedirectUri')}\""
+        buildConfigField "String", 'SIGN_OUT_REDIRECT_URI', "\"${oktaProperties.getProperty('signOutRedirectUri')}\""
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions += "env"
+    productFlavors {
+        register("qa") {
+            dimension = "env"
+            buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding-qa.clearent.net\""
+            buildConfigField "String", "BASE_URL_API", "\"https://api-qa.clearent.net\""
+            buildConfigField "String", "BASE_URL_GATEWAY", "\"https://gateway-qa.clearent.net\""
+
+            buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl_SB')}\""
+            buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId_SB')}\""
+        }
+        register("prod") {
+            dimension = "env"
+            buildConfigField "String", "BASE_URL_BOARDING", "\"https://boarding.clearent.net\""
+            buildConfigField "String", "BASE_URL_API", "\"https://api.clearent.net\""
+            buildConfigField "String", "BASE_URL_GATEWAY", "\"https://gateway.clearent.net\""
+
+            buildConfigField "String", 'DISCOVERY_URL', "\"${oktaProperties.getProperty('discoveryUrl')}\""
+            buildConfigField "String", 'CLIENT_ID', "\"${oktaProperties.getProperty('clientId')}\""
+        }
+    }
+
+    defaultConfig.manifestPlaceholders = [
+            "webAuthenticationRedirectScheme": parseScheme(oktaProperties.getProperty('signInRedirectUri'))
+    ]
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    hilt {
+        enableAggregatingTask = true
+    }
+    namespace 'com.xplore.paymobile'
+}
+
+kotlin {
+    jvmToolchain(11)
+    compilerOptions {
+        freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:2.1.20"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+
+    // Kotlin navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycles_version"
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycles_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycles_version"
+    // ViewModels delegate for fragments
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+
+    // Retrofit + GSON
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    // OkHttp3
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
+
+    // Jwt decoder
+    implementation 'com.auth0.android:jwtdecode:2.0.2'
+
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    ksp "com.google.dagger:hilt-compiler:$dagger_version"
+
+    // Timber logger for file logging
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
+    implementation "androidx.security:security-crypto:$crypto_security_version"
+
+    // Play In-App Update Library
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
+
+    // Clearent Idtech Android SDK
+    implementation project(':clearent-idtech-android')
+
+    //Splash screen
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    implementation(platform('com.okta.kotlin:bom:1.0.0'))
+    implementation('com.okta.kotlin:auth-foundation-bootstrap')
+    implementation('com.okta.kotlin:web-authentication-ui')
+
+    implementation 'commons-codec:commons-codec:1.19.0'
+}
+
+static def parseScheme(String uri) {
+    def index = uri.indexOf(':/')
+    if (index == -1) {
+        throw new IllegalStateException("Scheme is not in a valid format.")
+    }
+    return uri.substring(0, index)
+}
