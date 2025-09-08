@@ -184,12 +184,15 @@ class TransactionsFragment : BaseFragment() {
 
     // todo move this method into the process transaction class (make adapter with onclick behavior)
     private fun processTransaction(transactionItem: TransactionListAdapter.TransactionItem, transactionType: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.processTransaction(transactionItem, transactionType)
             // todo let's see if we can reduce the delay time
             delay(3500)
-            // TODO Discuss ticket 50560 Crash
-            showDialogMessage(transactionType)
+
+            // [50560]: Check if view is still alive before showing dialog message
+            if (_binding != null) {
+                showDialogMessage(transactionType)
+            }
         }
     }
 
@@ -203,26 +206,31 @@ class TransactionsFragment : BaseFragment() {
     }
 
     private fun showSuccessMessage(type: String) {
-        with(binding) {
-            if (type.uppercase() == TransactionType.VOID.name) {
-                successMessage.text = getString(R.string.transaction_voided)
-            } else {
-                successMessage.text = getString(R.string.transaction_refunded)
+        _binding?.let { binding ->
+            with(binding) {
+                if (type.uppercase() == TransactionType.VOID.name) {
+                    successMessage.text = getString(R.string.transaction_voided)
+                } else {
+                    successMessage.text = getString(R.string.transaction_refunded)
+                }
+                successMessageLayout.isVisible = true
+                val animSlideDown =
+                    AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
+                successMessageLayout.startAnimation(animSlideDown)
+                successMessageLayout.isVisible = false
             }
-            successMessageLayout.isVisible = true
-            val animSlideDown = AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
-            successMessageLayout.startAnimation(animSlideDown)
-            successMessageLayout.isVisible = false
         }
     }
 
     private fun showErrorMessage() {
-        with(binding) {
-            errorMessageLayout.isVisible = true
-            val animSlideDown =
-                AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
-            errorMessageLayout.startAnimation(animSlideDown)
-            errorMessageLayout.isVisible = false
+        _binding?.let { binding ->
+            with(binding) {
+                errorMessageLayout.isVisible = true
+                val animSlideDown =
+                    AnimationUtils.loadAnimation(requireContext(), R.anim.vertical_slide_down_up)
+                errorMessageLayout.startAnimation(animSlideDown)
+                errorMessageLayout.isVisible = false
+            }
         }
     }
 

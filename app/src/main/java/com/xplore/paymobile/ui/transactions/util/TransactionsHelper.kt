@@ -53,12 +53,10 @@ class TransactionsHelper @Inject constructor(
                 is NetworkResource.Success -> {
                     Logger.logMobileMessage(className, "Get transactions success")
 
-                    val transactionList = transactionResource.data as TransactionResponse
-                    isLastPage = transactionList.page.last
+                    val transactionList = transactionResource.data as? TransactionResponse
+                    isLastPage = transactionList?.page?.last == true
                     val transactions = transactionList?.payload?.transactions?.transaction
-                    if (transactions != null) {
-                        _resultsFlow.emit(transactions)
-                    }
+                    _resultsFlow.emit(transactions ?: emptyList())
                     isLoading = false
                 }
                 is NetworkResource.Error -> {
