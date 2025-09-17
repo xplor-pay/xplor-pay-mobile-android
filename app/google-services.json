@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402621253080",
+    "project_id": "xplor-payments",
+    "storage_bucket": "xplor-payments.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402621253080:android:72b94ad25f8e4360f01ead",
+        "android_client_info": {
+          "package_name": "com.xplore.paymobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbDQ7qULcTvfcZ0X7uUJvm6iQrRNK44mE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
