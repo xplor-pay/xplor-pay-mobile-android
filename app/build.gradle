@@ -21,7 +21,7 @@ android {
         applicationId "com.xplore.paymobile"
         minSdk 24
         targetSdk 35
-        versionCode 36
+        versionCode 37
 //      {app version}.{feature version}.{bug fix version}
         versionName "1.0.14"
 
